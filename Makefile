@@ -1,5 +1,7 @@
 
-.PHONY: execs
+.PHONY: execs all
+
+all: execs day1 day2a day2b day3a day3b day4a day4b day5a day5b
 
 execs:
 	mkdir -p build
@@ -43,3 +45,9 @@ day5a: day5/day5.cpp day5/*.hpp execs
 
 day5b: day5/day5.cpp day5/*.hpp execs
 	cat day5/day5b.txt | build/bin/day5
+
+day6a: day6/day6a.cpp execs
+	cat day6/day6.txt | build/bin/day6a
+
+day6b: day6/day6b.cpp execs
+	cat day6/day6.txt | build/bin/day6b

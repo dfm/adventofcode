@@ -36,6 +36,7 @@ struct OpCode {
   int mode1;
   int mode2;
   int mode3;
+  int width;
 };
 
 OpCode parse_op_code(size_t op_code) {
@@ -47,6 +48,14 @@ OpCode parse_op_code(size_t op_code) {
   result.mode1 = op_code / 100;
   op_code -= result.mode1 * 100;
   result.code = op_code;
+  if (op_code <= 2)
+    result.width = 4;
+  else if (op_code <= 4)
+    result.width = 2;
+  else if (op_code <= 6)
+    result.width = 0;
+  else if (op_code <= 8)
+    result.width = 4;
   return result;
 }
 
@@ -60,18 +69,14 @@ T run_intcode_program(IntcodeProgram<T> &program) {
       return program(0, 1);
     } else if (op.code == 1) {
       program(index + 3, op.mode3) = program(index + 1, op.mode1) + program(index + 2, op.mode2);
-      index += 4;
     } else if (op.code == 2) {
       program(index + 3, op.mode3) = program(index + 1, op.mode1) * program(index + 2, op.mode2);
-      index += 4;
     } else if (op.code == 3) {
       size_t arg;
       std::cin >> arg;
       program(index + 1, op.mode1) = arg;
-      index += 2;
     } else if (op.code == 4) {
       std::cout << program(index + 1, op.mode1) << std::endl;
-      index += 2;
     } else if (op.code == 5) {
       if (program(index + 1, op.mode1)) {
         index = program(index + 2, op.mode2);
@@ -86,13 +91,12 @@ T run_intcode_program(IntcodeProgram<T> &program) {
       }
     } else if (op.code == 7) {
       program(index + 3, op.mode3) = program(index + 1, op.mode1) < program(index + 2, op.mode2);
-      index += 4;
     } else if (op.code == 8) {
       program(index + 3, op.mode3) = program(index + 1, op.mode1) == program(index + 2, op.mode2);
-      index += 4;
     } else {
       throw std::runtime_error("invalid op");
     }
+    index += op.width;
   }
   return 0;
 }
