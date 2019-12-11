@@ -51,3 +51,9 @@ day6a: day6/day6a.cpp execs
 
 day6b: day6/day6b.cpp execs
 	cat day6/day6.txt | build/bin/day6b
+
+day7a: day7/day7a.cpp execs
+	cat day7/day7.txt | build/bin/day7a
+
+day7b: day7/day7b.cpp execs
+	cat day7/day7.txt | build/bin/day7b
