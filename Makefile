@@ -63,3 +63,15 @@ day8a: day8/day8a.cpp execs
 
 day8b: day8/day8b.cpp execs
 	build/bin/day8b day8/day8.txt
+
+day9a: day9/day9a.cpp execs
+	build/bin/day9a day9/day9.txt
+
+day9b: day9/day9b.cpp execs
+	build/bin/day9b day9/day9.txt
+
+day10a: day10/day10a.cpp execs
+	build/bin/day10a day10/day10.txt
+
+day10b: day10/day10b.cpp execs
+	build/bin/day10b day10/day10.txt
