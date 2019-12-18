@@ -78,3 +78,9 @@ day10b: day10/day10b.cpp execs
 
 day11: day11/day11.cpp day11/*.hpp execs
 	build/bin/day11 day11/day11.txt
+
+day12a: day12/day12a.cpp day12/*.hpp execs
+	build/bin/day12a day12/day12.txt
+
+day12b: day12/day12b.cpp day12/*.hpp execs
+	build/bin/day12b day12/day12.txt
