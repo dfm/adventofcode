@@ -84,3 +84,12 @@ day12a: day12/day12a.cpp day12/*.hpp execs
 
 day12b: day12/day12b.cpp day12/*.hpp execs
 	build/bin/day12b day12/day12.txt
+
+day13a: day13/day13a.cpp day13/*.hpp execs
+	build/bin/day13a day13/day13.txt
+
+day13b: day13/day13b.cpp day13/*.hpp execs
+	build/bin/day13b day13/day13.txt
+
+day14a: day14/day14a.cpp execs
+	build/bin/day14a day14/day14.txt
