@@ -96,3 +96,9 @@ day14: day14/day14.cpp execs
 
 day15: day15/day15.cpp day15/*.hpp execs
 	build/bin/day15 day15/day15.txt
+
+day16a: day16/day16a.cpp execs
+	cat day16/day16.txt | build/bin/day16a
+
+day16b: day16/day16b.cpp execs
+	cat day16/day16.txt | build/bin/day16b
