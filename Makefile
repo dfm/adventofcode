@@ -91,5 +91,8 @@ day13a: day13/day13a.cpp day13/*.hpp execs
 day13b: day13/day13b.cpp day13/*.hpp execs
 	build/bin/day13b day13/day13.txt
 
-day14a: day14/day14a.cpp execs
-	build/bin/day14a day14/day14.txt
+day14: day14/day14.cpp execs
+	build/bin/day14 day14/day14.txt
+
+day15: day15/day15.cpp day15/*.hpp execs
+	build/bin/day15 day15/day15.txt

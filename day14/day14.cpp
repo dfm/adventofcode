@@ -141,19 +141,8 @@ int main(int argc, char *argv[]) {
   size_t total_ore    = system.make_fuel();
   size_t ore_per_fuel = initial_ore - total_ore;
 
-  std::cout << ore_per_fuel << " " << (initial_ore / ore_per_fuel) << std::endl;
-
-  std::cout << system.search(initial_ore / ore_per_fuel) << std::endl;
-
-  // total_ore = system.make_fuel(total_ore / ore_per_fuel);
-  // std::cout << (total_ore / ore_per_fuel) << std::endl;
-
-  // size_t count = 0;
-  // while (size_t n = system.make_fuel()) {
-  //   std::cout << n << std::endl;
-  //   count++;
-  // }
-  // std::cout << count << std::endl;
+  std::cout << "ORE required for 1 FUEL: " << ore_per_fuel << std::endl;
+  std::cout << "FUEL made with 1,000,000,000,000 ORE: " << system.search(initial_ore / ore_per_fuel) << std::endl;
 
   return 0;
 }
