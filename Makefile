@@ -102,3 +102,6 @@ day16a: day16/day16a.cpp execs
 
 day16b: day16/day16b.cpp execs
 	cat day16/day16.txt | build/bin/day16b
+
+day17: day17/day17.cpp day17/*.hpp execs
+	build/bin/day17 day17/day17.txt
