@@ -114,3 +114,10 @@ day18b: day18/day18.cpp execs
 
 day19: day19/day19.cpp day19/*.hpp execs
 	build/bin/day19 day19/day19.txt
+
+day20a: day20/day20a.cpp execs
+	build/bin/day20a day20/day20.txt
+
+day20b: day20/day20b.cpp execs
+	# build/bin/day20b 7 day20/test3.txt
+	build/bin/day20b 27 day20/day20.txt
