@@ -11,32 +11,35 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-haskell@v1
-        with:
-          ghc-version: "8.8"
-          cabal-version: "3.4"
-          stack-version: "2.5.1"
-          enable-stack: true
 
-      - name: Cache
-        uses: actions/cache@v1
-        env:
-          cache-name: cache-stack-2
-        with:
-          path: ~/.stack
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml') }}-${{ hashFiles('**/package.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+      - run: which stack
 
-      - name: Install dependencies
-        run: stack build --only-dependencies
-      - name: Build
-        run: stack build
+      # - uses: actions/setup-haskell@v1
+      #   with:
+      #     ghc-version: "8.10"
+      #     cabal-version: "3.4"
+      #     stack-version: "2.5.1"
+      #     enable-stack: true
 
-      - name: Run tests
-        run: stack test
+      # - name: Cache
+      #   uses: actions/cache@v1
+      #   env:
+      #     cache-name: cache-stack-2
+      #   with:
+      #     path: ~/.stack
+      #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml') }}-${{ hashFiles('**/package.yaml') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-build-${{ env.cache-name }}-
+      #       ${{ runner.os }}-build-
+      #       ${{ runner.os }}-
 
-      - name: Run the puzzles
-        run: stack run
+      # - name: Install dependencies
+      #   run: stack build --only-dependencies
+      # - name: Build
+      #   run: stack build
+
+      # - name: Run tests
+      #   run: stack test
+
+      # - name: Run the puzzles
+      #   run: stack run
