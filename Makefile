@@ -119,9 +119,11 @@ day20a: day20/day20a.cpp execs
 	build/bin/day20a day20/day20.txt
 
 day20b: day20/day20b.cpp execs
-	# build/bin/day20b 7 day20/test3.txt
 	build/bin/day20b 27 day20/day20.txt
 
 day21: day21/day21.cpp day21/*.hpp execs
-	# build/bin/day21 1 day21/day21.txt
 	build/bin/day21 2 day21/day21.txt
+
+day22: day22/day22.cpp execs
+	# cat day22/day22.txt | build/bin/day22 10007 1
+	cat day22/day22.txt | build/bin/day22 119315717514047 101741582076661
