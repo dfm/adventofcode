@@ -1,0 +1,66 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 6a83edcb6e4c7294e65d3db9c041cfff4416afb9908f695aed79cb42b7defbfb
+
+name:           adventofcode
+version:        0.1.0.0
+synopsis:       Haskell edition
+description:    Let's see how this goes
+category:       Coding
+homepage:       https://github.com/dfm/adventofcode#readme
+bug-reports:    https://github.com/dfm/adventofcode/issues
+author:         Dan Foreman-Mackey
+maintainer:     foreman.mackey@gmail.com
+copyright:      2020, Dan Foreman-Mackey
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/dfm/adventofcode
+
+library
+  exposed-modules:
+      Advent.Day01
+  other-modules:
+      Advent
+      Paths_adventofcode
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Wcompat -Wno-partial-type-signatures -Wredundant-constraints
+  build-depends:
+      base >=4.7 && <5
+  default-language: Haskell2010
+
+executable day01
+  main-is: days/Day01.hs
+  other-modules:
+      Paths_adventofcode
+  ghc-options: -Wall -Wcompat -Wno-partial-type-signatures -Wredundant-constraints
+  build-depends:
+      adventofcode
+    , base >=4.7 && <5
+  default-language: Haskell2010
+
+test-suite check
+  type: exitcode-stdio-1.0
+  main-is: test.hs
+  other-modules:
+      CheckDay01
+  hs-source-dirs:
+      tests
+  ghc-options: -Wall -Wcompat -Wno-partial-type-signatures -Wredundant-constraints
+  build-depends:
+      adventofcode
+    , base >=4.7 && <5
+    , tasty >=0.7
+    , tasty-hunit
+  default-language: Haskell2010

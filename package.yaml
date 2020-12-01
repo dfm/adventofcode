@@ -1,6 +1,6 @@
-name: advent-of-code
+name: adventofcode
 version: 0.1.0.0
-github: "dfm/advent-of-code"
+github: "dfm/adventofcode"
 license: MIT
 author: "Dan Foreman-Mackey"
 maintainer: "foreman.mackey@gmail.com"
@@ -9,7 +9,6 @@ copyright: "2020, Dan Foreman-Mackey"
 extra-source-files:
   - README.md
   - CHANGELOG.md
-  - LICENSE
 
 synopsis: "Haskell edition"
 category: Coding
@@ -22,17 +21,28 @@ ghc-options:
   - -Wno-partial-type-signatures
   - -Wredundant-constraints
 
-# default-extensions:
-
 dependencies:
   - base >= 4.7 && < 5
 
-# library:
-#   source-dirs: src
-#   dependencies:
+library:
+  source-dirs: src
+  exposed-modules:
+    - Advent.Day01
 
 executables:
-  day01a:
-    main: days/Day01a.hs
-  day01b:
-    main: days/Day01b.hs
+  day01:
+    main: days/Day01.hs
+    dependencies:
+      - adventofcode
+
+tests:
+  check:
+    dependencies:
+      - tasty >= 0.7
+      - tasty-hunit
+      - adventofcode
+    source-dirs:
+      - tests
+    main: test.hs
+    other-modules:
+      - CheckDay01
