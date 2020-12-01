@@ -1,5 +1,6 @@
 module CheckDay01 (checkPart1, checkPart2) where
 
+import Advent (parseInts)
 import Advent.Day01
 import System.IO
 import Test.Tasty

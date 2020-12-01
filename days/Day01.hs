@@ -1,5 +1,6 @@
 module Main where
 
+import Advent
 import Advent.Day01
 
 main :: IO ()

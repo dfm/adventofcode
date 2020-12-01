@@ -1,12 +1,6 @@
-module Advent.Day01 (parseInts, part1, part2) where
+module Advent.Day01 (part1, part2) where
 
 import Data.List (tails)
-
-parseInts :: String -> [Integer]
-parseInts = parseInt . lines
-
-parseInt :: [String] -> [Integer]
-parseInt = map read
 
 part1 :: [Integer] -> Integer
 part1 numbers = head [x * y | (x : ys) <- tails numbers, y <- ys, x + y == 2020]

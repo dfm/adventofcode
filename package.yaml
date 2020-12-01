@@ -27,6 +27,7 @@ dependencies:
 library:
   source-dirs: src
   exposed-modules:
+    - Advent
     - Advent.Day01
 
 executables:
