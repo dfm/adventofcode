@@ -21,9 +21,9 @@ jobs:
     - name: Cache
       uses: actions/cache@v1
       env:
-        cache-name: cache-stack
+        cache-name: cache-stack-2
       with:
-        path: .stack-work
+        path: ~/.stack
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml') }}-${{ hashFiles('**/package.yaml') }}
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-
