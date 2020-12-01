@@ -15,7 +15,7 @@ jobs:
         with:
           ghc-version: "8.8"
           cabal-version: "3.4"
-          stack-version: "2.5"
+          stack-version: "2.5.1"
           enable-stack: true
 
       - name: Cache
