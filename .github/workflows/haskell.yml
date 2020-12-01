@@ -15,7 +15,7 @@ jobs:
       - name: Cache
         uses: actions/cache@v1
         env:
-          cache-name: cache-stack-2
+          cache-name: cache-stack
         with:
           path: ~/.stack
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml') }}-${{ hashFiles('**/package.yaml') }}
@@ -31,6 +31,3 @@ jobs:
 
       - name: Run tests
         run: stack test
-
-      - name: Run the puzzles
-        run: stack run

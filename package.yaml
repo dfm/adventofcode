@@ -26,13 +26,10 @@ dependencies:
 
 library:
   source-dirs: src
-  exposed-modules:
-    - Advent
-    - Advent.Day01
 
 executables:
   day01:
-    main: days/Day01.hs
+    main: days/day01.hs
     dependencies:
       - adventofcode
 
