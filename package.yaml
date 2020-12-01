@@ -1,0 +1,38 @@
+name: advent-of-code
+version: 0.1.0.0
+github: "dfm/advent-of-code"
+license: MIT
+author: "Dan Foreman-Mackey"
+maintainer: "foreman.mackey@gmail.com"
+copyright: "2020, Dan Foreman-Mackey"
+
+extra-source-files:
+  - README.md
+  - CHANGELOG.md
+  - LICENSE
+
+synopsis: "Haskell edition"
+category: Coding
+description: |
+  Let's see how this goes
+
+ghc-options:
+  - -Wall
+  - -Wcompat
+  - -Wno-partial-type-signatures
+  - -Wredundant-constraints
+
+# default-extensions:
+
+dependencies:
+  - base >= 4.7 && < 5
+
+# library:
+#   source-dirs: src
+#   dependencies:
+
+executables:
+  day01a:
+    main: days/Day01a.hs
+  day01b:
+    main: days/Day01b.hs

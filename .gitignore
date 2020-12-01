@@ -1,1 +1,4 @@
 build
+dist-newstyle
+.stack-work/
+inputs/days/
