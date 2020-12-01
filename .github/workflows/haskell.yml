@@ -2,39 +2,39 @@ name: Haskell CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-  build:
-
+  tests:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-haskell@v1
-      with:
-        ghc-version: '8.8.2'
-        enable-stack: true
-          
-    - name: Cache
-      uses: actions/cache@v1
-      env:
-        cache-name: cache-stack-2
-      with:
-        path: ~/.stack
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml') }}-${{ hashFiles('**/package.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
-          ${{ runner.os }}-build-
-          ${{ runner.os }}-
+      - uses: actions/checkout@v2
+      - uses: actions/setup-haskell@v1
+        with:
+          ghc-version: "8.8.2"
+          enable-stack: true
 
-    - name: Install dependencies
-      run: stack build --only-dependencies
-        
-    - name: Build
-      run: stack build
-      
-    - name: Run tests
-      run: stack test
+      - name: Cache
+        uses: actions/cache@v1
+        env:
+          cache-name: cache-stack-2
+        with:
+          path: ~/.stack
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml') }}-${{ hashFiles('**/package.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        run: stack build --only-dependencies
+      - name: Build
+        run: stack build
+
+      - name: Run tests
+        run: stack test
+
+      - name: Run the puzzles
+        run: stack run

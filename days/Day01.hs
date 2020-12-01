@@ -1,11 +1,13 @@
 module Main where
 
-import Advent
-import Advent.Day01
+import Advent (loadListOfInts)
+import Advent.Day01 (part1, part2)
 
 main :: IO ()
 main = do
-  contents <- getContents
-  let numbers = parseInts contents
-  print $ part1 $ numbers
-  print $ part2 $ numbers
+  numbers <- loadListOfInts "inputs/day01"
+  putStrLn "Day 1:"
+  putStr " - Part 1: "
+  print $ part1 numbers
+  putStr " - Part 2: "
+  print $ part2 numbers
