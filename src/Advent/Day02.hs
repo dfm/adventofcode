@@ -2,19 +2,16 @@ module Advent.Day02 where
 
 import Data.List.Split (splitOn)
 
-data PasswordRule = PasswordRule {minCount :: Int, maxCount :: Int, character :: Char, password :: String} deriving (Show)
+data PasswordRule = PasswordRule Int Int Char String deriving (Show)
 
 part1 :: [String] -> Int
-part1 text =
-  let rules = map parseRule text
-      checks = filter checkPasswordRule rules
-   in length checks
+part1 = part checkPasswordRule
 
 part2 :: [String] -> Int
-part2 text =
-  let rules = map parseRule text
-      checks = filter checkPasswordRule2 rules
-   in length checks
+part2 = part checkPasswordRule2
+
+part :: (PasswordRule -> Bool) -> [String] -> Int
+part checker text = length $ filter (checker . parseRule) text
 
 parseRule :: String -> PasswordRule
 parseRule text =
@@ -23,16 +20,12 @@ parseRule text =
    in PasswordRule (read idx1) (read idx2) c word
 
 checkPasswordRule :: PasswordRule -> Bool
-checkPasswordRule rule =
-  let target = character rule
-      word = password rule
-      count = length $ filter (== target) word
-   in count >= minCount rule && count <= maxCount rule
+checkPasswordRule (PasswordRule mn mx target word) =
+  let count = length $ filter (== target) word
+   in count >= mn && count <= mx
 
 checkPasswordRule2 :: PasswordRule -> Bool
-checkPasswordRule2 rule =
-  let target = character rule
-      word = password rule
-      at1 = word !! (minCount rule - 1)
-      at2 = word !! (maxCount rule - 1)
+checkPasswordRule2 (PasswordRule idx1 idx2 target word) =
+  let at1 = word !! (idx1 - 1)
+      at2 = word !! (idx2 - 1)
    in (at1 == target) /= (at2 == target)
