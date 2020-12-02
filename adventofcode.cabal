@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2cf4e6636ef0e9dbd77152604fc526f4ae5904097481db89388443d3be457606
+-- hash: 4d3db5ef51614a8fd1bd7303f12ea6aab746848819df041896f567f7409d4cad
 
 name:           adventofcode
 version:        0.1.0.0
@@ -38,6 +38,7 @@ library
   ghc-options: -Wall -Wcompat -Wno-partial-type-signatures -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , containers
   default-language: Haskell2010
 
 executable day01
@@ -48,6 +49,7 @@ executable day01
   build-depends:
       adventofcode
     , base >=4.7 && <5
+    , containers
   default-language: Haskell2010
 
 test-suite check
@@ -61,6 +63,7 @@ test-suite check
   build-depends:
       adventofcode
     , base >=4.7 && <5
+    , containers
     , tasty >=0.7
     , tasty-hunit
   default-language: Haskell2010

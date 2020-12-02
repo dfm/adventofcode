@@ -1,9 +1,9 @@
 module CheckDay01 (checkPart1, checkPart2) where
 
 import Advent (loadListOfInts)
-import Advent.Day01
-import Test.Tasty
-import Test.Tasty.HUnit
+import Advent.Day01 (part1, part2)
+import Test.Tasty (TestTree)
+import Test.Tasty.HUnit (assertEqual, testCase)
 
 checkPart1 :: TestTree
 checkPart1 =
