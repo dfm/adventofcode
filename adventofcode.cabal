@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: dd1c4ceed032e8680fc20b13fdbb4a4450dcbb8b7ac6d2e8c034c4e345591e7b
+-- hash: e6d8a6fa86dd9267cbc7ba9e92209520184315a2ae98ea63d652302ab88310e0
 
 name:           adventofcode
 version:        0.1.0.0
@@ -41,6 +41,7 @@ library
       base >=4.7 && <5
     , bytestring
     , split
+    , text
   default-language: Haskell2010
 
 executable day01
@@ -53,6 +54,7 @@ executable day01
     , base >=4.7 && <5
     , bytestring
     , split
+    , text
   default-language: Haskell2010
 
 executable day02
@@ -65,6 +67,7 @@ executable day02
     , base >=4.7 && <5
     , bytestring
     , split
+    , text
   default-language: Haskell2010
 
 test-suite check
@@ -83,4 +86,5 @@ test-suite check
     , split
     , tasty >=0.7
     , tasty-hunit
+    , text
   default-language: Haskell2010

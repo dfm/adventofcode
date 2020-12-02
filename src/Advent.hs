@@ -1,14 +1,11 @@
-module Advent (loadListOfInts) where
+module Advent (runPart) where
 
-import System.IO (Handle, hGetContents)
+import qualified Data.ByteString as S
+import qualified Data.Text as T
+import qualified Data.Text.Encoding as E
 
-parseInts :: String -> [Integer]
-parseInts = parseInt . lines
-
-parseInt :: [String] -> [Integer]
-parseInt = map read
-
-loadListOfInts :: Handle -> IO [Integer]
-loadListOfInts handle = do
-  contents <- hGetContents handle
-  return $ parseInts contents
+runPart :: FilePath -> (String -> a) -> IO a
+runPart filename func = do
+  contents <- S.readFile filename
+  let text = T.unpack $ E.decodeUtf8 contents
+  return $ func text

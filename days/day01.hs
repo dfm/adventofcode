@@ -1,16 +1,11 @@
 module Main where
 
-import Advent (loadListOfInts)
+import Advent (runPart)
 import Advent.Day01 (part1, part2)
-import System.IO (IOMode (ReadMode), withFile)
 
 main :: IO ()
 main = do
-  withFile
-    "inputs/day01"
-    ReadMode
-    ( \handle -> do
-        numbers <- loadListOfInts handle
-        print $ part1 numbers
-        print $ part2 numbers
-    )
+  result1 <- runPart "inputs/day01" part1
+  print result1
+  result2 <- runPart "inputs/day01" part2
+  print result2
