@@ -1,3 +1,8 @@
 cradle:
   stack:
-    component: "adventofcode:lib"
+    - path: "./tests"
+      component: "adventofcode:test:check"
+    - path: "./src"
+      component: "adventofcode:lib"
+    - path: "./days"
+      component: "adventofcode:lib"

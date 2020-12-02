@@ -23,8 +23,8 @@ ghc-options:
 
 dependencies:
   - base >= 4.7 && < 5
+  - split
   - bytestring
-  - parsec
 
 library:
   source-dirs: src

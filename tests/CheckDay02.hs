@@ -13,7 +13,7 @@ checkPart1 =
       ReadMode
       ( \handle -> do
           text <- hGetContents handle
-          assertEqual "Part 1: invalid test output" (Right 2) (part1 $ lines text)
+          assertEqual "Part 1: invalid test output" 2 (part1 $ lines text)
       )
 
 checkPart2 :: TestTree
@@ -24,5 +24,5 @@ checkPart2 =
       ReadMode
       ( \handle -> do
           text <- hGetContents handle
-          assertEqual "Part 2: invalid test output" (Right 1) (part2 $ lines text)
+          assertEqual "Part 2: invalid test output" 1 (part2 $ lines text)
       )
