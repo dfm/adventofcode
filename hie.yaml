@@ -1,2 +1,5 @@
 cradle:
   stack:
+    - path: "./tests"
+      component: "adventofcode:check"
+    - path: "./"
