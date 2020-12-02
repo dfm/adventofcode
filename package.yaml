@@ -23,7 +23,8 @@ ghc-options:
 
 dependencies:
   - base >= 4.7 && < 5
-  - containers
+  - bytestring
+  - parsec
 
 library:
   source-dirs: src
@@ -31,6 +32,10 @@ library:
 executables:
   day01:
     main: days/day01.hs
+    dependencies:
+      - adventofcode
+  day02:
+    main: days/day02.hs
     dependencies:
       - adventofcode
 
@@ -45,3 +50,4 @@ tests:
     main: test.hs
     other-modules:
       - CheckDay01
+      - CheckDay02

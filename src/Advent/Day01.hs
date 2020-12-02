@@ -1,10 +1,9 @@
 module Advent.Day01 (part1, part2) where
 
-import Data.List (sort, tails)
-import qualified Data.Set as Set
+import Data.List (tails)
 
 part1 :: [Integer] -> Integer
-part1 numbers = head $ take 1 [x * (2020 - x) | (x : ys) <- tails $ sort numbers, Set.member (2020 - x) $ Set.fromAscList ys]
+part1 numbers = head $ take 1 [x * y | (x : ys) <- tails numbers, y <- ys, x + y == 2020]
 
 part2 :: [Integer] -> Integer
-part2 numbers = head $ take 1 [x * y * (2020 - x - y) | (x : ys) <- tails $ sort numbers, (y : zs) <- tails ys, Set.member (2020 - x - y) $ Set.fromAscList zs]
+part2 numbers = head $ take 1 [x * y * z | (x : ys) <- tails numbers, (y : zs) <- tails ys, z <- zs, x + y + z == 2020]
