@@ -39,6 +39,10 @@ executables:
     main: days/day02.hs
     dependencies:
       - adventofcode
+  day03:
+    main: days/day03.hs
+    dependencies:
+      - adventofcode
 
 tests:
   check:
@@ -49,6 +53,3 @@ tests:
     source-dirs:
       - tests
     main: test.hs
-    other-modules:
-      - CheckDay01
-      - CheckDay02

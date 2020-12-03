@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e6d8a6fa86dd9267cbc7ba9e92209520184315a2ae98ea63d652302ab88310e0
+-- hash: a99ed0c0bab341bec59222b318ea6da7fc4879a53cca89f4bf0ec43588a63619
 
 name:           adventofcode
 version:        0.1.0.0
@@ -32,6 +32,7 @@ library
       Advent
       Advent.Day01
       Advent.Day02
+      Advent.Day03
   other-modules:
       Paths_adventofcode
   hs-source-dirs:
@@ -70,12 +71,27 @@ executable day02
     , text
   default-language: Haskell2010
 
+executable day03
+  main-is: days/day03.hs
+  other-modules:
+      Paths_adventofcode
+  ghc-options: -Wall -Wcompat -Wno-partial-type-signatures -Wredundant-constraints
+  build-depends:
+      adventofcode
+    , base >=4.7 && <5
+    , bytestring
+    , split
+    , text
+  default-language: Haskell2010
+
 test-suite check
   type: exitcode-stdio-1.0
   main-is: test.hs
   other-modules:
       CheckDay01
       CheckDay02
+      CheckDay03
+      Paths_adventofcode
   hs-source-dirs:
       tests
   ghc-options: -Wall -Wcompat -Wno-partial-type-signatures -Wredundant-constraints
