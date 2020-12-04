@@ -26,6 +26,8 @@ dependencies:
   - split
   - bytestring
   - text
+  - megaparsec
+  - containers
 
 library:
   source-dirs: src
@@ -41,6 +43,10 @@ executables:
       - adventofcode
   day03:
     main: days/day03.hs
+    dependencies:
+      - adventofcode
+  day04:
+    main: days/day04.hs
     dependencies:
       - adventofcode
 

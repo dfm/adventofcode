@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a99ed0c0bab341bec59222b318ea6da7fc4879a53cca89f4bf0ec43588a63619
+-- hash: 5ae2ec31f4e7a911f5d4ff189bb250d7ac35f065d92eec04c5c95b7b054c7968
 
 name:           adventofcode
 version:        0.1.0.0
@@ -33,6 +33,7 @@ library
       Advent.Day01
       Advent.Day02
       Advent.Day03
+      Advent.Day04
   other-modules:
       Paths_adventofcode
   hs-source-dirs:
@@ -41,6 +42,8 @@ library
   build-depends:
       base >=4.7 && <5
     , bytestring
+    , containers
+    , megaparsec
     , split
     , text
   default-language: Haskell2010
@@ -54,6 +57,8 @@ executable day01
       adventofcode
     , base >=4.7 && <5
     , bytestring
+    , containers
+    , megaparsec
     , split
     , text
   default-language: Haskell2010
@@ -67,6 +72,8 @@ executable day02
       adventofcode
     , base >=4.7 && <5
     , bytestring
+    , containers
+    , megaparsec
     , split
     , text
   default-language: Haskell2010
@@ -80,6 +87,23 @@ executable day03
       adventofcode
     , base >=4.7 && <5
     , bytestring
+    , containers
+    , megaparsec
+    , split
+    , text
+  default-language: Haskell2010
+
+executable day04
+  main-is: days/day04.hs
+  other-modules:
+      Paths_adventofcode
+  ghc-options: -Wall -Wcompat -Wno-partial-type-signatures -Wredundant-constraints
+  build-depends:
+      adventofcode
+    , base >=4.7 && <5
+    , bytestring
+    , containers
+    , megaparsec
     , split
     , text
   default-language: Haskell2010
@@ -91,6 +115,7 @@ test-suite check
       CheckDay01
       CheckDay02
       CheckDay03
+      CheckDay04
       Paths_adventofcode
   hs-source-dirs:
       tests
@@ -99,6 +124,8 @@ test-suite check
       adventofcode
     , base >=4.7 && <5
     , bytestring
+    , containers
+    , megaparsec
     , split
     , tasty >=0.7
     , tasty-hunit
