@@ -16,16 +16,12 @@ isValidPassport :: [Field] -> Bool
 isValidPassport passport = requiredFields `Set.isSubsetOf` Set.fromList (map fName passport)
 
 allValidFields :: [Field] -> Bool
-allValidFields passport =
-  let checkFieldValid (Field CountryID _) = True
-      checkFieldValid (Field _ Nothing) = False
-      checkFieldValid (Field _ (Just _)) = True
-   in all checkFieldValid passport
+allValidFields = all isValidField
 
 -- Parsing crap: types
 type Parser = Parsec Void String
 
-data Field = Field {fName :: FieldName, fContents :: Maybe FieldValue} deriving (Eq, Show)
+data Field = Field {fName :: FieldName, fContents :: String} deriving (Eq, Show)
 
 data FieldName
   = BirthYear
@@ -38,9 +34,19 @@ data FieldName
   | CountryID
   deriving (Eq, Show, Ord)
 
-newtype FieldValue = FieldValue String deriving (Eq, Show, Ord)
+-- Parsing crap: application functions
+parseToken :: String -> Field
+parseToken = handleParsingError pField
+
+parsePassports :: String -> [[Field]]
+parsePassports text = map (map parseToken . words) $ splitOn "\n\n" text
 
 -- Parsing crap: token parsers
+handleParsingError :: Parser p -> String -> p
+handleParsingError p text = case parse p "" text of
+  Left bundle -> error (errorBundlePretty bundle)
+  Right x -> x
+
 pFieldName :: Parser FieldName
 pFieldName =
   choice
@@ -54,76 +60,45 @@ pFieldName =
       CountryID <$ string "cid"
     ]
 
-pYearRange :: Int -> Int -> Parser (Maybe FieldValue)
-pYearRange mn mx = do
-  year <- some digitChar
-  let nYear = read year :: Int
-  if (mn <= nYear) && (nYear <= mx)
-    then return $ Just (FieldValue year)
-    else return Nothing
-
--- Parsing crap: field validation
-pFieldValue :: FieldName -> Parser (Maybe FieldValue)
-pFieldValue BirthYear = pYearRange 1920 2002
-pFieldValue IssueYear = pYearRange 2010 2020
-pFieldValue ExpirationYear = pYearRange 2020 2030
-pFieldValue Height = do
-  height <- some digitChar
-  units <- string "in" <|> string "cm"
-  let nHeight = read height :: Int
-      isValid = if units == "in" then 59 <= nHeight && nHeight <= 76 else 150 <= nHeight && nHeight <= 193
-  if isValid
-    then return $ Just (FieldValue height)
-    else return Nothing
-pFieldValue HairColor = do
-  _ <- char '#'
-  color <- some hexDigitChar
-  if length color == 6
-    then return $ Just (FieldValue color)
-    else return Nothing
-pFieldValue EyeColor = do
-  color <-
-    string "amb"
-      <|> string "blu"
-      <|> string "brn"
-      <|> string "gry"
-      <|> string "grn"
-      <|> string "hzl"
-      <|> string "oth"
-  return $ Just (FieldValue color)
-pFieldValue PassportID = do
-  number <- some digitChar
-  if length number == 9
-    then return $ Just (FieldValue number)
-    else return Nothing
-pFieldValue _ = do
-  c <- some (alphaNumChar <|> char '#')
-  return $ Just (FieldValue c)
-
 pField :: Parser Field
 pField = do
   n <- pFieldName
   _ <- char ':'
-  value <-
-    optional . try $
-      ( do
-          field <- pFieldValue n
-          _ <- eof
-          return field
-      )
-  case value of
-    Nothing -> return $ Field n Nothing
-    Just x -> return $ Field n x
+  v <- many asciiChar
+  return $ Field n v
 
--- Parsing crap: application functions
-parseToken :: String -> Field
-parseToken text = case parse pField "" text of
-  Left bundle -> error (errorBundlePretty bundle)
-  Right field -> field
+pHeight :: Parser (Int, String)
+pHeight = do
+  height <- many digitChar
+  unit <- string "in" <|> string "cm"
+  return (read height, unit)
 
-parsePassports :: String -> [[Field]]
-parsePassports text = map (map parseToken . words) $ splitOn "\n\n" text
+pColor :: Parser String
+pColor = do
+  _ <- char '#'
+  many hexDigitChar
 
+-- Parsing crap: field validation
+isInRange :: Int -> Int -> Int -> Bool
+isInRange mn mx = (&&) <$> (>= mn) <*> (<= mx)
+
+isValidField :: Field -> Bool
+isValidField (Field BirthYear x) = isInRange 1920 2002 $ read x
+isValidField (Field IssueYear x) = isInRange 2010 2020 $ read x
+isValidField (Field ExpirationYear x) = isInRange 2020 2030 $ read x
+isValidField (Field Height x) = case parse pHeight "" x of
+  Left _ -> False
+  Right (height, unit) ->
+    let (mn, mx) = if unit == "in" then (59, 76) else (150, 193)
+     in isInRange mn mx height
+isValidField (Field HairColor x) = case parse pColor "" x of
+  Left _ -> False
+  Right color -> length color == 6
+isValidField (Field EyeColor x) = Set.member x validEyeColors
+isValidField (Field PassportID x) = length x == 9 && all (`Set.member` Set.fromList "0123456789") x
+isValidField _ = True
+
+-- Validation sets
 requiredFields :: Set.Set FieldName
 requiredFields =
   Set.fromList
@@ -135,3 +110,6 @@ requiredFields =
       EyeColor,
       PassportID
     ]
+
+validEyeColors :: Set.Set String
+validEyeColors = Set.fromList ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]
