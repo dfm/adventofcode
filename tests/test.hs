@@ -39,4 +39,4 @@ day05 :: TestTree
 day05 =
   testGroup
     "Day 5"
-    [CheckDay05.checkPart1, CheckDay05.checkPart2]
+    [CheckDay05.checkPart1]

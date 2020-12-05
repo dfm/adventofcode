@@ -13,12 +13,6 @@ part2 text =
    in 1 + fst (head diffs)
 
 readId :: String -> Int
-readId text =
-  let (row, more) = readBinary 'F' 'B' text
-      (col, _) = readBinary 'L' 'R' more
-   in row * 8 + col
-
-readBinary :: (Integral a) => Char -> Char -> String -> (a, String)
-readBinary zero one =
-  let getValue x = if x == zero then 0 else 1
-   in head . readInt 2 (`elem` [zero, one]) getValue
+readId =
+  let getValue x = if x `elem` "FL" then 0 else 1
+   in fst . head . readInt 2 (`elem` "FBLR") getValue
