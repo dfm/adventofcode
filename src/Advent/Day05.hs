@@ -13,6 +13,4 @@ part2 text =
    in 1 + fst (head diffs)
 
 readId :: String -> Int
-readId =
-  let getValue x = if x `elem` "FL" then 0 else 1
-   in fst . head . readInt 2 (`elem` "FBLR") getValue
+readId = fst . head . readInt 2 (`elem` "FBLR") (fromEnum . (`elem` "BR"))
