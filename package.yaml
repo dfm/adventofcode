@@ -28,6 +28,7 @@ dependencies:
   - text
   - megaparsec
   - containers
+  - sort
 
 library:
   source-dirs: src
@@ -47,6 +48,10 @@ executables:
       - adventofcode
   day04:
     main: days/day04.hs
+    dependencies:
+      - adventofcode
+  day05:
+    main: days/day05.hs
     dependencies:
       - adventofcode
 

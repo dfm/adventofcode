@@ -2,13 +2,14 @@ import qualified CheckDay01
 import qualified CheckDay02
 import qualified CheckDay03
 import qualified CheckDay04
+import qualified CheckDay05
 import Test.Tasty (TestTree, defaultMain, testGroup)
 
 main = defaultMain tests
 
 main :: IO ()
 tests :: TestTree
-tests = testGroup "Tests" [day01, day02, day03, day04]
+tests = testGroup "Tests" [day01, day02, day03, day04, day05]
 
 day01 :: TestTree
 day01 =
@@ -33,3 +34,9 @@ day04 =
   testGroup
     "Day 4"
     [CheckDay04.checkPart1, CheckDay04.checkPart2]
+
+day05 :: TestTree
+day05 =
+  testGroup
+    "Day 5"
+    [CheckDay05.checkPart1, CheckDay05.checkPart2]

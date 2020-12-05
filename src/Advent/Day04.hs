@@ -1,4 +1,4 @@
-module Advent.Day04 where
+module Advent.Day04 (part1, part2) where
 
 import Data.List.Split (splitOn)
 import qualified Data.Set as Set
