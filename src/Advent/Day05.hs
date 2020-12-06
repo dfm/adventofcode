@@ -13,5 +13,7 @@ readId :: String -> Int
 readId = fst . head . readInt 2 (`elem` "FBLR") (fromEnum . (`elem` "BR"))
 
 findGaps :: [Int] -> [Int]
-findGaps (x : y : zs) = if y - x == 2 then x : findGaps (y : zs) else findGaps (y : zs)
+findGaps (x : y : zs)
+  | y - x == 2 = x : findGaps (y : zs)
+  | otherwise = findGaps (y : zs)
 findGaps _ = []
