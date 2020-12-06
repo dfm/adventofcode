@@ -1,16 +1,17 @@
 module Advent.Day01 (part1, part2) where
 
-import Data.List (tails)
+import qualified Data.Set as Set
 
-part1 :: String -> Int
-part1 text = head [x * y | (x : ys) <- tails numbers, y <- ys, x + y == 2020]
-  where
-    numbers = parseInts text
+part1 :: String -> Integer
+part1 = sum . map readLine . lines
 
-part2 :: String -> Int
-part2 text = head [x * y * z | (x : ys) <- tails numbers, (y : zs) <- tails ys, z <- zs, x + y + z == 2020]
-  where
-    numbers = parseInts text
+part2 :: String -> Integer
+part2 text =
+  let baseNumbers = map readLine $ lines text
+      numbers = scanl (+) 0 $ cycle baseNumbers
+      sets = scanl (flip Set.insert) Set.empty numbers
+   in head [x | (x, s) <- zip numbers sets, Set.member x s]
 
-parseInts :: String -> [Int]
-parseInts text = map read (lines text)
+readLine :: String -> Integer
+readLine [] = 0
+readLine (x : xs) = if x == '+' then read xs else read (x : xs)
