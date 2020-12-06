@@ -34,28 +34,8 @@ library:
   source-dirs: src
 
 executables:
-  day01:
-    main: days/day01.hs
-    dependencies:
-      - adventofcode
-  day02:
-    main: days/day02.hs
-    dependencies:
-      - adventofcode
-  day03:
-    main: days/day03.hs
-    dependencies:
-      - adventofcode
-  day04:
-    main: days/day04.hs
-    dependencies:
-      - adventofcode
-  day05:
-    main: days/day05.hs
-    dependencies:
-      - adventofcode
-  day06:
-    main: days/day06.hs
+  day:
+    main: days/day.hs
     dependencies:
       - adventofcode
 

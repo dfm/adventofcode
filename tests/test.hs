@@ -1,49 +1,33 @@
-import qualified CheckDay01
-import qualified CheckDay02
-import qualified CheckDay03
-import qualified CheckDay04
-import qualified CheckDay05
-import qualified CheckDay06
+import Advent
 import Test.Tasty (TestTree, defaultMain, testGroup)
+import Test.Tasty.HUnit (assertEqual, testCase)
 
 main = defaultMain tests
 
 main :: IO ()
 tests :: TestTree
-tests = testGroup "Tests" [day01, day02, day03, day04, day05, day06]
-
-day01 :: TestTree
-day01 =
+tests =
   testGroup
-    "Day 1"
-    [CheckDay01.checkPart1, CheckDay01.checkPart2]
+    "Tests"
+    [ dayTest Day01 (Just 514579) (Just 241861950),
+      dayTest Day02 (Just 2) (Just 1),
+      dayTest Day03 (Just 7) (Just 336),
+      dayTest Day04 (Just 2) (Just 2),
+      dayTest Day05 (Just 820) Nothing,
+      dayTest Day06 (Just 11) (Just 6)
+    ]
 
-day02 :: TestTree
-day02 =
-  testGroup
-    "Day 2"
-    [CheckDay02.checkPart1, CheckDay02.checkPart2]
+dayTest :: Day -> Maybe Int -> Maybe Int -> TestTree
+dayTest day ex1 ex2 = testGroup (show day) [part1Test day ex1, part2Test day ex2]
 
-day03 :: TestTree
-day03 =
-  testGroup
-    "Day 3"
-    [CheckDay03.checkPart1, CheckDay03.checkPart2]
+part1Test :: Day -> Maybe Int -> TestTree
+part1Test day (Just expected) = testCase "Part 1" $ do
+  res <- runPart1 day (getFileName day "tests/inputs")
+  assertEqual "Part 1: invalid test output" expected res
+part1Test _ Nothing = testCase "Part 1 (not implemented)" $ do return ()
 
-day04 :: TestTree
-day04 =
-  testGroup
-    "Day 4"
-    [CheckDay04.checkPart1, CheckDay04.checkPart2]
-
-day05 :: TestTree
-day05 =
-  testGroup
-    "Day 5"
-    [CheckDay05.checkPart1]
-
-day06 :: TestTree
-day06 =
-  testGroup
-    "Day 6"
-    [CheckDay06.checkPart1, CheckDay06.checkPart2]
+part2Test :: Day -> Maybe Int -> TestTree
+part2Test day (Just expected) = testCase "Part 2" $ do
+  res <- runPart2 day (getFileName day "tests/inputs")
+  assertEqual "Part 1: invalid test output" expected res
+part2Test _ Nothing = testCase "Part 2 (not implemented)" $ do return ()

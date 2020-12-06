@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 0aa3afaa9cc5016894db67423c37bbb7a20b03edd34a479860901681735488e3
+-- hash: ae91526665c465d92a08bdd84f9b20e986735bc34eed097cd091eb1bf9092013
 
 name:           adventofcode
 version:        0.1.0.0
@@ -51,88 +51,8 @@ library
     , text
   default-language: Haskell2010
 
-executable day01
-  main-is: days/day01.hs
-  other-modules:
-      Paths_adventofcode
-  ghc-options: -Wall -Wcompat -Wno-partial-type-signatures -Wredundant-constraints
-  build-depends:
-      adventofcode
-    , base >=4.7 && <5
-    , bytestring
-    , containers
-    , megaparsec
-    , sort
-    , split
-    , text
-  default-language: Haskell2010
-
-executable day02
-  main-is: days/day02.hs
-  other-modules:
-      Paths_adventofcode
-  ghc-options: -Wall -Wcompat -Wno-partial-type-signatures -Wredundant-constraints
-  build-depends:
-      adventofcode
-    , base >=4.7 && <5
-    , bytestring
-    , containers
-    , megaparsec
-    , sort
-    , split
-    , text
-  default-language: Haskell2010
-
-executable day03
-  main-is: days/day03.hs
-  other-modules:
-      Paths_adventofcode
-  ghc-options: -Wall -Wcompat -Wno-partial-type-signatures -Wredundant-constraints
-  build-depends:
-      adventofcode
-    , base >=4.7 && <5
-    , bytestring
-    , containers
-    , megaparsec
-    , sort
-    , split
-    , text
-  default-language: Haskell2010
-
-executable day04
-  main-is: days/day04.hs
-  other-modules:
-      Paths_adventofcode
-  ghc-options: -Wall -Wcompat -Wno-partial-type-signatures -Wredundant-constraints
-  build-depends:
-      adventofcode
-    , base >=4.7 && <5
-    , bytestring
-    , containers
-    , megaparsec
-    , sort
-    , split
-    , text
-  default-language: Haskell2010
-
-executable day05
-  main-is: days/day05.hs
-  other-modules:
-      Paths_adventofcode
-  ghc-options: -Wall -Wcompat -Wno-partial-type-signatures -Wredundant-constraints
-  build-depends:
-      adventofcode
-    , base >=4.7 && <5
-    , bytestring
-    , containers
-    , megaparsec
-    , sort
-    , split
-    , text
-  default-language: Haskell2010
-
-executable day06
-  main-is: days/day06.hs
+executable day
+  main-is: days/day.hs
   other-modules:
       Paths_adventofcode
   ghc-options: -Wall -Wcompat -Wno-partial-type-signatures -Wredundant-constraints
@@ -151,12 +71,6 @@ test-suite check
   type: exitcode-stdio-1.0
   main-is: test.hs
   other-modules:
-      CheckDay01
-      CheckDay02
-      CheckDay03
-      CheckDay04
-      CheckDay05
-      CheckDay06
       Paths_adventofcode
   hs-source-dirs:
       tests
