@@ -1,4 +1,6 @@
-It's not pretty, but it works(?).
+It's not pretty, but it works(?):
+
+![Tests](https://github.com/dfm/adventofcode/workflows/Tests/badge.svg)
 
 This year, in Haskell.
 
