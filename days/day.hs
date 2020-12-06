@@ -1,7 +1,7 @@
 module Main where
 
-import Advent
-import System.Environment
+import Advent (Day, getFileName, runPart1, runPart2)
+import System.Environment (getArgs)
 import Text.Read (readMaybe)
 
 main :: IO [()]

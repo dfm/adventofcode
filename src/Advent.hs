@@ -1,4 +1,4 @@
-module Advent where
+module Advent (runPart1, runPart2, getFileName, Day (..)) where
 
 import qualified Advent.Day01
 import qualified Advent.Day02
