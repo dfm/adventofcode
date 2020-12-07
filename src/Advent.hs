@@ -1,4 +1,4 @@
-module Advent (runPart1, runPart2, getFileName, Day (..)) where
+module Advent (runPart1, runPart2, getFileName, loadData, Day (..)) where
 
 import qualified Advent.Day01
 import qualified Advent.Day02
@@ -12,10 +12,15 @@ import Data.Char (toLower)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as E
 
-runPart :: (String -> a) -> FilePath -> IO a
-runPart func filename = do
+loadData :: FilePath -> IO String
+loadData filename = do
   contents <- S.readFile filename
   let text = T.unpack $ E.decodeUtf8 contents
+  return text
+
+runPart :: (String -> a) -> FilePath -> IO a
+runPart func filename = do
+  text <- loadData filename
   return $ func text
 
 data Day
