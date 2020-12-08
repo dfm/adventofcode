@@ -1,10 +1,10 @@
-module Advent.Day07 where
+module Advent.Day07 (part1, part2) where
 
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 import Data.Void (Void)
 import Text.Megaparsec
-import Text.Megaparsec.Char
+import Text.Megaparsec.Char (char, digitChar, string)
 
 root :: (String, Int)
 root = ("shiny gold", 1)
@@ -15,18 +15,14 @@ part1 text = Set.size (findParents (loadTree text) root) - 1
 part2 :: String -> Int
 part2 text = countBags (loadTree text) root - 1
 
---
--- ALGORITHMS
---
+-- Algorithms
 findParents :: TreeMap -> (String, Int) -> Set.Set String
 findParents = foldTree (\(name, _) elems -> Set.unions (Set.singleton name : elems)) . transposeTree
 
 countBags :: TreeMap -> (String, Int) -> Int
 countBags = foldTree (\(_, dist) elems -> dist * (1 + sum elems))
 
---
--- DATA STRUCTURE
---
+-- Tree data structure
 type TreeMap = Map.Map String [(String, Int)]
 
 loadTree :: String -> TreeMap
@@ -45,9 +41,7 @@ foldTree :: ((String, Int) -> [a] -> a) -> TreeMap -> (String, Int) -> a
 foldTree func tree value@(name, _) =
   func value $ map (foldTree func tree) $ Map.findWithDefault [] name tree
 
---
--- PARSING AND NORMALIZING
---
+-- Parsing
 type Parser = Parsec Void String
 
 pEmpty :: Parser [(String, Int)]
