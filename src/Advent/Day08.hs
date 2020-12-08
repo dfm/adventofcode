@@ -6,7 +6,7 @@ part1 :: String -> Int
 part1 = sAcc . pState . runProgram . loadProgram
 
 part2 :: String -> Int
-part2 = sAcc . pState . head . filter pSuccess . swapAndRun [] . loadInstr
+part2 = snd . head . filter fst . swapAndRun [] . loadInstr
 
 data Op = OpNop | OpAcc | OpJmp deriving (Show, Eq)
 
@@ -54,6 +54,9 @@ swapInstr (Instr OpNop value) = Instr OpJmp value
 swapInstr (Instr OpJmp value) = Instr OpNop value
 swapInstr instr = instr
 
-swapAndRun :: [Instr] -> [Instr] -> [Program]
+swapAndRun :: [Instr] -> [Instr] -> [(Bool, Int)]
 swapAndRun _ [] = []
-swapAndRun xs (y : ys) = runProgram (newProgram (xs ++ [swapInstr y] ++ ys)) : swapAndRun (xs ++ [y]) ys
+swapAndRun xs (y@(Instr OpAcc _) : ys) = (False, 0) : swapAndRun (xs ++ [y]) ys
+swapAndRun xs (y : ys) =
+  let p = runProgram (newProgram (xs ++ [swapInstr y] ++ ys))
+   in (pSuccess p, sAcc (pState p)) : swapAndRun (xs ++ [y]) ys
