@@ -1,4 +1,4 @@
-module Advent.Day08 where
+module Advent.Day08 (part1, part2) where
 
 import qualified Data.Set as Set
 
