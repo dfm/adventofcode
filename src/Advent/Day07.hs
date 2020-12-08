@@ -10,20 +10,16 @@ root :: (String, Int)
 root = ("shiny gold", 1)
 
 part1 :: String -> Int
-part1 text =
-  let tree = transposeTree $ loadTree text
-   in Set.size (findParents tree root) - 1
+part1 text = Set.size (findParents (loadTree text) root) - 1
 
 part2 :: String -> Int
-part2 text =
-  let tree = loadTree text
-   in countBags tree root - 1
+part2 text = countBags (loadTree text) root - 1
 
 --
 -- ALGORITHMS
 --
 findParents :: TreeMap -> (String, Int) -> Set.Set String
-findParents = foldTree (\(name, _) elems -> Set.unions (Set.singleton name : elems))
+findParents = foldTree (\(name, _) elems -> Set.unions (Set.singleton name : elems)) . transposeTree
 
 countBags :: TreeMap -> (String, Int) -> Int
 countBags = foldTree (\(_, dist) elems -> dist * (1 + sum elems))
