@@ -16,7 +16,7 @@ tests =
       dayTest Day05 (Just 820) Nothing,
       dayTest Day06 (Just 11) (Just 6),
       dayTest Day07 (Just 4) (Just 32),
-      dayTest Day08 (Just 1) (Just 2)
+      dayTest Day08 (Just 5) (Just 8)
     ]
 
 dayTest :: Day -> Maybe Int -> Maybe Int -> TestTree
