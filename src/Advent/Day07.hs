@@ -11,32 +11,30 @@ root = ("shiny gold", 1)
 
 part1 :: String -> Int
 part1 text =
-  let tree = transposeTree . Map.fromList $ parseData text
-   in Set.size (findParentsFrom tree root) - 1
+  let tree = transposeTree $ loadTree text
+   in Set.size (findParents tree root) - 1
 
 part2 :: String -> Int
 part2 text =
-  let tree = Map.fromList $ parseData text
+  let tree = loadTree text
    in countBags tree root - 1
 
 --
 -- ALGORITHMS
 --
-findParentsFrom :: TreeMap -> (String, Int) -> Set.Set String
-findParentsFrom tree (name, _) =
-  let parents = Map.findWithDefault [] name tree
-   in foldl (\acc n -> Set.union acc $ findParentsFrom tree n) (Set.singleton name) parents
+findParents :: TreeMap -> (String, Int) -> Set.Set String
+findParents = foldTree (\(name, _) elems -> Set.unions (Set.singleton name : elems))
 
 countBags :: TreeMap -> (String, Int) -> Int
-countBags tree (name, dist) =
-  let children = Map.findWithDefault [] name tree
-      numIn = foldl (\acc n -> acc + countBags tree n) 1 children
-   in dist * numIn
+countBags = foldTree (\(_, dist) elems -> dist * (1 + sum elems))
 
 --
 -- DATA STRUCTURE
 --
 type TreeMap = Map.Map String [(String, Int)]
+
+loadTree :: String -> TreeMap
+loadTree = Map.fromList . parseData
 
 -- Transpose a single rule into a list of singleton rules
 transposeRule :: (String, [(String, Int)]) -> [(String, [(String, Int)])]
@@ -45,6 +43,11 @@ transposeRule (from, elems) = [(to, [(from, weight)]) | (to, weight) <- elems]
 -- Transpose a tree by flipping the edges
 transposeTree :: TreeMap -> TreeMap
 transposeTree tree = Map.fromListWith (++) $ concatMap transposeRule (Map.assocs tree)
+
+-- Magic to accumulate a function across the tree
+foldTree :: ((String, Int) -> [a] -> a) -> TreeMap -> (String, Int) -> a
+foldTree func tree value@(name, _) =
+  func value $ map (foldTree func tree) $ Map.findWithDefault [] name tree
 
 --
 -- PARSING AND NORMALIZING
