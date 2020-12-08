@@ -1,42 +1,54 @@
 module Advent.Day07 where
 
-import qualified Data.Map as Map
+import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 import Data.Void (Void)
 import Text.Megaparsec
 import Text.Megaparsec.Char
 
+root :: (String, Int)
+root = ("shiny gold", 1)
+
 part1 :: String -> Int
 part1 text =
-  let tree = flipTree . Map.fromList $ parseData text
-   in (Set.size . Set.fromList $ findParentsFrom tree "shiny gold") - 1
+  let tree = transposeTree . Map.fromList $ parseData text
+   in Set.size (findParentsFrom tree root) - 1
 
 part2 :: String -> Int
 part2 text =
   let tree = Map.fromList $ parseData text
-   in countBags tree ("shiny gold", 1) - 1
+   in countBags tree root - 1
 
--- Solution algorithms
-findParentsFrom :: TreeMap -> String -> [String]
-findParentsFrom tree name =
+--
+-- ALGORITHMS
+--
+findParentsFrom :: TreeMap -> (String, Int) -> Set.Set String
+findParentsFrom tree (name, _) =
   let parents = Map.findWithDefault [] name tree
-   in foldl (\x n -> x ++ findParentsFrom tree (fst n)) [name] parents
+   in foldl (\acc n -> Set.union acc $ findParentsFrom tree n) (Set.singleton name) parents
 
 countBags :: TreeMap -> (String, Int) -> Int
 countBags tree (name, dist) =
-  let numIn = sum . map (countBags tree) $ Map.findWithDefault [] name tree
-   in dist * (1 + numIn)
+  let children = Map.findWithDefault [] name tree
+      numIn = foldl (\acc n -> acc + countBags tree n) 1 children
+   in dist * numIn
 
--- Tree data structure
+--
+-- DATA STRUCTURE
+--
 type TreeMap = Map.Map String [(String, Int)]
 
-flipTree :: TreeMap -> TreeMap
-flipTree = Map.foldrWithKey (\from elems newTree -> foldl (addToTree from) newTree elems) Map.empty
+-- Transpose a single rule into a list of singleton rules
+transposeRule :: (String, [(String, Int)]) -> [(String, [(String, Int)])]
+transposeRule (from, elems) = [(to, [(from, weight)]) | (to, weight) <- elems]
 
-addToTree :: String -> TreeMap -> (String, Int) -> TreeMap
-addToTree from tree (to, weight) = Map.insertWith (++) to [(from, weight)] tree
+-- Transpose a tree by flipping the edges
+transposeTree :: TreeMap -> TreeMap
+transposeTree tree = Map.fromListWith (++) $ concatMap transposeRule (Map.assocs tree)
 
--- Parsing and normalizing the data
+--
+-- PARSING AND NORMALIZING
+--
 type Parser = Parsec Void String
 
 pEmpty :: Parser [(String, Int)]
