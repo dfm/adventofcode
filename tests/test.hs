@@ -17,7 +17,7 @@ tests =
       dayTest Day06 (Just 11) (Just 6),
       dayTest Day07 (Just 4) (Just 32),
       dayTest Day08 (Just 5) (Just 8),
-      dayTest Day09 Nothing Nothing
+      dayTest Day09 (Just 127) (Just 62)
     ]
 
 dayTest :: Day -> Maybe Int -> Maybe Int -> TestTree
@@ -25,12 +25,12 @@ dayTest day ex1 ex2 = testGroup (show day) [part1Test day ex1, part2Test day ex2
 
 part1Test :: Day -> Maybe Int -> TestTree
 part1Test day (Just expected) = testCase "Part 1" $ do
-  res <- runPart1 day (getFileName day "tests/inputs")
+  res <- runPart1 day True (getFileName day "tests/inputs")
   assertEqual "Part 1: invalid test output" expected res
 part1Test _ Nothing = testCase "Part 1 (not implemented)" $ do return ()
 
 part2Test :: Day -> Maybe Int -> TestTree
 part2Test day (Just expected) = testCase "Part 2" $ do
-  res <- runPart2 day (getFileName day "tests/inputs")
+  res <- runPart2 day True (getFileName day "tests/inputs")
   assertEqual "Part 1: invalid test output" expected res
 part2Test _ Nothing = testCase "Part 2 (not implemented)" $ do return ()

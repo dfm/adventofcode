@@ -2,13 +2,13 @@ module Advent.Day03 (part1, part2) where
 
 newtype TreeMap = TreeMap (Int, [Bool]) deriving (Show)
 
-part1 :: String -> Int
-part1 inp =
+part1 :: Bool -> String -> Int
+part1 _ inp =
   let TreeMap (stride, vs) = readTreeMap inp
    in countTrees vs stride 3 1
 
-part2 :: String -> Int
-part2 inp =
+part2 :: Bool -> String -> Int
+part2 _ inp =
   let TreeMap (stride, vs) = readTreeMap inp
    in product $ [countTrees vs stride dx dy | (dx, dy) <- zip [1, 3, 5, 7, 1] [1, 1, 1, 1, 2]]
 

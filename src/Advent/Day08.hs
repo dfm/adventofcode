@@ -2,11 +2,11 @@ module Advent.Day08 (part1, part2) where
 
 import qualified Data.Set as Set
 
-part1 :: String -> Int
-part1 = sAcc . pState . runProgram . loadProgram
+part1 :: Bool -> String -> Int
+part1 _ = sAcc . pState . runProgram . loadProgram
 
-part2 :: String -> Int
-part2 = snd . head . filter fst . swapAndRun [] . loadInstr
+part2 :: Bool -> String -> Int
+part2 _ = snd . head . filter fst . swapAndRun [] . loadInstr
 
 data Op = OpNop | OpAcc | OpJmp deriving (Show, Eq)
 

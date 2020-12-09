@@ -15,9 +15,9 @@ runDay :: Maybe Day -> IO ()
 runDay (Just day) = do
   let fn = getFileName day "inputs"
   putStrLn $ "Running: " ++ show day
-  result1 <- runPart1 day fn
+  result1 <- runPart1 day False fn
   print result1
-  result2 <- runPart2 day fn
+  result2 <- runPart2 day False fn
   print result2
 runDay Nothing = do
   putStrLn "Unrecognized day"

@@ -9,11 +9,11 @@ import Text.Megaparsec.Char (char, digitChar, string)
 root :: (String, Int)
 root = ("shiny gold", 1)
 
-part1 :: String -> Int
-part1 text = Set.size (findParents (loadTree text) root) - 1
+part1 :: Bool -> String -> Int
+part1 _ text = Set.size (findParents (loadTree text) root) - 1
 
-part2 :: String -> Int
-part2 text = countBags (loadTree text) root - 1
+part2 :: Bool -> String -> Int
+part2 _ text = countBags (loadTree text) root - 1
 
 -- Algorithms
 findParents :: TreeMap -> (String, Int) -> Set.Set String

@@ -4,11 +4,11 @@ import Data.List.Split (splitOn)
 
 data PasswordRule = PasswordRule Int Int Char String deriving (Show)
 
-part1 :: String -> Int
-part1 = part checkPasswordRule
+part1 :: Bool -> String -> Int
+part1 _ = part checkPasswordRule
 
-part2 :: String -> Int
-part2 = part checkPasswordRule2
+part2 :: Bool -> String -> Int
+part2 _ = part checkPasswordRule2
 
 part :: (PasswordRule -> Bool) -> String -> Int
 part checker text = length $ filter (checker . parseRule) (lines text)

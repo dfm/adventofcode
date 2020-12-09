@@ -20,10 +20,10 @@ loadData filename = do
   let text = T.unpack $ E.decodeUtf8 contents
   return text
 
-runPart :: (String -> a) -> FilePath -> IO a
-runPart func filename = do
+runPart :: (Bool -> String -> a) -> Bool -> FilePath -> IO a
+runPart func isTest filename = do
   text <- loadData filename
-  return $ func text
+  return $ func isTest text
 
 data Day
   = Day01
@@ -40,7 +40,7 @@ data Day
 getFileName :: Day -> FilePath -> FilePath
 getFileName day = (++ "/" ++ map toLower (show day))
 
-runPart1 :: Day -> FilePath -> IO Int
+runPart1 :: Day -> Bool -> FilePath -> IO Int
 runPart1 Day01 = runPart Advent.Day01.part1
 runPart1 Day02 = runPart Advent.Day02.part1
 runPart1 Day03 = runPart Advent.Day03.part1
@@ -51,7 +51,7 @@ runPart1 Day07 = runPart Advent.Day07.part1
 runPart1 Day08 = runPart Advent.Day08.part1
 runPart1 Day09 = runPart Advent.Day09.part1
 
-runPart2 :: Day -> FilePath -> IO Int
+runPart2 :: Day -> Bool -> FilePath -> IO Int
 runPart2 Day01 = runPart Advent.Day01.part2
 runPart2 Day02 = runPart Advent.Day02.part2
 runPart2 Day03 = runPart Advent.Day03.part2

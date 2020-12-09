@@ -6,11 +6,11 @@ import Data.Void
 import Text.Megaparsec
 import Text.Megaparsec.Char
 
-part1 :: String -> Int
-part1 text = length $ filter isValidPassport (parsePassports text)
+part1 :: Bool -> String -> Int
+part1 _ text = length $ filter isValidPassport (parsePassports text)
 
-part2 :: String -> Int
-part2 text = length $ filter ((&&) <$> allValidFields <*> isValidPassport) (parsePassports text)
+part2 :: Bool -> String -> Int
+part2 _ text = length $ filter ((&&) <$> allValidFields <*> isValidPassport) (parsePassports text)
 
 isValidPassport :: [Field] -> Bool
 isValidPassport passport = requiredFields `Set.isSubsetOf` Set.fromList (map fName passport)
