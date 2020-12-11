@@ -15,18 +15,13 @@ part1 _ text =
 part2 :: Bool -> String -> Int
 part2 _ text =
   let numbers = loadData text
-      tree = Map.fromList $ buildTree numbers
-      cache = foldr (countPaths tree) (Map.singleton (last numbers) 1) (init numbers)
-   in cache ! 0
+      cache = foldl doUpdate (Map.singleton 0 1) (tail numbers)
+   in cache ! last numbers
+
+doUpdate :: Map.IntMap Int -> Int -> Map.IntMap Int
+doUpdate cache n = Map.insert n (sum [Map.findWithDefault 0 (n + d) cache | d <- [-3, -2, -1]]) cache
 
 loadData :: String -> [Int]
 loadData text =
   let numbers = sort $ map read (lines text)
    in 0 : numbers ++ [last numbers + 3]
-
-buildTree :: [Int] -> [(Int, [Int])]
-buildTree (x : xs) = (x, takeWhile (<= x + 3) xs) : buildTree xs
-buildTree [] = []
-
-countPaths :: Map.IntMap [Int] -> Int -> Map.IntMap Int -> Map.IntMap Int
-countPaths tree node cache = Map.insert node (sum $ map (cache !) (tree ! node)) cache
