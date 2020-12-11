@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 34943765d7cb0d1cfbcfbb86ae55409f506af5b0bf6c2071681200102399cd61
+-- hash: ffffee4e6f828372638ca2a4575416bddbb453998d5eedd3d9e16b92a380181c
 
 name:           adventofcode
 version:        0.1.0.0
@@ -40,6 +40,7 @@ library
       Advent.Day08
       Advent.Day09
       Advent.Day10
+      Advent.Day11
   other-modules:
       Paths_adventofcode
   hs-source-dirs:
@@ -53,6 +54,7 @@ library
     , sort
     , split
     , text
+    , vector
   default-language: Haskell2010
 
 executable day
@@ -69,6 +71,7 @@ executable day
     , sort
     , split
     , text
+    , vector
   default-language: Haskell2010
 
 test-suite check
@@ -90,4 +93,5 @@ test-suite check
     , tasty >=0.7
     , tasty-hunit
     , text
+    , vector
   default-language: Haskell2010

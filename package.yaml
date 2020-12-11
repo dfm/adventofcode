@@ -29,6 +29,7 @@ dependencies:
   - megaparsec
   - containers
   - sort
+  - vector
 
 library:
   source-dirs: src
