@@ -12,6 +12,7 @@ import qualified Advent.Day09
 import qualified Advent.Day10
 import qualified Advent.Day11
 import qualified Advent.Day12
+import qualified Advent.Day13
 import qualified Data.ByteString as S
 import Data.Char (toLower)
 import qualified Data.Text as T
@@ -41,6 +42,7 @@ data Day
   | Day10
   | Day11
   | Day12
+  | Day13
   deriving (Enum, Bounded, Show, Read)
 
 getFileName :: Day -> FilePath -> FilePath
@@ -59,6 +61,7 @@ runPart1 Day09 = runPart Advent.Day09.part1
 runPart1 Day10 = runPart Advent.Day10.part1
 runPart1 Day11 = runPart Advent.Day11.part1
 runPart1 Day12 = runPart Advent.Day12.part1
+runPart1 Day13 = runPart Advent.Day13.part1
 
 runPart2 :: Day -> Bool -> FilePath -> IO Int
 runPart2 Day01 = runPart Advent.Day01.part2
@@ -73,3 +76,4 @@ runPart2 Day09 = runPart Advent.Day09.part2
 runPart2 Day10 = runPart Advent.Day10.part2
 runPart2 Day11 = runPart Advent.Day11.part2
 runPart2 Day12 = runPart Advent.Day12.part2
+runPart2 Day13 = runPart Advent.Day13.part2
