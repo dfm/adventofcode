@@ -23,7 +23,7 @@ rotate amt p@(Pointing (x, y) (dx, dy))
   | r == 3 = Pointing (x, y) (- dy, dx)
   | otherwise = p
   where
-    r = amt `mod` 4
+    r = (amt `div` 90) `mod` 4
 
 -- Moving rules
 baseMove :: Char -> Int -> (Int, Int) -> (Int, Int)
@@ -45,10 +45,10 @@ execute amt (Pointing (x, y) (dx, dy)) = Pointing (x + amt * dx, y + amt * dy) (
 
 runInstr :: (Char -> Int -> Pointing -> Pointing) -> Pointing -> String -> Pointing
 runInstr mover p (dir : amt)
-  | dir == 'R' = rotate (value `div` 90) p
-  | dir == 'L' = rotate (- value `div` 90) p
+  | dir == 'R' = rotate value p
+  | dir == 'L' = rotate (- value) p
   | dir == 'F' = execute value p
-  | otherwise = mover dir (read amt) p
+  | otherwise = mover dir value p
   where
     value = read amt
 runInstr _ _ [] = error "Invalid instruction"
