@@ -2,4 +2,4 @@ My solutions for [Advent of Code](https://adventofcode.com/). This year, in Hask
 
 It's not pretty, but sometimes it works(?):
 
-![Tests](https://github.com/dfm/adventofcode/workflows/Tests/badge.svg)
+[![Tests](https://github.com/dfm/adventofcode/workflows/Tests/badge.svg)](https://github.com/dfm/adventofcode/actions?query=workflow%3ATests)
