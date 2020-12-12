@@ -1,4 +1,4 @@
-module Advent.Day11 where
+module Advent.Day11 (part1, part2, Seating (..)) where
 
 import Data.Vector ((!))
 import qualified Data.Vector as Vector
