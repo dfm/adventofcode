@@ -3,15 +3,14 @@ module Advent.Day13 where
 import Data.List (minimumBy)
 import Data.List.Split (splitOn)
 import Data.Maybe (catMaybes, mapMaybe)
+import Data.Ord (comparing)
 import Text.Read (readMaybe)
 
 part1 :: Bool -> String -> Int
 part1 _ text =
   let (time, schedule) = parseInput (lines text)
-      inService = catMaybes schedule
-      comp = getWaitTime time
-      first = minimumBy (\x y -> compare (comp x) (comp y)) inService
-   in fromIntegral (first * comp first)
+      result = minimumBy (comparing snd) [(x, x - time `mod` x) | x <- catMaybes schedule]
+   in fromIntegral $ uncurry (*) result
 
 part2 :: Bool -> String -> Int
 part2 _ text =
@@ -21,7 +20,7 @@ part2 _ text =
 
 convertToMod :: (Integer, Maybe Integer) -> Maybe (Integer, Integer)
 convertToMod (_, Nothing) = Nothing
-convertToMod (n, Just x) = Just (wrap x (- n), x)
+convertToMod (n, Just x) = Just (- n, x)
 
 parseSchedule :: String -> [Maybe Integer]
 parseSchedule = map readMaybe . splitOn ","
@@ -29,9 +28,6 @@ parseSchedule = map readMaybe . splitOn ","
 parseInput :: [String] -> (Integer, [Maybe Integer])
 parseInput [time, schedule] = (read time, parseSchedule schedule)
 parseInput _ = error "Invalid input"
-
-getWaitTime :: Integer -> Integer -> Integer
-getWaitTime earliest number = number - earliest `mod` number
 
 -- https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm
 extendedGcd :: (Integer, Integer) -> (Integer, Integer) -> (Integer, Integer)
