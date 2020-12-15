@@ -1,4 +1,4 @@
-module Advent.Day13 where
+module Advent.Day13 (part1, part2) where
 
 import Data.List (minimumBy)
 import Data.List.Split (splitOn)

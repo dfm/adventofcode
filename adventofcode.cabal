@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 31dfa38af5bdb6151add8e7950727528e345b5a11f1c02b808d706d03d1a10a7
+-- hash: ed6260815b04eea6875128a7a1f9ae9bbfece3389b1089dd1c62b956862054f8
 
 name:           adventofcode
 version:        0.1.0.0
@@ -43,6 +43,7 @@ library
       Advent.Day11
       Advent.Day12
       Advent.Day13
+      Advent.Day14
   other-modules:
       Paths_adventofcode
   hs-source-dirs:
@@ -53,6 +54,7 @@ library
     , bytestring
     , containers
     , megaparsec
+    , regex-tdfa
     , sort
     , split
     , text
@@ -70,6 +72,7 @@ executable day
     , bytestring
     , containers
     , megaparsec
+    , regex-tdfa
     , sort
     , split
     , text
@@ -90,6 +93,7 @@ test-suite check
     , bytestring
     , containers
     , megaparsec
+    , regex-tdfa
     , sort
     , split
     , tasty >=0.7

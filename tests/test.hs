@@ -21,7 +21,8 @@ tests =
       dayTest Day10 (Just 220) (Just 19208),
       dayTest Day11 (Just 37) (Just 26),
       dayTest Day12 (Just 25) (Just 286),
-      dayTest Day13 (Just 295) (Just 1068781)
+      dayTest Day13 (Just 295) (Just 1068781),
+      dayTest Day14 Nothing (Just 208)
     ]
 
 dayTest :: Day -> Maybe Int -> Maybe Int -> TestTree

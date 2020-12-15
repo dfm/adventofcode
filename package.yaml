@@ -30,6 +30,7 @@ dependencies:
   - containers
   - sort
   - vector
+  - regex-tdfa
 
 library:
   source-dirs: src
