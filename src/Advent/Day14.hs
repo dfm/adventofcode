@@ -1,6 +1,6 @@
 module Advent.Day14 (part1, part2) where
 
-import Data.Bits (Bits (shiftL), complement, (.&.), (.|.))
+import Data.Bits (clearBit, setBit)
 import qualified Data.IntMap as IntMap
 import Data.Maybe (catMaybes)
 import Text.Regex.TDFA ((=~))
@@ -24,13 +24,6 @@ type StateFunc = ((Int, Char) -> Maybe [Int -> Int])
 
 type UpdateFunc = Machine -> (Int, Int) -> Machine
 
--- Helpers to flip bits
-oneBit :: Int -> (Int -> Int)
-oneBit k = (.|. (1 `shiftL` k))
-
-zeroBit :: Int -> (Int -> Int)
-zeroBit k = (.&. complement (1 `shiftL` k))
-
 -- Parse a mask instruction into a list of bit flip operations
 parseMask :: StateFunc -> String -> [Int -> Int]
 parseMask func text =
@@ -52,15 +45,15 @@ parseLine parseState applyUpdate machine@(Machine mem _) line
 -- The specific code for parts 1 and 2
 parseState1 :: StateFunc
 parseState1 (k, c)
-  | c == '1' = Just [oneBit k]
-  | c == '0' = Just [zeroBit k]
+  | c == '1' = Just [flip setBit k]
+  | c == '0' = Just [flip clearBit k]
   | otherwise = Nothing
 
 parseState2 :: StateFunc
 parseState2 (k, c)
-  | c == '1' = Just [oneBit k]
+  | c == '1' = Just [flip setBit k]
   | c == '0' = Nothing
-  | otherwise = Just [zeroBit k, oneBit k]
+  | otherwise = Just [flip clearBit k, flip setBit k]
 
 applyUpdate1 :: UpdateFunc
 applyUpdate1 (Machine mem mask) (add, val) =
