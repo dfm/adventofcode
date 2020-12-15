@@ -7,13 +7,13 @@ import Data.STRef (newSTRef, readSTRef, writeSTRef)
 import qualified Data.Vector.Unboxed.Mutable as MV
 
 part1 :: Bool -> String -> Int
-part1 _ = doLoop 2020 . map read . splitOn ","
+part1 _ = findNumbersUntil 2020 . map read . splitOn ","
 
 part2 :: Bool -> String -> Int
-part2 _ = doLoop 30000000 . map read . splitOn ","
+part2 _ = findNumbersUntil 30000000 . map read . splitOn ","
 
-doLoop :: Int -> [Int] -> Int
-doLoop iters xs = runST $ do
+findNumbersUntil :: Int -> [Int] -> Int
+findNumbersUntil iters xs = runST $ do
   -- Allocate memory for the workspace
   work <- MV.replicate (max iters (1 + maximum xs)) (-1)
 
@@ -21,7 +21,7 @@ doLoop iters xs = runST $ do
   forM_ (zip [0 ..] xs) $ \(i, x) -> do
     MV.write work x i
 
-  -- Do the loop
+  -- Iterate new numbers until the end
   number <- newSTRef $ last xs
   forM_ [length xs - 1 .. iters - 2] $ \turn -> do
     num <- readSTRef number
