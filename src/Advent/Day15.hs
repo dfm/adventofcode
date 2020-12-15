@@ -1,35 +1,33 @@
-module Advent.Day15 where
+module Advent.Day15 (part1, part2) where
 
-import Data.Foldable (foldl')
-import Data.IntMap (IntMap)
-import qualified Data.IntMap as IM
+import Control.Monad.ST.Strict (runST)
+import Data.Foldable (forM_)
 import Data.List.Split (splitOn)
+import Data.STRef (newSTRef, readSTRef, writeSTRef)
+import qualified Data.Vector.Unboxed.Mutable as MV
 
 part1 :: Bool -> String -> Int
-part1 _ text =
-  let input = parseInput text
-      result = foldl' (\state _ -> getNextNumber state) input [sTurn input .. 2020 - 2]
-   in sNumber result
+part1 _ = doLoop 2020 . map read . splitOn ","
 
 part2 :: Bool -> String -> Int
-part2 _ text =
-  let input = parseInput text
-      result = foldl' (\state _ -> getNextNumber state) input [sTurn input .. 30000000 - 2]
-   in sNumber result
+part2 _ = doLoop 30000000 . map read . splitOn ","
 
-data State = State {sTurn :: Int, sNumber :: Int, sPast :: IntMap Int} deriving (Show)
+doLoop :: Int -> [Int] -> Int
+doLoop iters xs = runST $ do
+  -- Allocate memory for the workspace
+  work <- MV.replicate (max iters (1 + maximum xs)) (-1)
 
-parseInput :: String -> State
-parseInput text =
-  let numbers = map read $ splitOn "," text
-   in State
-        { sTurn = length numbers - 1,
-          sNumber = last numbers,
-          sPast = IM.fromList $ zip (init numbers) [0 ..]
-        }
+  -- Save the initial numbers to the workspace
+  forM_ (zip [0 ..] xs) $ \(i, x) -> do
+    MV.write work x i
 
-getNextNumber :: State -> State
-getNextNumber (State turn current past) =
-  let n = turn - IM.findWithDefault turn current past
-      newPast = IM.insert current turn past
-   in State {sTurn = turn + 1, sNumber = n, sPast = newPast}
+  -- Do the loop
+  number <- newSTRef $ last xs
+  forM_ [length xs - 1 .. iters - 2] $ \turn -> do
+    num <- readSTRef number
+    prev <- MV.unsafeRead work num
+    let n = if prev < 0 then 0 else turn - prev
+    writeSTRef number n
+    MV.unsafeWrite work num turn
+
+  readSTRef number
