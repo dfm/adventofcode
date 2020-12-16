@@ -42,10 +42,10 @@ part1Test :: Day -> String -> Maybe Int -> TestTree
 part1Test day filename (Just expected) = testCase "Part 1" $ do
   res <- runPart1 day True ("tests/inputs/" ++ filename)
   assertEqual "Part 1: invalid test output" expected res
-part1Test _ _ Nothing = testCase "Part 1 (not implemented)" $ do return ()
+part1Test _ _ Nothing = testCase "Part 1 (N/A)" $ do return ()
 
 part2Test :: Day -> String -> Maybe Int -> TestTree
 part2Test day filename (Just expected) = testCase "Part 2" $ do
   res <- runPart2 day True ("tests/inputs/" ++ filename)
   assertEqual "Part 1: invalid test output" expected res
-part2Test _ _ Nothing = testCase "Part 2 (not implemented)" $ do return ()
+part2Test _ _ Nothing = testCase "Part 2 (N/A)" $ do return ()
