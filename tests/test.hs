@@ -27,7 +27,8 @@ tests =
       dayTest Day15 "day15" (Just 436) Nothing,
       dayTest Day16 "day16a" (Just 71) Nothing,
       dayTest Day16 "day16b" Nothing (Just 13),
-      dayTest Day17 "day17" (Just 112) (Just 848)
+      dayTest Day17 "day17" (Just 112) (Just 848),
+      dayTest Day18 "day18" Nothing Nothing
     ]
 
 dayTest :: Day -> String -> Maybe Int -> Maybe Int -> TestTree

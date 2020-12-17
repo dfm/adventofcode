@@ -1,4 +1,4 @@
-module Advent.Day17 where
+module Advent.Day17 (part1, part2) where
 
 import Control.Monad (replicateM)
 import Control.Monad.ST.Strict (runST)
@@ -18,18 +18,16 @@ part2 _ = runPart 4 6
 -- Runner
 runPart :: Int -> Int -> String -> Int
 runPart dim iters text =
-  let (shape, inp) = parseInput dim iters text
-      (size, strides) = getStrides shape
-      offsets = getOffsets strides
-      inds = getValidIndices shape strides
-      initial = ((V.replicate size False) V.// (map (first (ravel strides)) inp))
-   in V.length (V.filter id $ doLoops iters offsets inds initial)
+  let problem = parseInput dim iters text
+   in doLoops iters problem
 
-doLoops :: Int -> [Int] -> [Int] -> V.Vector Bool -> V.Vector Bool
-doLoops iters offsets inds array = foldl (\a _ -> doLoop offsets inds a) array [1 .. iters]
+doLoops :: Int -> ProblemSpec -> Int
+doLoops iters (ProblemSpec offsets inds array) =
+  let res = foldl (\a _ -> update offsets inds a) array [1 .. iters]
+   in V.length $ V.filter id res
 
-doLoop :: [Int] -> [Int] -> V.Vector Bool -> V.Vector Bool
-doLoop offsets inds array = runST $ do
+update :: [Int] -> [Int] -> V.Vector Bool -> V.Vector Bool
+update offsets inds array = runST $ do
   tmp <- V.thaw array
   forM_ inds $ \i -> do
     x <- forM offsets $ \d -> do
@@ -40,14 +38,21 @@ doLoop offsets inds array = runST $ do
     MV.unsafeWrite tmp i up
   V.freeze tmp
 
+data ProblemSpec = ProblemSpec {psOffsets :: ![Int], psValidIndices :: ![Int], psArray :: !(V.Vector Bool)}
+
 -- Parse the data into an appropriately padded array
-parseInput :: Int -> Int -> String -> ([Int], [([Int], Bool)])
+parseInput :: Int -> Int -> String -> ProblemSpec
 parseInput dim iters text =
   let rows = lines text
       delta = iters + 1
       shape = [2 * delta + length rows, 2 * delta + length (head rows)] ++ replicate (dim - 2) (1 + 2 * delta)
       extra = replicate (dim - 2) delta
-   in (shape, concat $ zipWith (\i row -> zipWith (\j val -> ([i, j] ++ extra, val == '#')) [delta ..] row) [delta ..] rows)
+      inits = concat $ zipWith (\i row -> zipWith (\j val -> ([i, j] ++ extra, val == '#')) [delta ..] row) [delta ..] rows
+      (size, strides) = getStrides shape
+      offsets = getOffsets strides
+      inds = getValidIndices shape strides
+      array = (V.replicate size False V.// map (first (ravel strides)) inits)
+   in ProblemSpec {psOffsets = offsets, psValidIndices = inds, psArray = array}
 
 -- Strides and coords to the flattened index
 ravel :: [Int] -> [Int] -> Int
