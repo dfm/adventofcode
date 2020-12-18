@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Advent.Day18 where
+module Advent.Day18 (part1, part2) where
 
 import Data.List.Split (splitOn)
 import Data.Text (pack, replace, unpack)
