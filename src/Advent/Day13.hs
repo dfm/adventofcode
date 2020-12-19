@@ -7,7 +7,7 @@ part1 :: Bool -> String -> Int
 part1 _ text =
   let [row1, row2] = lines text
       time = read row1
-      schedule = [read x | x <- splitOn "," row2, x /= "x"] :: [Int]
+      schedule = [read x | x <- splitOn "," row2, x /= "x"]
       wrap x = x - time `mod` x
       result = head $ sortOn wrap schedule
    in result * wrap result
