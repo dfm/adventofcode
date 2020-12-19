@@ -1,22 +1,21 @@
 module Advent.Day13 (part1, part2) where
 
-import Data.List (minimumBy)
 import Data.List.Split (splitOn)
-import Data.Ord (Down (..), comparing)
 import Data.Sort (sortOn)
 
 part1 :: Bool -> String -> Int
 part1 _ text =
   let [row1, row2] = lines text
       time = read row1
-      schedule = [read x | x <- splitOn "," row2, x /= "x"]
-      result = minimumBy (comparing snd) [(x, x - time `mod` x) | x <- schedule]
-   in uncurry (*) result
+      schedule = [read x | x <- splitOn "," row2, x /= "x"] :: [Int]
+      wrap x = x - time `mod` x
+      result = head $ sortOn wrap schedule
+   in result * wrap result
 
 part2 :: Bool -> String -> Int
 part2 _ text =
   let [_, schedule] = lines text
-      pairs = sortOn (Down . snd) [(n, read v) | (n, v) <- zip [0 ..] (splitOn "," schedule), v /= "x"]
+      pairs = [(n, read v) | (n, v) <- zip [0 ..] (splitOn "," schedule), v /= "x"]
       result = foldl computeNext (0, 1) pairs
    in fst result
 
