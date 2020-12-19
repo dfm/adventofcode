@@ -2,49 +2,25 @@ module Advent.Day13 (part1, part2) where
 
 import Data.List (minimumBy)
 import Data.List.Split (splitOn)
-import Data.Maybe (catMaybes, mapMaybe)
-import Data.Ord (comparing)
-import Text.Read (readMaybe)
+import Data.Ord (Down (..), comparing)
+import Data.Sort (sortOn)
 
 part1 :: Bool -> String -> Int
 part1 _ text =
-  let (time, schedule) = parseInput (lines text)
-      result = minimumBy (comparing snd) [(x, x - time `mod` x) | x <- catMaybes schedule]
-   in fromIntegral $ uncurry (*) result
+  let [row1, row2] = lines text
+      time = read row1
+      schedule = [read x | x <- splitOn "," row2, x /= "x"]
+      result = minimumBy (comparing snd) [(x, x - time `mod` x) | x <- schedule]
+   in uncurry (*) result
 
 part2 :: Bool -> String -> Int
 part2 _ text =
-  let (_, schedule) = parseInput (lines text)
-      system = mapMaybe convertToMod $ zip [0 ..] schedule
-   in fromIntegral (fst $ foldl1 solve system)
+  let [_, schedule] = lines text
+      pairs = sortOn (Down . snd) [(n, read v) | (n, v) <- zip [0 ..] (splitOn "," schedule), v /= "x"]
+      result = foldl computeNext (0, 1) pairs
+   in fst result
 
-convertToMod :: (Integer, Maybe Integer) -> Maybe (Integer, Integer)
-convertToMod (_, Nothing) = Nothing
-convertToMod (n, Just x) = Just (- n, x)
-
-parseSchedule :: String -> [Maybe Integer]
-parseSchedule = map readMaybe . splitOn ","
-
-parseInput :: [String] -> (Integer, [Maybe Integer])
-parseInput [time, schedule] = (read time, parseSchedule schedule)
-parseInput _ = error "Invalid input"
-
--- https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm
-extendedGcd :: (Integer, Integer) -> (Integer, Integer) -> (Integer, Integer)
-extendedGcd (r, r') (s, s')
-  | r' == 0 = (r, s)
-  | otherwise =
-    let q = r `div` r'
-     in extendedGcd (r', r - q * r') (s', s - q * s')
-
--- https://en.wikipedia.org/wiki/Chinese_remainder_theorem
-solve :: (Integer, Integer) -> (Integer, Integer) -> (Integer, Integer)
-solve (a1, n1) (a2, n2) =
-  let (_, m1) = extendedGcd (n1, n2) (1, 0)
-      n = n1 * n2
-   in (wrap n (a1 + (a2 - a1) * m1 * n1), n)
-
-wrap :: Integer -> Integer -> Integer
-wrap n x
-  | x < 0 = wrap n (x + n)
-  | otherwise = x `mod` n
+computeNext :: (Int, Int) -> (Int, Int) -> (Int, Int)
+computeNext (current, delta) (offset, modBy)
+  | (current + offset) `mod` modBy == 0 = (current, delta * modBy)
+  | otherwise = computeNext (current + delta, delta) (offset, modBy)
