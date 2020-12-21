@@ -1,4 +1,4 @@
-module Advent.Day19 where
+module Advent.Day19 (part1, part2) where
 
 import Data.List (intercalate)
 import Data.List.Split (splitOn)
@@ -32,9 +32,6 @@ readRule :: RuleSet -> String -> RuleSet
 readRule cache text =
   let (name, _, body) = text =~ ": " :: (String, String, String)
    in M.insert name body cache
-
-updateRules :: RuleSet -> RuleSet
-updateRules = M.insert "11" "11" . M.insert "8" "8"
 
 getRegex :: RuleSet -> String -> String
 getRegex _ ['"', c, '"'] = [c]

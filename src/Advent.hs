@@ -1,4 +1,4 @@
-module Advent (runPart1, runPart2, getFileName, loadData, Day (..)) where
+module Advent (runPart, runPart1, runPart2, getFileName, loadData, Day (..)) where
 
 import qualified Advent.Day01
 import qualified Advent.Day02
@@ -19,6 +19,7 @@ import qualified Advent.Day16
 import qualified Advent.Day17
 import qualified Advent.Day18
 import qualified Advent.Day19
+import qualified Advent.Day21
 import qualified Data.ByteString as S
 import Data.Char (toLower)
 import qualified Data.Text as T
@@ -30,10 +31,10 @@ loadData filename = do
   let text = T.unpack $ E.decodeUtf8 contents
   return text
 
-runPart :: (Bool -> String -> a) -> Bool -> FilePath -> IO a
+runPart :: Show a => (Bool -> String -> a) -> Bool -> FilePath -> IO String
 runPart func isTest filename = do
   text <- loadData filename
-  return $ func isTest text
+  return $ show (func isTest text)
 
 data Day
   = Day01
@@ -55,12 +56,13 @@ data Day
   | Day17
   | Day18
   | Day19
+  | Day21
   deriving (Enum, Bounded, Show, Read)
 
 getFileName :: Day -> FilePath -> FilePath
 getFileName day = (++ "/" ++ map toLower (show day))
 
-runPart1 :: Day -> Bool -> FilePath -> IO Int
+runPart1 :: Day -> Bool -> FilePath -> IO String
 runPart1 Day01 = runPart Advent.Day01.part1
 runPart1 Day02 = runPart Advent.Day02.part1
 runPart1 Day03 = runPart Advent.Day03.part1
@@ -80,8 +82,9 @@ runPart1 Day16 = runPart Advent.Day16.part1
 runPart1 Day17 = runPart Advent.Day17.part1
 runPart1 Day18 = runPart Advent.Day18.part1
 runPart1 Day19 = runPart Advent.Day19.part1
+runPart1 Day21 = runPart Advent.Day21.part1
 
-runPart2 :: Day -> Bool -> FilePath -> IO Int
+runPart2 :: Day -> Bool -> FilePath -> IO String
 runPart2 Day01 = runPart Advent.Day01.part2
 runPart2 Day02 = runPart Advent.Day02.part2
 runPart2 Day03 = runPart Advent.Day03.part2
@@ -101,3 +104,4 @@ runPart2 Day16 = runPart Advent.Day16.part2
 runPart2 Day17 = runPart Advent.Day17.part2
 runPart2 Day18 = runPart Advent.Day18.part2
 runPart2 Day19 = runPart Advent.Day19.part2
+runPart2 Day21 = runPart Advent.Day21.part2
