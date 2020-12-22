@@ -31,7 +31,8 @@ tests =
       dayTest Day18 "day18" (Just "26386") (Just "693942"),
       dayTest Day19 "day19a" (Just "2") Nothing,
       dayTest Day19 "day19b" Nothing (Just "12"),
-      dayTest Day21 "day21" (Just "5") (Just "\"mxmxvkd,sqjhc,fvjkl\"")
+      dayTest Day21 "day21" (Just "5") (Just "\"mxmxvkd,sqjhc,fvjkl\""),
+      dayTest Day22 "day22" (Just "306") (Just "291")
     ]
 
 dayTest :: Day -> String -> Maybe String -> Maybe String -> TestTree
