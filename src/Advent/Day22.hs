@@ -1,8 +1,11 @@
 module Advent.Day22 (part1, part2) where
 
+import Data.Foldable (toList)
 import Data.List.Split (splitOn)
+import Data.Sequence (Seq (..))
+import qualified Data.Sequence as Seq
 import Data.Set (Set)
-import qualified Data.Set as S
+import qualified Data.Set as Set
 
 part1 :: Bool -> String -> Int
 part1 _ = getScore . playTurns applyRules1 . parseInput
@@ -11,29 +14,31 @@ part2 :: Bool -> String -> Int
 part2 _ = getScore . playTurns applyRules2 . parseInput
 
 -- Game setup and dealing helpers
+type Deck = Seq Int
+
 data Game = Game
-  { gOne :: [Int],
-    gTwo :: [Int],
+  { gOne :: Deck,
+    gTwo :: Deck,
     gPrevious :: Set Int,
     gOneWins :: Bool
   }
 
-pop :: [a] -> (a, [a])
-pop [] = error "Empty deck"
-pop (c : cs) = (c, cs)
+pop :: Seq a -> (a, Seq a)
+pop Seq.Empty = error "Empty deck"
+pop (x :<| xs) = (x, xs)
 
-push :: [a] -> [a] -> [a]
-push c cs = cs ++ c
+push :: Seq a -> [a] -> Seq a
+push c = (Seq.><) c . Seq.fromList
 
 -- I/O
 parseInput :: String -> Game
 parseInput text =
   let [a, b] = splitOn "\n\n" text
-      f = map read . tail . lines
+      f = Seq.fromList . map read . tail . lines
    in Game
         { gOne = f a,
           gTwo = f b,
-          gPrevious = S.empty,
+          gPrevious = Set.empty,
           gOneWins = False
         }
 
@@ -43,7 +48,7 @@ hashPair k1 k2 = sm * (sm + 1) `div` 2 + k2
   where
     sm = k1 + k2
 
-hashDeck :: [Int] -> Int
+hashDeck :: Seq Int -> Int
 hashDeck = foldl hashPair 0
 
 -- Scoring
@@ -51,15 +56,15 @@ getScore :: Game -> Int
 getScore (Game one _ _ True) = computeScore one
 getScore (Game _ two _ False) = computeScore two
 
-computeScore :: [Int] -> Int
-computeScore = sum . zipWith (*) [1 ..] . reverse
+computeScore :: Seq Int -> Int
+computeScore = sum . zipWith (*) [1 ..] . toList . Seq.reverse
 
 -- Gameplay
 playTurns :: (Int -> Game -> Game) -> Game -> Game
-playTurns _ (Game [] two _ _) = Game [] two S.empty False
-playTurns _ (Game one [] _ _) = Game one [] S.empty True
+playTurns _ (Game Seq.Empty two _ _) = Game Seq.empty two Set.empty False
+playTurns _ (Game one Seq.Empty _ _) = Game one Seq.empty Set.empty True
 playTurns rules game@(Game one two prev _)
-  | S.member state prev = Game one two S.empty True
+  | Set.member state prev = Game one two Set.empty True
   | otherwise = rules state game
   where
     state = hashPair (hashDeck one) (hashDeck two)
@@ -72,22 +77,22 @@ applyRules1 _ (Game one two prev _) =
 
 applyRules2 :: Int -> Game -> Game
 applyRules2 state (Game one two prev _) =
-  let prev' = S.insert state prev
+  let prev' = Set.insert state prev
       (one', two') = recurseGame (pop one) (pop two)
    in playTurns applyRules2 (Game one' two' prev' False)
 
 -- Deck update helpers
-compareHighCard :: (Int, [Int]) -> (Int, [Int]) -> ([Int], [Int])
+compareHighCard :: (Int, Deck) -> (Int, Deck) -> (Deck, Deck)
 compareHighCard (a, one) (b, two) =
-  let one' = if a > b then push [a, b] one else one
-      two' = if a <= b then push [b, a] two else two
+  let one' = if a > b then push one [a, b] else one
+      two' = if a <= b then push two [b, a] else two
    in (one', two')
 
-recurseGame :: (Int, [Int]) -> (Int, [Int]) -> ([Int], [Int])
+recurseGame :: (Int, Deck) -> (Int, Deck) -> (Deck, Deck)
 recurseGame (a, one) (b, two)
   | a <= length one && b <= length two =
-    let (Game _ _ _ flag) = playTurns applyRules2 (Game (take a one) (take b two) S.empty False)
-        one' = if flag then push [a, b] one else one
-        two' = if not flag then push [b, a] two else two
+    let (Game _ _ _ flag) = playTurns applyRules2 (Game (Seq.take a one) (Seq.take b two) Set.empty False)
+        one' = if flag then push one [a, b] else one
+        two' = if not flag then push two [b, a] else two
      in (one', two')
   | otherwise = compareHighCard (a, one) (b, two)
