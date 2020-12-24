@@ -34,7 +34,7 @@ tests =
       dayTest Day21 "day21" (Just "5") (Just "\"mxmxvkd,sqjhc,fvjkl\""),
       dayTest Day22 "day22" (Just "306") (Just "291"),
       dayTest Day23 "day23" (Just "\"67384529\"") (Just "149245887792"),
-      dayTest Day24 "day24" Nothing Nothing
+      dayTest Day24 "day24" (Just "10") (Just "2208")
     ]
 
 dayTest :: Day -> String -> Maybe String -> Maybe String -> TestTree
