@@ -8,13 +8,13 @@ import qualified Data.Vector.Unboxed as V
 import qualified Data.Vector.Unboxed.Mutable as MV
 
 part1 :: Bool -> String -> String
-part1 _ = concatMap show . drop 1 . take 9 . runPart 10 100
+part1 _ = concatMap show . drop 1 . take 9 . runPart [] 100
 
 part2 :: Bool -> String -> Int
-part2 _ = product . take 2 . drop 1 . runPart 1000000 10000000
+part2 _ = product . take 2 . drop 1 . runPart [10 .. 1000000] 10000000
 
-runPart :: Int -> Int -> String -> [Int]
-runPart size turns = toList 1 . snd . takeTurns turns . fromList size . parseInput
+runPart :: [Int] -> Int -> String -> [Int]
+runPart extras turns = toList 1 . snd . takeTurns turns . fromList . (++ extras) . parseInput
 
 -- Input parsing
 strip :: String -> String
@@ -29,18 +29,13 @@ toList n v =
   let m = (n - 1) `mod` V.length v
    in n : toList (v V.! m) v
 
-fromList :: Int -> [Int] -> (Int, Vector Int)
-fromList _ [] = (0, V.empty)
-fromList size xs@(x : _) = runST $ do
-  mv <- MV.new size
-  let l = length xs
-  forM_ [0 .. l - 1] $ \n -> do
-    let m = (n + 1) `mod` l
-    MV.unsafeWrite mv (xs !! n) (xs !! m)
-
-  forM_ [l .. size] $ \n -> do
-    MV.unsafeWrite mv n n
-
+fromList :: [Int] -> (Int, Vector Int)
+fromList [] = (0, V.empty)
+fromList xs@(x : _) = runST $ do
+  let size = length xs
+  mv <- V.unsafeThaw (V.generate size (+ 1))
+  forM_ (zip xs (drop 1 (cycle xs))) $ \(x1, x2) -> do
+    MV.unsafeWrite mv (x1 - 1) x2
   v <- V.unsafeFreeze mv
   return (x, v)
 
