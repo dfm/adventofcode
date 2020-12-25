@@ -1,6 +1,6 @@
 {-# LANGUAGE TupleSections #-}
 
-module Advent.Day24 where
+module Advent.Day24 (part1, part2) where
 
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as M
@@ -82,10 +82,6 @@ countTiles :: Floor -> Int
 countTiles (Floor f) = sum $ map fromEnum (M.elems f)
 
 -- Transpose graph
-addNeighbor :: Maybe Int -> Maybe Int
-addNeighbor Nothing = Just 1
-addNeighbor (Just x) = Just (x + 1)
-
 findNeighbors :: Adjacency -> (Int, Int) -> Bool -> Adjacency
 findNeighbors (Adjacency a) x True =
   let n = M.fromList $ (,1) <$> map (step x) [NE, NW, SE, SW, E, W]
