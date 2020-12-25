@@ -1,4 +1,4 @@
-module Advent.Day25 where
+module Advent.Day25 (part1, part2) where
 
 part1 :: Bool -> String -> Int
 part1 _ text =

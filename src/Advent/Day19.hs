@@ -1,65 +1,77 @@
-module Advent.Day19 (part1, part2) where
+-- Original regex version in Day19Original.hs
+-- This version trying to understand
+-- https://github.com/mstksg/advent-of-code-2020/blob/9193ef5babec896e0269e3fa3141db1068705766/src/AOC/Challenge/Day19.hs
+{-# LANGUAGE DeriveFunctor #-}
 
-import Data.List (intercalate)
+module Advent.Day19 where
+
+import Control.Monad (ap, (>=>))
+import Data.IntMap (IntMap)
+import qualified Data.IntMap as IntMap
 import Data.List.Split (splitOn)
-import Data.Map.Strict (Map)
-import qualified Data.Map.Strict as M
 import Text.Regex.TDFA ((=~))
 
 part1 :: Bool -> String -> Int
-part1 _ text =
-  let (rules, messages) = readInput text
-      re = '^' : getRegex rules "0" ++ "$"
-      doMatch :: String -> String
-      doMatch x = x =~ re
-   in length $ filter ((/= "") . doMatch) messages
+part1 _ = runPart IntMap.empty
 
 part2 :: Bool -> String -> Int
-part2 _ text =
+part2 _ =
+  runPart
+    ( IntMap.fromList
+        [ (8, Compound (Or [Leaf 42, And [Leaf 42, Leaf 8]])),
+          (11, Compound (Or [And [Leaf 42, Leaf 31], And [Leaf 42, Leaf 11, Leaf 31]]))
+        ]
+    )
+
+runPart :: IntMap Rule -> String -> Int
+runPart extraRules text =
   let (rules, messages) = readInput text
-      prefix = '^' : getRegex rules "42"
-      suffix = getRegex rules "31" ++ "$"
-   in length $ filter (checkMessage prefix suffix) messages
+      expandedRules = expandRules (IntMap.union extraRules rules)
+      matches = map (match (expandedRules IntMap.! 0)) messages
+      count = length $ filter (any null) matches
+   in count
 
-type RuleSet = Map String String
+data BaseRule a = Leaf a | And [BaseRule a] | Or [BaseRule a] deriving (Show, Eq, Ord, Functor)
 
-readInput :: String -> (RuleSet, [String])
+data Rule = Simple Char | Compound (BaseRule Int) deriving (Show)
+
+instance Applicative BaseRule where
+  pure = return
+  (<*>) = ap
+
+instance Monad BaseRule where
+  return = Leaf
+  rule >>= f = case rule of
+    Leaf x -> f x
+    And xs -> And (map (>>= f) xs)
+    Or xs -> Or (map (>>= f) xs)
+
+readInput :: String -> (IntMap Rule, [String])
 readInput text =
   let [rules, messages] = splitOn "\n\n" text
-   in (foldl readRule M.empty (lines rules), lines messages)
+   in (foldl readRule IntMap.empty (lines rules), lines messages)
 
-readRule :: RuleSet -> String -> RuleSet
+readRule :: IntMap Rule -> String -> IntMap Rule
 readRule cache text =
   let (name, _, body) = text =~ ": " :: (String, String, String)
-   in M.insert name body cache
+   in IntMap.insert (read name) (toRule body) cache
 
-getRegex :: RuleSet -> String -> String
-getRegex _ ['"', c, '"'] = [c]
-getRegex rules "8" =
-  let a = getRegex rules (rules M.! "42")
-   in '(' : a ++ ")+"
-getRegex rules "11" =
-  let a = getRegex rules (rules M.! "42")
-      b = getRegex rules (rules M.! "31")
-      set = map (\n -> concat (["("] ++ replicate n a ++ replicate n b ++ [")"])) [1 .. 5]
-   in '(' : intercalate "|" set ++ ")"
-getRegex rules rule =
-  let options = splitOn " | " rule
-      res = map (concatMap (getRegex rules . (rules M.!)) . words) options
-   in "(" ++ intercalate "|" res ++ ")"
+toRule :: String -> Rule
+toRule ['"', c, '"'] = Simple c
+toRule x = (Compound . Or) $ map (And . map (Leaf . read) . words) (splitOn " | " x)
 
-matchPrefix :: String -> (Int, String) -> (Int, String)
-matchPrefix prefix (count, text) =
-  let (_, match, rest) = text =~ prefix :: (String, String, String)
-   in if null match then (count, text) else matchPrefix prefix (count + 1, rest)
+expandRules :: IntMap Rule -> IntMap (BaseRule Char)
+expandRules rules = res
+  where
+    res = fmap inner rules
+    inner x = case x of
+      Simple c -> Leaf c
+      Compound cs -> cs >>= (res IntMap.!)
 
-matchSuffix :: String -> (Int, String) -> (Int, String)
-matchSuffix suffix (count, text) =
-  let (rest, match, _) = text =~ suffix :: (String, String, String)
-   in if null match then (count, text) else matchSuffix suffix (count + 1, rest)
-
-checkMessage :: String -> String -> String -> Bool
-checkMessage prefix suffix message =
-  let (c1, rest) = matchPrefix prefix (0, message)
-      (c2, left) = matchSuffix suffix (0, rest)
-   in c1 > c2 && c2 >= 1 && null left
+match :: BaseRule Char -> String -> [String]
+match (Leaf _) [] = []
+match (Leaf c) (x : xs)
+  | x == c = [xs]
+  | otherwise = []
+match (And xs) text = foldr (>=>) pure (match <$> xs) text
+match (Or xs) text = concatMap (`match` text) xs
