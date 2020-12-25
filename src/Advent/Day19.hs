@@ -3,7 +3,7 @@
 -- https://github.com/mstksg/advent-of-code-2020/blob/9193ef5babec896e0269e3fa3141db1068705766/src/AOC/Challenge/Day19.hs
 {-# LANGUAGE DeriveFunctor #-}
 
-module Advent.Day19 where
+module Advent.Day19 (part1, part2) where
 
 import Control.Monad (ap, (>=>))
 import Data.IntMap (IntMap)
