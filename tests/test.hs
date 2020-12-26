@@ -15,7 +15,9 @@ tests =
       testPart Day02b "day02" "48",
       testPart Day03a "day03" "4",
       testPart Day03b "day03" "3",
-      testPart Day04a "day04" "609043"
+      testPart Day04a "day04" "609043",
+      testPart Day05a "day05a" "2",
+      testPart Day05b "day05b" "2"
     ]
 
 testPart :: Part -> String -> String -> TestTree

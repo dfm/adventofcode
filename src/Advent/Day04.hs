@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Advent.Day04 where
+module Advent.Day04 (day04a, day04b) where
 
 import Advent.Solver (Solver (..))
 import Crypto.Hash (Context, MD5 (..))

@@ -4,6 +4,7 @@ import qualified Advent.Day01
 import qualified Advent.Day02
 import qualified Advent.Day03
 import qualified Advent.Day04
+import qualified Advent.Day05
 import Advent.Solver (Solver (..))
 import qualified Data.ByteString as S
 import Data.Char (toLower)
@@ -19,6 +20,8 @@ data Part
   | Day03b
   | Day04a
   | Day04b
+  | Day05a
+  | Day05b
   deriving (Enum, Bounded, Show, Read)
 
 loadData :: FilePath -> IO String
@@ -42,6 +45,8 @@ resolve Day03a = runSolver Advent.Day03.day03a
 resolve Day03b = runSolver Advent.Day03.day03b
 resolve Day04a = runSolver Advent.Day04.day04a
 resolve Day04b = runSolver Advent.Day04.day04b
+resolve Day05a = runSolver Advent.Day05.day05a
+resolve Day05b = runSolver Advent.Day05.day05b
 
 runPart :: Part -> FilePath -> IO String
 runPart part filename = do

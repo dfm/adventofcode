@@ -1,4 +1,4 @@
-module Advent.Day01 where
+module Advent.Day01 (day01a, day01b) where
 
 import Advent.Solver (Solver (..))
 

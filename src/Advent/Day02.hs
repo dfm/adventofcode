@@ -1,4 +1,4 @@
-module Advent.Day02 where
+module Advent.Day02 (day02a, day02b) where
 
 import Advent.Solver (Solver (..))
 import Data.List.Split (splitOn)

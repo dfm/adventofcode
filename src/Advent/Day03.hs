@@ -1,4 +1,4 @@
-module Advent.Day03 where
+module Advent.Day03 (day03a, day03b) where
 
 import Advent.Solver (Solver (..))
 import Data.Foldable (foldl')
