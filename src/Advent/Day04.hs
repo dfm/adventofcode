@@ -1,115 +1,39 @@
-module Advent.Day04 (part1, part2) where
+{-# LANGUAGE OverloadedStrings #-}
 
-import Data.List.Split (splitOn)
-import qualified Data.Set as Set
-import Data.Void
-import Text.Megaparsec
-import Text.Megaparsec.Char
+module Advent.Day04 where
 
-part1 :: Bool -> String -> Int
-part1 _ text = length $ filter isValidPassport (parsePassports text)
+import Advent.Solver (Solver (..))
+import Crypto.Hash (Context, MD5 (..))
+import qualified Crypto.Hash as Hash
+import Data.ByteString (ByteString)
+import Data.List (isPrefixOf)
+import Data.Text (pack)
+import Data.Text.Encoding (encodeUtf8)
 
-part2 :: Bool -> String -> Int
-part2 _ text = length $ filter ((&&) <$> allValidFields <*> isValidPassport) (parsePassports text)
+day04a :: Solver (Context MD5) Int
+day04a =
+  Solver
+    { sParse = Just . getBaseContext,
+      sSolve = Just . findFirst "00000",
+      sShow = show
+    }
 
-isValidPassport :: [Field] -> Bool
-isValidPassport passport = requiredFields `Set.isSubsetOf` Set.fromList (map fName passport)
+day04b :: Solver (Context MD5) Int
+day04b =
+  Solver
+    { sParse = Just . getBaseContext,
+      sSolve = Just . findFirst "000000",
+      sShow = show
+    }
 
-allValidFields :: [Field] -> Bool
-allValidFields = all isValidField
+toByteString :: String -> ByteString
+toByteString = encodeUtf8 . pack
 
--- Parsing crap: types
-type Parser = Parsec Void String
+getBaseContext :: String -> Context MD5
+getBaseContext = Hash.hashUpdate (Hash.hashInitWith MD5) . toByteString
 
-data Field = Field {fName :: FieldName, fContents :: String} deriving (Eq, Show)
+tryNumber :: Context MD5 -> Int -> String
+tryNumber ctx = show . Hash.hashFinalize . Hash.hashUpdate ctx . toByteString . show
 
-data FieldName
-  = BirthYear
-  | IssueYear
-  | ExpirationYear
-  | Height
-  | HairColor
-  | EyeColor
-  | PassportID
-  | CountryID
-  deriving (Eq, Show, Ord)
-
--- Parsing crap: application functions
-parseToken :: String -> Field
-parseToken = handleParsingError pField
-
-parsePassports :: String -> [[Field]]
-parsePassports text = map (map parseToken . words) $ splitOn "\n\n" text
-
--- Parsing crap: token parsers
-handleParsingError :: Parser p -> String -> p
-handleParsingError p text = case parse p "" text of
-  Left bundle -> error (errorBundlePretty bundle)
-  Right x -> x
-
-pFieldName :: Parser FieldName
-pFieldName =
-  choice
-    [ BirthYear <$ string "byr",
-      IssueYear <$ string "iyr",
-      ExpirationYear <$ string "eyr",
-      Height <$ string "hgt",
-      HairColor <$ string "hcl",
-      EyeColor <$ string "ecl",
-      PassportID <$ string "pid",
-      CountryID <$ string "cid"
-    ]
-
-pField :: Parser Field
-pField = do
-  n <- pFieldName
-  _ <- char ':'
-  v <- many asciiChar
-  return $ Field n v
-
-pHeight :: Parser (Int, String)
-pHeight = do
-  height <- many digitChar
-  unit <- string "in" <|> string "cm"
-  return (read height, unit)
-
-pColor :: Parser String
-pColor = do
-  _ <- char '#'
-  many hexDigitChar
-
--- Parsing crap: field validation
-isInRange :: Int -> Int -> Int -> Bool
-isInRange mn mx = (&&) <$> (>= mn) <*> (<= mx)
-
-isValidField :: Field -> Bool
-isValidField (Field BirthYear x) = isInRange 1920 2002 $ read x
-isValidField (Field IssueYear x) = isInRange 2010 2020 $ read x
-isValidField (Field ExpirationYear x) = isInRange 2020 2030 $ read x
-isValidField (Field Height x) = case parse pHeight "" x of
-  Left _ -> False
-  Right (height, unit) ->
-    let (mn, mx) = if unit == "in" then (59, 76) else (150, 193)
-     in isInRange mn mx height
-isValidField (Field HairColor x) = case parse pColor "" x of
-  Left _ -> False
-  Right color -> length color == 6
-isValidField (Field EyeColor x) = Set.member x validEyeColors
-isValidField (Field PassportID x) = length x == 9 && all (`Set.member` Set.fromList "0123456789") x
-isValidField _ = True
-
--- Validation sets
-requiredFields :: Set.Set FieldName
-requiredFields =
-  Set.fromList
-    [ BirthYear,
-      IssueYear,
-      ExpirationYear,
-      Height,
-      HairColor,
-      EyeColor,
-      PassportID
-    ]
-
-validEyeColors :: Set.Set String
-validEyeColors = Set.fromList ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]
+findFirst :: String -> Context MD5 -> Int
+findFirst prefix ctx = head $ filter (isPrefixOf prefix . tryNumber ctx) [0 ..]

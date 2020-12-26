@@ -1,31 +1,32 @@
-module Advent.Day02 (part1, part2) where
+module Advent.Day02 where
 
+import Advent.Solver (Solver (..))
 import Data.List.Split (splitOn)
+import Data.Sort (sort)
 
-data PasswordRule = PasswordRule Int Int Char String deriving (Show)
+day02a :: Solver [(Int, Int, Int)] Int
+day02a =
+  Solver
+    { sParse = Just . map parse . lines,
+      sSolve = Just . sum . map paper,
+      sShow = show
+    }
 
-part1 :: Bool -> String -> Int
-part1 _ = part checkPasswordRule
+day02b :: Solver [(Int, Int, Int)] Int
+day02b =
+  Solver
+    { sParse = Just . map parse . lines,
+      sSolve = Just . sum . map ribbon,
+      sShow = show
+    }
 
-part2 :: Bool -> String -> Int
-part2 _ = part checkPasswordRule2
+parse :: String -> (Int, Int, Int)
+parse text =
+  let [x, y, z] = sort $ take 3 (map read $ splitOn "x" text)
+   in (x, y, z)
 
-part :: (PasswordRule -> Bool) -> String -> Int
-part checker text = length $ filter (checker . parseRule) (lines text)
+paper :: (Int, Int, Int) -> Int
+paper (x, y, z) = 2 * (x * y + x * z + y * z) + x * y
 
-parseRule :: String -> PasswordRule
-parseRule text =
-  let [inds, c : _, word] = words text
-      [idx1, idx2] = splitOn "-" inds
-   in PasswordRule (read idx1) (read idx2) c word
-
-checkPasswordRule :: PasswordRule -> Bool
-checkPasswordRule (PasswordRule mn mx target word) =
-  let count = length $ filter (== target) word
-   in count >= mn && count <= mx
-
-checkPasswordRule2 :: PasswordRule -> Bool
-checkPasswordRule2 (PasswordRule idx1 idx2 target word) =
-  let at1 = word !! (idx1 - 1)
-      at2 = word !! (idx2 - 1)
-   in (at1 == target) /= (at2 == target)
+ribbon :: (Int, Int, Int) -> Int
+ribbon (x, y, z) = 2 * (x + y) + x * y * z

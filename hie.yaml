@@ -4,5 +4,5 @@ cradle:
       component: "adventofcode:test:check"
     - path: "./src"
       component: "adventofcode:lib"
-    - path: "./days"
+    - path: "./exec"
       component: "adventofcode:lib"

@@ -31,13 +31,15 @@ dependencies:
   - sort
   - vector
   - regex-tdfa
+  - cryptonite
+  - memory
 
 library:
   source-dirs: src
 
 executables:
-  day:
-    main: days/day.hs
+  aoc:
+    main: exec/aoc.hs
     dependencies:
       - adventofcode
 

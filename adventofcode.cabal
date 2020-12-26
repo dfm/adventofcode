@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 544abbae0ffa6990a85d64b2fa9efad033287c75a30c7eefc3f5bacd689dc426
+-- hash: f880bd2a214e34aacc557a49ed494341a2855ffebb89189585cb47abcdd7b2a7
 
 name:           adventofcode
 version:        0.1.0.0
@@ -34,27 +34,7 @@ library
       Advent.Day02
       Advent.Day03
       Advent.Day04
-      Advent.Day05
-      Advent.Day06
-      Advent.Day07
-      Advent.Day08
-      Advent.Day09
-      Advent.Day10
-      Advent.Day11
-      Advent.Day12
-      Advent.Day13
-      Advent.Day14
-      Advent.Day15
-      Advent.Day16
-      Advent.Day17
-      Advent.Day18
-      Advent.Day19
-      Advent.Day19Original
-      Advent.Day21
-      Advent.Day22
-      Advent.Day23
-      Advent.Day24
-      Advent.Day25
+      Advent.Solver
   other-modules:
       Paths_adventofcode
   hs-source-dirs:
@@ -64,7 +44,9 @@ library
       base >=4.7 && <5
     , bytestring
     , containers
+    , cryptonite
     , megaparsec
+    , memory
     , regex-tdfa
     , sort
     , split
@@ -72,8 +54,8 @@ library
     , vector
   default-language: Haskell2010
 
-executable day
-  main-is: days/day.hs
+executable aoc
+  main-is: exec/aoc.hs
   other-modules:
       Paths_adventofcode
   ghc-options: -Wall -Wcompat -Wno-partial-type-signatures -Wredundant-constraints
@@ -82,7 +64,9 @@ executable day
     , base >=4.7 && <5
     , bytestring
     , containers
+    , cryptonite
     , megaparsec
+    , memory
     , regex-tdfa
     , sort
     , split
@@ -103,7 +87,9 @@ test-suite check
     , base >=4.7 && <5
     , bytestring
     , containers
+    , cryptonite
     , megaparsec
+    , memory
     , regex-tdfa
     , sort
     , split

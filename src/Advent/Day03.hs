@@ -1,30 +1,48 @@
-module Advent.Day03 (part1, part2) where
+module Advent.Day03 where
 
-newtype TreeMap = TreeMap (Int, [Bool]) deriving (Show)
+import Advent.Solver (Solver (..))
+import Data.Foldable (foldl')
+import Data.Set (Set)
+import qualified Data.Set as Set
 
-part1 :: Bool -> String -> Int
-part1 _ inp =
-  let TreeMap (stride, vs) = readTreeMap inp
-   in countTrees vs stride 3 1
+day03a :: Solver [(Int, Int)] Int
+day03a =
+  Solver
+    { sParse = mapM parse,
+      sSolve = Just . Set.size . travel,
+      sShow = show
+    }
 
-part2 :: Bool -> String -> Int
-part2 _ inp =
-  let TreeMap (stride, vs) = readTreeMap inp
-   in product $ [countTrees vs stride dx dy | (dx, dy) <- zip [1, 3, 5, 7, 1] [1, 1, 1, 1, 2]]
+day03b :: Solver [(Int, Int)] Int
+day03b =
+  Solver
+    { sParse = mapM parse,
+      sSolve = Just . Set.size . roboTravel,
+      sShow = show
+    }
 
-readTreeMap :: String -> TreeMap
-readTreeMap text =
-  let inp = lines text
-      cols = length $ head inp
-   in TreeMap (cols, map (== '#') (concat inp))
+parse :: Char -> Maybe (Int, Int)
+parse '>' = Just (1, 0)
+parse 'v' = Just (0, -1)
+parse '<' = Just (-1, 0)
+parse '^' = Just (0, 1)
+parse _ = Nothing
 
-countTrees :: [Bool] -> Int -> Int -> Int -> Int
-countTrees vs stride dx dy = length $ filter id (sled vs stride dx dy 0 0)
+step :: ((Int, Int), Set (Int, Int)) -> (Int, Int) -> ((Int, Int), Set (Int, Int))
+step ((x, y), past) (dx, dy) = ((x', y'), Set.insert (x', y') past)
+  where
+    x' = x + dx
+    y' = y + dy
 
-sled :: [Bool] -> Int -> Int -> Int -> Int -> Int -> [Bool]
-sled [] _ _ _ _ _ = []
-sled (v : vs) stride dx dy x y =
-  let x' = (x + dx) `mod` stride
-      y' = y + dy
-      delta = x' - x + dy * stride - 1
-   in v : sled (drop delta vs) stride dx dy x' y'
+travel :: [(Int, Int)] -> Set (Int, Int)
+travel = snd . foldl' step ((0, 0), Set.singleton (0, 0))
+
+everyOther :: [a] -> [a]
+everyOther [] = []
+everyOther (x : xs) = x : everyOther (drop 1 xs)
+
+roboTravel :: [(Int, Int)] -> Set (Int, Int)
+roboTravel xs =
+  let s1 = travel $ everyOther xs
+      s2 = travel $ everyOther (drop 1 xs)
+   in Set.union s1 s2

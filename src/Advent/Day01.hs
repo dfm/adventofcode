@@ -1,16 +1,24 @@
-module Advent.Day01 (part1, part2) where
+module Advent.Day01 where
 
-import Data.List (tails)
+import Advent.Solver (Solver (..))
 
-part1 :: Bool -> String -> Int
-part1 _ text = head [x * y | (x : ys) <- tails numbers, y <- ys, x + y == 2020]
-  where
-    numbers = parseInts text
+day01a :: Solver [Int] Int
+day01a =
+  Solver
+    { sParse = mapM parse,
+      sSolve = Just . sum,
+      sShow = show
+    }
 
-part2 :: Bool -> String -> Int
-part2 _ text = head [x * y * z | (x : ys) <- tails numbers, (y : zs) <- tails ys, z <- zs, x + y + z == 2020]
-  where
-    numbers = parseInts text
+day01b :: Solver [Int] Int
+day01b =
+  Solver
+    { sParse = mapM parse,
+      sSolve = Just . fst . head . filter ((< 0) . snd) . zip [0 ..] . scanl (+) 0,
+      sShow = show
+    }
 
-parseInts :: String -> [Int]
-parseInts text = map read (lines text)
+parse :: Char -> Maybe Int
+parse '(' = Just 1
+parse ')' = Just (-1)
+parse _ = Nothing
