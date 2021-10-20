@@ -45,8 +45,8 @@ jobs:
         with:
           command: test
 
-  lints:
-    name: Lints
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
