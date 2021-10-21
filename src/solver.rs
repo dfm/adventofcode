@@ -1,8 +1,8 @@
-use crate::error::Error;
+use crate::error::Result;
 
 pub trait Solver {
     type Data;
-    fn parse(input: &str) -> Result<Self::Data, Error>;
-    fn part1(data: &Self::Data) -> Result<(), Error>;
-    fn part2(data: &Self::Data) -> Result<(), Error>;
+    fn parse(input: &str) -> Result<Self::Data>;
+    fn part1(data: &Self::Data) -> Result<()>;
+    fn part2(data: &Self::Data) -> Result<()>;
 }
