@@ -1,5 +1,5 @@
+use crate::error::Result;
 use std::env;
-use std::error;
 use std::fs;
 use std::path::Path;
 
@@ -22,7 +22,7 @@ fn get_session_key() -> Option<String> {
     None
 }
 
-pub fn get_input(year: u16, day: u8) -> Result<(), Box<dyn error::Error>> {
+pub fn get_input(year: u16, day: u8) -> Result<()> {
     let key = get_session_key().ok_or("Unable to load session key")?;
 
     // Skip if the input already exists
