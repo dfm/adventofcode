@@ -1,4 +1,4 @@
-use aoc::download;
+use aoc_frontend::download;
 use clap::{App, Arg, SubCommand};
 
 fn main() {

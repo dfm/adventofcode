@@ -1,0 +1,8 @@
+[package]
+name = "aoc-day01"
+version = "0.2021.0"
+authors = ["Dan F-M"]
+edition = "2018"
+
+[dependencies]
+aoc = { path = "../../aoc" }

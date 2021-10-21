@@ -13,6 +13,10 @@ impl Error {
     pub fn new(kind: ErrorKind) -> Error {
         Error(Box::new(kind))
     }
+
+    pub fn new_not_implemented() -> Error {
+        Error(Box::new(ErrorKind::NotImplementedError))
+    }
 }
 
 #[derive(Debug)]

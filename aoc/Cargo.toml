@@ -1,0 +1,8 @@
+[package]
+name = "aoc"
+version = "0.2021.0"
+authors = ["Dan F-M"]
+edition = "2018"
+
+[dependencies]
+reqwest = "0.11.6"

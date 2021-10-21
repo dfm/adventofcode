@@ -1,4 +1,4 @@
-use crate::error::Result;
+use aoc::Result;
 use std::env;
 use std::fs;
 use std::path::Path;
