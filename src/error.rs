@@ -16,13 +16,12 @@ impl Error {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum ErrorKind {
     Io(io::Error),
     Reqwest(reqwest::Error),
     NotImplementedError,
     Message(String),
-    #[doc(hidden)]
-    __Nonexhaustive,
 }
 
 impl From<io::Error> for Error {
@@ -50,7 +49,6 @@ impl StdError for Error {
             ErrorKind::Reqwest(ref err) => Some(err),
             ErrorKind::NotImplementedError => None,
             ErrorKind::Message(_) => None,
-            ErrorKind::__Nonexhaustive => unreachable!(),
         }
     }
 }
@@ -62,7 +60,6 @@ impl fmt::Display for Error {
             ErrorKind::Reqwest(ref err) => err.fmt(f),
             ErrorKind::NotImplementedError => f.write_str("not implemented"),
             ErrorKind::Message(ref msg) => f.write_str(msg),
-            ErrorKind::__Nonexhaustive => unreachable!(),
         }
     }
 }
