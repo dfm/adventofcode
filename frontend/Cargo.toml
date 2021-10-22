@@ -1,11 +1,15 @@
 [package]
 name = "aoc-frontend"
 version = "0.2021.0"
-authors = ["Dan F-M"]
+authors = ["Dan F-M <foreman.mackey@gmail.com>"]
 edition = "2018"
+license = "Apache-2.0"
+description = "Holiday hacking"
+repository = "https://github.com/dfm/adventofcode"
 
 [dependencies]
 clap = "2.33.3"
+toml_edit = "0.6.0"
 reqwest = { version = "0.11.6", features = ["blocking"] }
 aoc = { path = "../aoc" }
 aoc-day01 = { path = "../days/day01" }
