@@ -6,7 +6,7 @@ use toml_edit;
 pub fn setup_day(day: u8) -> Result<()> {
     copy_files(day)?;
     update_root_cargo(day)?;
-    update_frontend_cargo(day)?;
+    update_cli_cargo(day)?;
     update_runner(day)?;
     Ok(())
 }
@@ -47,20 +47,20 @@ fn update_root_cargo(day: u8) -> Result<()> {
     Ok(())
 }
 
-fn update_frontend_cargo(day: u8) -> Result<()> {
-    let data = fs::read_to_string("frontend/Cargo.toml")?;
+fn update_cli_cargo(day: u8) -> Result<()> {
+    let data = fs::read_to_string("cli/Cargo.toml")?;
     let mut toml = data.parse::<toml_edit::Document>()?;
     let deps = toml["dependencies"].as_table_mut().unwrap();
     let item = format!("{{ path = \"../days/day{:02}\" }}", day);
     let item = item.parse::<toml_edit::Item>()?;
     let key = format!("aoc-day{:02}", day);
     deps.insert(&key, item);
-    fs::write("frontend/Cargo.toml", toml.to_string())?;
+    fs::write("cli/Cargo.toml", toml.to_string())?;
     Ok(())
 }
 
 fn update_runner(day: u8) -> Result<()> {
-    let src = fs::read_to_string("frontend/src/days.rs")?;
+    let src = fs::read_to_string("cli/src/days.rs")?;
     let src = src.replace(
         "// __USE",
         &format!("use aoc_day{0:02}::Day{0:02};\n// __USE", day),
@@ -69,6 +69,6 @@ fn update_runner(day: u8) -> Result<()> {
         "// __MATCH",
         &format!("{0} => run_solver!(Day{0:02}),\n        // __MATCH", day),
     );
-    fs::write("frontend/src/days.rs", src)?;
+    fs::write("cli/src/days.rs", src)?;
     Ok(())
 }

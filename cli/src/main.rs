@@ -1,4 +1,4 @@
-use aoc_frontend::{days, download, template};
+use aoc_cli::{days, download, template};
 use clap::{App, Arg, SubCommand};
 
 fn main() {

@@ -1,5 +1,5 @@
 [package]
-name = "aoc-frontend"
+name = "aoc-cli"
 version = "0.2021.0"
 authors = ["Dan F-M <foreman.mackey@gmail.com>"]
 edition = "2018"
