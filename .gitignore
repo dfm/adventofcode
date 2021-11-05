@@ -1,7 +1,4 @@
 .aoc
-
-# Added by cargo
+data
 /target
 Cargo.lock
-
-data

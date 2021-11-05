@@ -1,20 +1,32 @@
+use anyhow::Result;
 use aoc::solver::Solver;
-use aoc::{Error, Result};
 
-pub struct Day{{ day }} {}
+pub struct Day01 {}
 
-impl Solver for Day{{ day }} {
+impl Solver for Day01 {
     type Data = Vec<i32>;
 
-    fn parse(_input: &str) -> Result<Self::Data> {
-        Err(Error::new_not_implemented())
+    fn parse(input: &str) -> Result<Self::Data> {
+        let tokens: std::result::Result<Vec<_>, _> = input
+            .split_whitespace()
+            .map(|x| x.trim().parse::<i32>())
+            .collect();
+        Ok(tokens?)
     }
 
-    fn part1(_data: &Self::Data) -> Result<()> {
-        Err(Error::new_not_implemented())
+    fn part1(_data: &Self::Data) -> Result<String> {
+        Err(aoc::Error::NotImplemented.into())
     }
 
-    fn part2(_data: &Self::Data) -> Result<()> {
-        Err(Error::new_not_implemented())
+    fn part2(_data: &Self::Data) -> Result<String> {
+        Err(aoc::Error::NotImplemented.into())
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parsing() {}
 }

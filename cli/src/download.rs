@@ -1,4 +1,4 @@
-use crate::error::Result;
+use anyhow::{Context, Result};
 use std::env;
 use std::fs;
 use std::path::Path;
@@ -23,7 +23,7 @@ fn get_session_key() -> Option<String> {
 }
 
 pub fn get_input(year: u16, day: u8) -> Result<()> {
-    let key = get_session_key().ok_or("Unable to load session key")?;
+    let key = get_session_key().context("Unable to load session key")?;
 
     // Skip if the input already exists
     let filename = format!("data/{}/{:02}", year, day);
@@ -53,12 +53,4 @@ pub fn get_input(year: u16, day: u8) -> Result<()> {
     response.copy_to(&mut file)?;
 
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
 }

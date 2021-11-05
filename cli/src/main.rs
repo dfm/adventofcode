@@ -1,7 +1,8 @@
+use anyhow::{Context, Result};
 use aoc_cli::{days, download, template};
 use clap::{App, Arg, SubCommand};
 
-fn main() {
+fn main() -> Result<()> {
     let matches = App::new("Advent of Code")
         .about("holiday hacking")
         .subcommand(
@@ -26,17 +27,25 @@ fn main() {
 
     if let Some(matches) = matches.subcommand_matches("setup") {
         // Set up a new day
-        let day = matches.value_of("DAY").unwrap().parse::<u8>().unwrap();
+        let day = matches
+            .value_of("DAY")
+            .context("reading day number from command line")?
+            .parse::<u8>()?;
 
         println!("Downloading data for Dec {} ...", day);
-        download::get_input(2021, day).unwrap();
+        download::get_input(2018, day)?;
         println!("... Finished.");
 
         println!("Setting up template source ...");
-        template::setup_day(day).unwrap();
+        template::setup_day(day)?;
         println!("... Finished.");
     } else if let Some(matches) = matches.subcommand_matches("exec") {
-        let day = matches.value_of("DAY").unwrap().parse::<u8>().unwrap();
-        days::run_day(day).unwrap();
+        let day = matches
+            .value_of("DAY")
+            .context("reading day number from command line")?
+            .parse::<u8>()?;
+        days::run_day(day)?;
     }
+
+    Ok(())
 }
