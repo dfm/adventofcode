@@ -5,6 +5,7 @@ use std::fs;
 use std::path::Path;
 
 use aoc_day01::Day01;
+use aoc_day02::Day02;
 // __USE
 
 macro_rules! run_solver {
@@ -30,6 +31,7 @@ pub fn run_day(day: u8) -> Result<()> {
     // Execute the solver on these data
     match day {
         1 => run_solver!(Day01, data),
+        2 => run_solver!(Day02, data),
         // __MATCH
         _ => Err(aoc::Error::NotImplemented.into()),
     }

@@ -1,5 +1,5 @@
 [package]
-name = "aoc-cli"
+name = "aoc-day02"
 version = "0.2021.0"
 authors = ["Dan F-M <foreman.mackey@gmail.com>"]
 edition = "2018"
@@ -8,10 +8,5 @@ description = "Holiday hacking"
 repository = "https://github.com/dfm/adventofcode"
 
 [dependencies]
-clap = "2.33.3"
-toml_edit = "0.6.0"
-reqwest = { version = "0.11.6", features = ["blocking"] }
 anyhow = "1.0.45"
-aoc = { path = "../aoc" }
-aoc-day01 = { path = "../days/day01" }
-aoc-day02 = { path = "../days/day02" }
+aoc = { path = "../../aoc" }

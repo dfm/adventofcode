@@ -67,7 +67,10 @@ fn update_runner(day: u8) -> Result<()> {
     );
     let src = src.replace(
         "// __MATCH",
-        &format!("{0} => run_solver!(Day{0:02}),\n        // __MATCH", day),
+        &format!(
+            "{0} => run_solver!(Day{0:02}, data),\n        // __MATCH",
+            day
+        ),
     );
     fs::write("cli/src/days.rs", src)?;
     Ok(())

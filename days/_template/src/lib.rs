@@ -1,9 +1,9 @@
 use anyhow::Result;
 use aoc::solver::Solver;
 
-pub struct Day01 {}
+pub struct Day{{ day }} {}
 
-impl Solver for Day01 {
+impl Solver for Day{{ day }} {
     type Data = Vec<i32>;
 
     fn parse(input: &str) -> Result<Self::Data> {
