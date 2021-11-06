@@ -33,7 +33,7 @@ fn main() -> Result<()> {
             .parse::<u8>()?;
 
         println!("Downloading data for Dec {} ...", day);
-        download::get_input(2018, day)?;
+        download::get_input(day)?;
         println!("... Finished.");
 
         println!("Setting up template source ...");

@@ -1,7 +1,7 @@
+use crate::config::{data_path, YEAR};
 use anyhow::{Context, Result};
 use std::env;
 use std::fs;
-use std::path::Path;
 
 macro_rules! check_key {
     ( $key:expr ) => {{
@@ -22,18 +22,19 @@ fn get_session_key() -> Option<String> {
     None
 }
 
-pub fn get_input(year: u16, day: u8) -> Result<()> {
+pub fn get_input(day: u8) -> Result<()> {
     let key = get_session_key().context("Unable to load session key")?;
 
     // Skip if the input already exists
-    let filename = format!("data/{}/{:02}", year, day);
-    let target_path = Path::new(&filename);
+    let target_path = data_path(day)?;
+    // let filename = format!("data/{}/{:02}", year, day);
+    // let target_path = Path::new(&filename);
     if target_path.exists() {
         return Ok(());
     }
 
     // Download the input file
-    let url = format!("https://adventofcode.com/{}/day/{}/input", year, day);
+    let url = format!("https://adventofcode.com/{}/day/{}/input", YEAR, day);
     let client = reqwest::blocking::Client::new();
     let mut response = client
         .get(url)

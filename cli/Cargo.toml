@@ -15,3 +15,4 @@ anyhow = "1.0.45"
 aoc = { path = "../aoc" }
 aoc-day01 = { path = "../days/day01" }
 aoc-day02 = { path = "../days/day02" }
+aoc-day03 = { path = "../days/day03" }
