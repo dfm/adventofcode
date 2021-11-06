@@ -37,15 +37,10 @@ impl Solver for Day03 {
 
     fn part1(data: &Self::Data) -> Result<String> {
         let counts = count_overlaps(data);
-        let mut over = 0;
-        for x in 0..1000 {
-            for y in 0..1000 {
-                if counts[x][y] > 1 {
-                    over += 1;
-                }
-            }
-        }
-
+        let over: usize = counts
+            .iter()
+            .map(|row| row.iter().filter(|&v| *v > 1).count())
+            .sum();
         Ok(format!("{}", over))
     }
 
@@ -53,34 +48,37 @@ impl Solver for Day03 {
         let counts = count_overlaps(data);
         let result = data
             .iter()
-            .filter(|v| no_overlap(&counts, v))
-            .next()
+            .find(|v| no_overlap(&counts, v))
             .context("finding no overlap")?;
         Ok(format!("{}", result.id))
     }
 }
 
-fn count_overlaps(data: &Vec<Vote>) -> Grid {
+fn count_overlaps(data: &[Vote]) -> Grid {
     let mut counts = [[0; 1000]; 1000];
-    for v in data.iter() {
-        for x in v.left..v.left + v.width {
-            for y in v.top..v.top + v.height {
-                counts[x][y] += 1;
-            }
-        }
-    }
+    data.iter().for_each(|v| {
+        counts
+            .iter_mut()
+            .skip(v.left)
+            .take(v.width)
+            .for_each(|row| {
+                (*row)
+                    .iter_mut()
+                    .skip(v.top)
+                    .take(v.height)
+                    .for_each(|value| *value += 1);
+            });
+    });
     counts
 }
 
 fn no_overlap(grid: &Grid, v: &Vote) -> bool {
-    for x in v.left..v.left + v.width {
-        for y in v.top..v.top + v.height {
-            if grid[x][y] > 1 {
-                return false;
-            }
-        }
-    }
-    return true;
+    grid.iter()
+        .skip(v.left)
+        .take(v.width)
+        .filter_map(|row| row.iter().skip(v.top).take(v.height).find(|&x| *x > 1))
+        .next()
+        .is_none()
 }
 
 #[cfg(test)]
