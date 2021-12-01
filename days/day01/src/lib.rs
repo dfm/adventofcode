@@ -1,7 +1,7 @@
 use anyhow::Result;
 use aoc::solver::Solver;
 
-pub struct Day01 {}
+pub struct Day01;
 
 impl Solver for Day01 {
     type Data = Vec<i32>;
@@ -33,7 +33,6 @@ impl Solver for Day01 {
             .map(|(a, &b)| a + b)
             .collect();
         Self::part1(&windowed)
-        // Err(aoc::Error::NotImplemented.into())
     }
 }
 

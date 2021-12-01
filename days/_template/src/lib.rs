@@ -1,7 +1,7 @@
 use anyhow::Result;
 use aoc::solver::Solver;
 
-pub struct Day{{ day }} {}
+pub struct Day{{ day }};
 
 impl Solver for Day{{ day }} {
     type Data = Vec<i32>;
@@ -28,5 +28,11 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_parsing() {}
+    fn test_parse() {}
+
+    #[test]
+    fn test_part1() {}
+
+    #[test]
+    fn test_part2() {}
 }
