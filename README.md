@@ -1,6 +1,6 @@
 My solutions for [Advent of Code](https://adventofcode.com/).
 
-2021 coming soon in Rust. Previous years:
+2021 in Rust. Previous years:
 
 - [2019 in C++](https://github.com/dfm/adventofcode/tree/2019)
 - [2020 in Haskell](https://github.com/dfm/adventofcode/tree/2020)
