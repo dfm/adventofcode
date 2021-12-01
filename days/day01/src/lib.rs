@@ -15,24 +15,13 @@ impl Solver for Day01 {
     }
 
     fn part1(data: &Self::Data) -> Result<String> {
-        let result = data
-            .iter()
-            .zip(data.iter().skip(1))
-            .map(|(&a, &b)| a < b)
-            .filter(|&x| x)
-            .count();
+        let result = data.windows(2).filter(|w| w[0] < w[1]).count();
         Ok(format!("{}", result))
     }
 
     fn part2(data: &Self::Data) -> Result<String> {
-        let windowed: Vec<i32> = data
-            .iter()
-            .zip(data.iter().skip(1))
-            .map(|(&a, &b)| a + b)
-            .zip(data.iter().skip(2))
-            .map(|(a, &b)| a + b)
-            .collect();
-        Self::part1(&windowed)
+        let smooth: Vec<i32> = data.windows(3).map(|w| w.iter().sum()).collect();
+        Self::part1(&smooth)
     }
 }
 
