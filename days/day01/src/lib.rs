@@ -1,6 +1,5 @@
 use anyhow::Result;
 use aoc::solver::Solver;
-use std::collections::HashSet;
 
 pub struct Day01 {}
 
@@ -16,21 +15,25 @@ impl Solver for Day01 {
     }
 
     fn part1(data: &Self::Data) -> Result<String> {
-        let result: i32 = data.iter().sum();
+        let result = data
+            .iter()
+            .zip(data.iter().skip(1))
+            .map(|(&a, &b)| a < b)
+            .filter(|&x| x)
+            .count();
         Ok(format!("{}", result))
     }
 
     fn part2(data: &Self::Data) -> Result<String> {
-        let mut seen = HashSet::new();
-        let mut current = 0;
-        for n in data.iter().cycle() {
-            current += n;
-            if seen.contains(&current) {
-                break;
-            }
-            seen.insert(current);
-        }
-        Ok(format!("{}", current))
+        let windowed: Vec<i32> = data
+            .iter()
+            .zip(data.iter().skip(1))
+            .map(|(&a, &b)| a + b)
+            .zip(data.iter().skip(2))
+            .map(|(a, &b)| a + b)
+            .collect();
+        Self::part1(&windowed)
+        // Err(aoc::Error::NotImplemented.into())
     }
 }
 
@@ -39,23 +42,14 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_parsing() {
-        let data = Day01::parse("+1\n-1\n+1").unwrap();
-        assert_eq!(data.len(), 3);
-        assert_eq!(data[0], 1);
-        assert_eq!(data[1], -1);
-        assert_eq!(data[2], 1);
-    }
-
-    #[test]
     fn test_part1() {
-        let data = Day01::parse("+1\n-2\n+3\n+1").unwrap();
-        assert_eq!(Day01::part1(&data).unwrap(), "3");
+        let data = vec![199, 200, 208, 210, 200, 207, 240, 269, 260, 263];
+        assert_eq!(Day01::part1(&data).unwrap(), "7");
     }
 
     #[test]
     fn test_part2() {
-        let data = Day01::parse("+1\n-2\n+3\n+1").unwrap();
-        assert_eq!(Day01::part2(&data).unwrap(), "2");
+        let data = vec![199, 200, 208, 210, 200, 207, 240, 269, 260, 263];
+        assert_eq!(Day01::part2(&data).unwrap(), "5");
     }
 }

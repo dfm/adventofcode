@@ -2,7 +2,7 @@ use anyhow::Result;
 use std::env;
 use std::path::PathBuf;
 
-pub const YEAR: u16 = 2018;
+pub const YEAR: u16 = 2021;
 
 pub fn data_dir() -> Result<PathBuf> {
     Ok(match env::var("AOC_DATA_DIR") {
