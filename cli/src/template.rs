@@ -1,4 +1,5 @@
 use anyhow::Result;
+use regex::Regex;
 use std::fs;
 use std::path::Path;
 use toml_edit;
@@ -72,6 +73,14 @@ fn update_runner(day: u8) -> Result<()> {
             day
         ),
     );
+    let re = Regex::new(r"pub const MAX_DAY: u8 = (\d);")?;
+    let src = re
+        .replace(&src, |caps: &regex::Captures| {
+            let old_max = (&caps[1]).parse::<u8>().unwrap();
+            format!("pub const MAX_DAY: u8 = {};", std::cmp::max(day, old_max))
+        })
+        .to_string();
+
     fs::write("cli/src/days.rs", src)?;
     Ok(())
 }

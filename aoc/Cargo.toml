@@ -8,5 +8,5 @@ description = "Holiday hacking"
 repository = "https://github.com/dfm/adventofcode"
 
 [dependencies]
-thiserror = "1.0.30"
-anyhow = "1.0.45"
+thiserror = "1.0"
+anyhow = "1.0"

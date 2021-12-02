@@ -17,3 +17,24 @@ your AofC session key saved somewhere. To find it, log in on
 https://adventofcode.com, and use the developer tools to look at the cookies to
 find your session key. Then save that key to a file called `.aoc` in the root of
 this repo, or as the `AOC_SESSION_KEY` environment variable.
+
+**Downloading data**:
+Once you have your session key set, download the inputs by running:
+
+```bash
+cargo run download
+```
+
+**Setting up a new day**:
+To copy the template and boilerplate for a new day, run:
+
+```bash
+cargo run setup {DAY}
+```
+
+**Running the code**:
+To run the solver on your inputs, you can just run:
+
+```bash
+cargo run
+```
