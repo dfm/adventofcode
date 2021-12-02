@@ -16,3 +16,4 @@ regex = "1.5"
 aoc = { path = "../aoc" }
 aoc-day01 = { path = "../days/day01" }
 aoc-day02 = { path = "../days/day02" }
+aoc-day03 = { path = "../days/day03" }

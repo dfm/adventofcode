@@ -5,9 +5,10 @@ use std::fs;
 
 use aoc_day01::Day01;
 use aoc_day02::Day02;
+use aoc_day03::Day03;
 // __USE
 
-pub const MAX_DAY: u8 = 2;
+pub const MAX_DAY: u8 = 3;
 
 macro_rules! run_solver {
     ( $day:tt, $data:expr ) => {
@@ -30,6 +31,7 @@ pub fn run_day(day: u8) -> Result<()> {
     match day {
         1 => run_solver!(Day01, data),
         2 => run_solver!(Day02, data),
+        3 => run_solver!(Day03, data),
         // __MATCH
         _ => Err(aoc::Error::NotImplemented.into()),
     }

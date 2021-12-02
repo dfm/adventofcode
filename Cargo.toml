@@ -2,4 +2,4 @@
 opt-level = 3
 
 [workspace]
-members = ["aoc", "cli", "days/day01", "days/day02", "days/day02"]
+members = ["aoc", "cli", "days/day01", "days/day02", "days/day02", "days/day03"]

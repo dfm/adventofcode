@@ -18,7 +18,7 @@ fn main() -> Result<()> {
         .arg(Arg::with_name("DAY").help("specify the day number"))
         .get_matches();
 
-    if matches.subcommand_matches("setup").is_some() {
+    if let Some(matches) = matches.subcommand_matches("setup") {
         // Set up a new day
         let day = matches
             .value_of("DAY")
