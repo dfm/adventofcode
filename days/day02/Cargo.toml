@@ -9,4 +9,5 @@ repository = "https://github.com/dfm/adventofcode"
 
 [dependencies]
 anyhow = "1.0"
+regex = "1.5"
 aoc = { path = "../../aoc" }
