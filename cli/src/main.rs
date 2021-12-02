@@ -18,7 +18,7 @@ fn main() -> Result<()> {
         .arg(Arg::with_name("DAY").help("specify the day number"))
         .get_matches();
 
-    if let Some(_) = matches.subcommand_matches("setup") {
+    if matches.subcommand_matches("setup").is_some() {
         // Set up a new day
         let day = matches
             .value_of("DAY")
@@ -27,7 +27,7 @@ fn main() -> Result<()> {
         println!("Setting up template source ...");
         template::setup_day(day)?;
         println!("... Finished.");
-    } else if let Some(_) = matches.subcommand_matches("download") {
+    } else if matches.subcommand_matches("download").is_some() {
         for day in 1..=MAX_DAY {
             println!("Downloading data for Dec {} ...", day);
             download::get_input(day)?;
