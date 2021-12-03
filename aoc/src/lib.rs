@@ -1,4 +1,7 @@
+pub mod error;
+pub mod input_handler;
 pub mod solver;
 
-pub mod error;
 pub use error::{Error, Result};
+pub use input_handler::InputHandler;
+pub use solver::Solver;

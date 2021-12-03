@@ -69,7 +69,7 @@ fn update_runner(day: u8) -> Result<()> {
     let src = src.replace(
         "// __MATCH",
         &format!(
-            "{0} => run_solver!(Day{0:02}, data),\n        // __MATCH",
+            "{0} => run_solver!(Day{0:02}, handler.into()),\n        // __MATCH",
             day
         ),
     );
