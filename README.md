@@ -29,7 +29,7 @@ cargo run download
 To copy the template and boilerplate for a new day, run:
 
 ```bash
-cargo run setup
+cargo run new
 ```
 
 **Running the code**:

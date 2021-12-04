@@ -5,12 +5,12 @@ use clap::{App, Arg, SubCommand};
 fn main() -> Result<()> {
     let matches = App::new("Advent of Code")
         .about("holiday hacking")
-        .subcommand(SubCommand::with_name("setup").about("sets up the next day"))
+        .subcommand(SubCommand::with_name("new").about("sets up the next day"))
         .subcommand(SubCommand::with_name("download").about("download any missing data"))
         .arg(Arg::with_name("DAY").help("specify the day number"))
         .get_matches();
 
-    if matches.subcommand_matches("setup").is_some() {
+    if matches.subcommand_matches("new").is_some() {
         let day = MAX_DAY + 1;
         println!("Setting up template source ...");
         template::setup_day(day)?;
