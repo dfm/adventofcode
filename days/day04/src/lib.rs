@@ -22,19 +22,11 @@ impl Solver<&str> for Day04 {
     fn part2(data: &str) -> Result<String> {
         let (draws, mut cards) = parse(data);
         for &n in draws.iter() {
-            let mut remove = vec![];
-            for card in cards.iter_mut() {
-                card.mark(n);
-                remove.push(card.check());
-            }
+            cards.iter_mut().for_each(|c| c.mark(n));
             if cards.len() == 1 && cards[0].check() {
                 return Ok((cards[0].score() * n).to_string());
             }
-            for (ind, &rm) in remove.iter().enumerate().rev() {
-                if rm {
-                    cards.remove(ind);
-                }
-            }
+            cards = cards.into_iter().filter(|c| !c.check()).collect();
         }
         Ok("Something went wrong".to_string())
     }
