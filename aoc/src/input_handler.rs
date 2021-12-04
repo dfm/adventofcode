@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use std::fs;
-use std::path::PathBuf;
+use std::path::Path;
 
 #[derive(Debug, Clone)]
 pub struct InputHandler {
@@ -14,9 +14,9 @@ impl InputHandler {
         }
     }
 
-    pub fn from_file(filename: &PathBuf) -> Result<Self> {
+    pub fn from_file(filename: &Path) -> Result<Self> {
         let data = fs::read_to_string(&filename).context(format!("{:?}", filename))?;
-        Ok(Self { data: data })
+        Ok(Self { data })
     }
 }
 
