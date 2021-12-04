@@ -46,7 +46,7 @@ fn parse(data: &str) -> (Vec<Int>, Vec<Card>) {
         .next()
         .unwrap()
         .trim()
-        .split(",")
+        .split(',')
         .map(|n| n.trim().parse().unwrap())
         .collect();
 
@@ -85,11 +85,9 @@ impl Card {
         let parts = data.split_whitespace();
         let parts = parts.map(|p| p.trim().parse().unwrap()).collect::<Vec<_>>();
         let mut numbers = [0; SIZE * SIZE];
-        for n in 0..SIZE * SIZE {
-            numbers[n] = parts[n];
-        }
+        numbers[..(SIZE * SIZE)].clone_from_slice(&parts[..(SIZE * SIZE)]);
         Card {
-            numbers: numbers,
+            numbers,
             mask: [false; SIZE * SIZE],
         }
     }
@@ -129,10 +127,10 @@ impl Card {
 
     fn check(&self) -> bool {
         for n in 0..SIZE {
-            if self.row(n).find(|(&m, _)| !m).is_none() {
+            if self.row(n).any(|(&m, _)| !m) {
                 return true;
             }
-            if self.col(n).find(|(&m, _)| !m).is_none() {
+            if self.col(n).any(|(&m, _)| !m) {
                 return true;
             }
         }
