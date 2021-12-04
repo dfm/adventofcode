@@ -23,13 +23,14 @@ fn get_session_key() -> Option<String> {
 }
 
 pub fn get_input(day: u8) -> Result<()> {
+    println!("Downloading data for Dec {} ...", day);
+
     let key = get_session_key().context("Unable to load session key")?;
 
     // Skip if the input already exists
     let target_path = data_path(day)?;
-    // let filename = format!("data/{}/{:02}", year, day);
-    // let target_path = Path::new(&filename);
     if target_path.exists() {
+        println!("... Skipped");
         return Ok(());
     }
 
@@ -53,5 +54,6 @@ pub fn get_input(day: u8) -> Result<()> {
     let mut file = fs::File::create(target_path)?;
     response.copy_to(&mut file)?;
 
+    println!("... Finished");
     Ok(())
 }
