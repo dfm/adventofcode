@@ -127,10 +127,10 @@ impl Card {
 
     fn check(&self) -> bool {
         for n in 0..SIZE {
-            if self.row(n).any(|(&m, _)| !m) {
+            if !self.row(n).any(|(&m, _)| !m) {
                 return true;
             }
-            if self.col(n).any(|(&m, _)| !m) {
+            if !self.col(n).any(|(&m, _)| !m) {
                 return true;
             }
         }
