@@ -92,23 +92,6 @@ impl Card {
         }
     }
 
-    fn row(&self, n: usize) -> impl Iterator<Item = (&bool, &Int)> {
-        self.mask
-            .iter()
-            .zip(self.numbers.iter())
-            .skip(n * SIZE)
-            .take(SIZE)
-    }
-
-    fn col(&self, n: usize) -> impl Iterator<Item = (&bool, &Int)> {
-        self.mask
-            .iter()
-            .zip(self.numbers.iter())
-            .skip(n)
-            .step_by(SIZE)
-            .take(SIZE)
-    }
-
     fn score(&self) -> Int {
         self.mask
             .iter()
@@ -119,10 +102,10 @@ impl Card {
 
     fn check(&self) -> bool {
         for n in 0..SIZE {
-            if !self.row(n).any(|(&m, _)| !m) {
+            if self.mask.iter().skip(n * SIZE).take(SIZE).all(|&x| x) {
                 return true;
             }
-            if !self.col(n).any(|(&m, _)| !m) {
+            if self.mask.iter().skip(n).step_by(SIZE).all(|&x| x) {
                 return true;
             }
         }
