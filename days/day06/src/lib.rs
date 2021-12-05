@@ -1,9 +1,9 @@
 use anyhow::Result;
 use aoc::solver::Solver;
 
-pub struct Day{{ day }};
+pub struct Day06;
 
-impl Solver<&str> for Day{{ day }} {
+impl Solver<&str> for Day06 {
     fn part1(_data: &str) -> Result<String> {
         Err(aoc::Error::NotImplemented.into())
     }

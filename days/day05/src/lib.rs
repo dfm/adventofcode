@@ -17,18 +17,16 @@ pub struct Point {
 pub struct Line(Point, Point);
 
 impl Line {
-    fn get_trajectory(self) -> Vec<Point> {
+    fn get_trajectory(self) -> impl Iterator<Item = Point> {
         let x1 = self.0.x;
         let y1 = self.0.y;
         let dx = (self.1.x - x1).signum();
         let dy = (self.1.y - y1).signum();
         let tot = std::cmp::max((self.1.x - x1) * dx, (self.1.y - y1) * dy);
-        (0..=tot)
-            .map(|n| Point {
-                x: x1 + dx * n,
-                y: y1 + dy * n,
-            })
-            .collect()
+        (0..=tot).map(move |n| Point {
+            x: x1 + dx * n,
+            y: y1 + dy * n,
+        })
     }
 }
 
@@ -92,7 +90,7 @@ mod tests {
         assert_eq!(data.len(), 10);
         assert_eq!(data[0].0.x, 0);
         assert_eq!(data[4].1.y, 4);
-        assert_eq!(data[0].get_trajectory().len(), 6);
+        assert_eq!(data[0].get_trajectory().count(), 6);
     }
 
     #[test]
