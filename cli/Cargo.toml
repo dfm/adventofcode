@@ -13,6 +13,7 @@ toml_edit = "0.6"
 reqwest = { version = "0.11", features = ["blocking"] }
 anyhow = "1.0"
 regex = "1.5"
+criterion = "0.3"
 aoc = { path = "../aoc" }
 aoc-day01 = { path = "../days/day01" }
 aoc-day02 = { path = "../days/day02" }
@@ -20,3 +21,7 @@ aoc-day03 = { path = "../days/day03" }
 aoc-day04 = { path = "../days/day04" }
 aoc-day05 = { path = "../days/day05" }
 aoc-day06 = { path = "../days/day06" }
+
+[[bench]]
+name = "benchmark"
+harness = false

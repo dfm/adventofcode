@@ -27,10 +27,16 @@ fn main() -> Result<()> {
             .flatten();
 
         if let Some(day) = day {
-            days::run_day(day)?;
+            println!("=> DAY {:02}", day);
+            let (p1, p2) = days::run_day(day)?;
+            println!(" -> part 1: {}", p1);
+            println!(" -> part 2: {}\n", p2);
         } else {
             for day in 1..=MAX_DAY {
-                days::run_day(day)?;
+                println!("=> DAY {:02}", day);
+                let (p1, p2) = days::run_day(day)?;
+                println!(" -> part 1: {}", p1);
+                println!(" -> part 2: {}\n", p2);
             }
         }
     }

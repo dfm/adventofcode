@@ -14,23 +14,21 @@ pub const MAX_DAY: u8 = 6;
 
 macro_rules! run_solver {
     ( $day:tt, $data:expr ) => {
-        Ok({
-            // let parsed = $day::parse(&$data)?;
-            println!(" -> part 1: {}", $day::part1($data)?);
-            println!(" -> part 2: {}\n", $day::part2($data)?);
-        })
+        Ok(($day::part1($data)?, $day::part2($data)?))
     };
 }
 
-pub fn run_day(day: u8) -> Result<()> {
-    println!("=> DAY {:02}", day);
+pub fn run_day(day: u8) -> Result<(String, String)> {
+    let handler = load_data(day)?;
+    run_day_with_data(day, &handler)
+}
 
-    // Read the input data file
+pub fn load_data(day: u8) -> Result<InputHandler> {
     let filename = data_path(day)?;
-    let handler = &InputHandler::from_file(&filename)?;
-    // let data = fs::read_to_string(&filename).context(format!("{:?}", filename))?;
+    InputHandler::from_file(&filename)
+}
 
-    // Execute the solver on these data
+pub fn run_day_with_data(day: u8, handler: &InputHandler) -> Result<(String, String)> {
     match day {
         1 => run_solver!(Day01, handler.into()),
         2 => run_solver!(Day02, handler.into()),

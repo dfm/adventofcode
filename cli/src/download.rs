@@ -23,18 +23,14 @@ fn get_session_key() -> Option<String> {
 }
 
 pub fn get_input(day: u8) -> Result<()> {
-    println!("Downloading data for Dec {} ...", day);
-
-    let key = get_session_key().context("Unable to load session key")?;
-
     // Skip if the input already exists
     let target_path = data_path(day)?;
     if target_path.exists() {
-        println!("... Skipped");
         return Ok(());
     }
 
     // Download the input file
+    let key = get_session_key().context("Unable to load session key")?;
     let url = format!("https://adventofcode.com/{}/day/{}/input", YEAR, day);
     let client = reqwest::blocking::Client::new();
     let mut response = client
@@ -54,6 +50,5 @@ pub fn get_input(day: u8) -> Result<()> {
     let mut file = fs::File::create(target_path)?;
     response.copy_to(&mut file)?;
 
-    println!("... Finished");
     Ok(())
 }

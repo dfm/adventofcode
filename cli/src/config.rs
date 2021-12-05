@@ -1,6 +1,6 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 use std::env;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 pub const YEAR: u16 = 2021;
 
@@ -11,7 +11,16 @@ pub fn data_dir() -> Result<PathBuf> {
             path.push(dir);
             path
         }
-        _ => env::current_dir()?,
+        _ => {
+            if let Ok(manifest_dir) = env::var("CARGO_MANIFEST_DIR") {
+                Path::new(&manifest_dir)
+                    .parent()
+                    .context("Finding path to manifest dir")?
+                    .to_path_buf()
+            } else {
+                env::current_dir()?
+            }
+        }
     })
 }
 
