@@ -5,11 +5,11 @@ pub struct Day{{ day }};
 
 impl Solver<&str> for Day{{ day }} {
     fn part1(_data: &str) -> Result<String> {
-        Err(aoc::Error::NotImplemented.into())
+        Ok("not implemented".to_string())
     }
 
     fn part2(_data: &str) -> Result<String> {
-        Err(aoc::Error::NotImplemented.into())
+        Ok("not implemented".to_string())
     }
 }
 
