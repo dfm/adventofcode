@@ -3,14 +3,15 @@ use aoc::solver::Solver;
 
 pub struct Day07;
 
+fn parse(data: &str) -> Vec<i32> {
+    let mut x: Vec<_> = data.trim().split(',').map(|x| x.parse().unwrap()).collect();
+    x.sort();
+    x
+}
+
 impl Solver<&str> for Day07 {
     fn part1(data: &str) -> Result<String> {
-        let mut x = data
-            .trim()
-            .split(',')
-            .map(|x| x.parse::<i32>().unwrap())
-            .collect::<Vec<_>>();
-        x.sort();
+        let x = parse(data);
         let mid = x.len() / 2;
         let median = x[mid];
         let fuel = x.iter().fold(0, |c, &v| c + (v - median).abs());
@@ -19,24 +20,18 @@ impl Solver<&str> for Day07 {
     }
 
     fn part2(data: &str) -> Result<String> {
-        let x = data
-            .trim()
-            .split(',')
-            .map(|x| x.parse::<i32>().unwrap())
-            .collect::<Vec<_>>();
+        let x = parse(data);
 
-        let get_fuel = |&x0: &i32| {
+        let get_fuel = |x0: i32| {
             x.iter().fold(0, |c, &v| {
                 let k = (v - x0).abs();
                 c + k * (k + 1) / 2
             })
         };
 
-        let &min = x.iter().min().unwrap();
-        let &max = x.iter().max().unwrap();
-        let x0 = (min..=max).min_by_key(get_fuel).unwrap();
-
-        Ok(get_fuel(&x0).to_string())
+        let mean = x.iter().sum::<i32>() as f32 / x.len() as f32;
+        let fuel = std::cmp::min(get_fuel(mean as i32), get_fuel(mean as i32 + 1));
+        Ok(fuel.to_string())
     }
 }
 
