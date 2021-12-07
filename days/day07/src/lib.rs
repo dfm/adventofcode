@@ -5,7 +5,7 @@ pub struct Day07;
 
 fn parse(data: &str) -> Vec<i32> {
     let mut x: Vec<_> = data.trim().split(',').map(|x| x.parse().unwrap()).collect();
-    x.sort();
+    x.sort_unstable();
     x
 }
 
