@@ -6,7 +6,7 @@ pub struct Day08;
 
 type Hash = [u8; 10];
 type Map = HashMap<Hash, usize>;
-const BASELINE: &'static str = "abcefg cf acdeg acdfg bcdf abdfg abdefg acf abcdefg abcdfg";
+const BASELINE: &str = "abcefg cf acdeg acdfg bcdf abdfg abdefg acf abcdefg abcdfg";
 
 fn get_mapper() -> Map {
     let counts = get_character_counts(BASELINE);
@@ -36,7 +36,7 @@ fn get_hash(counts: &[usize; 7], data: &str) -> Hash {
 
 fn get_hashes(counts: &[usize; 7], data: &str) -> Vec<Hash> {
     data.split_whitespace()
-        .map(move |w| get_hash(&counts, w))
+        .map(|w| get_hash(counts, w))
         .collect()
 }
 
