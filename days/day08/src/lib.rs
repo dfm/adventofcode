@@ -1,19 +1,23 @@
 use anyhow::Result;
 use aoc::solver::Solver;
-use std::collections::HashSet;
+use std::collections::HashMap;
 
 pub struct Day08;
 
-fn to_digit(data: &str) -> u8 {
-    let n0 = 'a' as usize;
-    let mut digit = 0;
-    for c in data.trim().chars() {
-        digit |= 1 << (c as usize - n0);
-    }
-    digit
+type Hash = [u8; 10];
+type Map = HashMap<Hash, usize>;
+const BASELINE: &'static str = "abcefg cf acdeg acdfg bcdf abdfg abdefg acf abcdefg abcdfg";
+
+fn get_mapper() -> Map {
+    let counts = get_character_counts(BASELINE);
+    get_hashes(&counts, BASELINE)
+        .iter()
+        .enumerate()
+        .map(|(n, &h)| (h, n))
+        .collect()
 }
 
-fn character_counts(data: &str) -> [u8; 7] {
+fn get_character_counts(data: &str) -> [usize; 7] {
     let n0 = 'a' as usize;
     let mut result = [0; 7];
     data.chars()
@@ -22,60 +26,29 @@ fn character_counts(data: &str) -> [u8; 7] {
     result
 }
 
-fn find_with_counts(counts: &[u8; 7], target: u8) -> u8 {
-    let index = counts.iter().position(|&v| v == target).unwrap();
-    1 << index
-}
-
-fn pop_num_edges(source: &mut HashSet<u8>, target: u32) -> u8 {
-    let result = *source.iter().find(|t| t.count_ones() == target).unwrap();
-    source.remove(&result);
+fn get_hash(counts: &[usize; 7], data: &str) -> Hash {
+    let mut result = [0; 10];
+    for c in data.trim().chars() {
+        result[counts[c as usize - 'a' as usize]] += 1;
+    }
     result
 }
 
-fn pop_from_diff(source: &mut HashSet<u8>, a: u8, b: u8) -> u8 {
-    let target = a & !b;
-    source.remove(&target);
-    target
+fn get_hashes(counts: &[usize; 7], data: &str) -> Vec<Hash> {
+    data.split_whitespace()
+        .map(move |w| get_hash(&counts, w))
+        .collect()
 }
 
-fn solve_one(line: &str) -> usize {
+fn solve_one(mapper: &Map, line: &str) -> usize {
     let mut parts = line.split(" | ");
-    let input_str = parts.next().unwrap();
-    let input_counts = character_counts(input_str);
-    let mut input = input_str.split_whitespace().map(to_digit).collect();
-    let mut key = [0; 10];
-
-    // We can work out some edges based on character counts
-    let bl = find_with_counts(&input_counts, 4);
-    let tl = find_with_counts(&input_counts, 6);
-    let br = find_with_counts(&input_counts, 9);
-
-    // Some digits have a unique number of edges
-    key[1] = pop_num_edges(&mut input, 2);
-    key[4] = pop_num_edges(&mut input, 4);
-    key[7] = pop_num_edges(&mut input, 3);
-    key[8] = pop_num_edges(&mut input, 7);
-
-    // Work out the rest
-    key[9] = pop_from_diff(&mut input, key[8], bl);
-    key[3] = pop_from_diff(&mut input, key[9], tl);
-    key[2] = pop_from_diff(&mut input, key[8], br | tl);
-    key[5] = pop_num_edges(&mut input, 5);
-    let tr = key[9] & !key[5];
-    key[6] = pop_from_diff(&mut input, key[8], tr);
-    key[0] = *input.iter().next().unwrap();
-
-    parts
-        .next()
-        .unwrap()
-        .split_whitespace()
+    let counts = get_character_counts(parts.next().unwrap());
+    let hashes = get_hashes(&counts, parts.next().unwrap());
+    hashes
+        .iter()
         .rev()
         .enumerate()
-        .fold(0, |acc, (n, v)| {
-            let target = to_digit(v);
-            acc + key.iter().position(|&k| k == target).unwrap() * usize::pow(10, n as u32)
-        })
+        .fold(0, |acc, (n, v)| acc + mapper[v] * usize::pow(10, n as u32))
 }
 
 impl Solver<&str> for Day08 {
@@ -100,7 +73,8 @@ impl Solver<&str> for Day08 {
     }
 
     fn part2(data: &str) -> Result<String> {
-        let result: usize = data.lines().map(solve_one).sum();
+        let mapper = get_mapper();
+        let result: usize = data.lines().map(|l| solve_one(&mapper, l)).sum();
         Ok(result.to_string())
     }
 }
@@ -123,15 +97,11 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
 ";
 
     #[test]
-    fn test_to_digit() {
-        assert_eq!(to_digit("abdg"), 75);
-    }
-
-    #[test]
     fn test_solve_one() {
+        let mapper = get_mapper();
         let data =
             "acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf";
-        assert_eq!(solve_one(&data), 5353);
+        assert_eq!(solve_one(&mapper, &data), 5353);
     }
 
     #[test]
