@@ -99,8 +99,6 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
     #[test]
     fn test_solve_one() {
         let mapper = get_mapper();
-        println!("{:?}", mapper);
-        assert!(false);
         let data =
             "acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf";
         assert_eq!(solve_one(&mapper, &data), 5353);
