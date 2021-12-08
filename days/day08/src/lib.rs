@@ -27,14 +27,20 @@ fn find_with_counts(counts: &[u8; 7], target: u8) -> u8 {
     1 << index
 }
 
-fn find_with_len(parts: &mut HashSet<u8>, target: u32) -> u8 {
-    let result = parts
+fn pop_num_edges(source: &mut HashSet<u8>, target: u32) -> u8 {
+    let result = source
         .iter()
         .find(|t| t.count_ones() == target)
         .unwrap()
         .clone();
-    parts.remove(&result);
+    source.remove(&result);
     result
+}
+
+fn pop_from_diff(source: &mut HashSet<u8>, a: u8, b: u8) -> u8 {
+    let target = a & !b;
+    source.remove(&target);
+    target
 }
 
 fn solve_one(line: &str) -> usize {
@@ -50,22 +56,18 @@ fn solve_one(line: &str) -> usize {
     let br = find_with_counts(&input_counts, 9);
 
     // Some digits have a unique number of edges
-    key[1] = find_with_len(&mut input, 2);
-    key[4] = find_with_len(&mut input, 4);
-    key[7] = find_with_len(&mut input, 3);
-    key[8] = find_with_len(&mut input, 7);
+    key[1] = pop_num_edges(&mut input, 2);
+    key[4] = pop_num_edges(&mut input, 4);
+    key[7] = pop_num_edges(&mut input, 3);
+    key[8] = pop_num_edges(&mut input, 7);
 
     // Work out the rest
-    key[9] = key[8] & !bl;
-    key[3] = key[9] & !tl;
-    key[2] = key[8] & !br & !tl;
-    input.remove(&key[9]);
-    input.remove(&key[3]);
-    input.remove(&key[2]);
-    key[5] = find_with_len(&mut input, 5);
+    key[9] = pop_from_diff(&mut input, key[8], bl);
+    key[3] = pop_from_diff(&mut input, key[9], tl);
+    key[2] = pop_from_diff(&mut input, key[8], br | tl);
+    key[5] = pop_num_edges(&mut input, 5);
     let tr = key[9] & !key[5];
-    key[6] = key[8] & !tr;
-    input.remove(&key[6]);
+    key[6] = pop_from_diff(&mut input, key[8], tr);
     key[0] = *input.iter().next().unwrap();
 
     parts
