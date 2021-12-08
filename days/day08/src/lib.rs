@@ -28,11 +28,7 @@ fn find_with_counts(counts: &[u8; 7], target: u8) -> u8 {
 }
 
 fn pop_num_edges(source: &mut HashSet<u8>, target: u32) -> u8 {
-    let result = source
-        .iter()
-        .find(|t| t.count_ones() == target)
-        .unwrap()
-        .clone();
+    let result = *source.iter().find(|t| t.count_ones() == target).unwrap();
     source.remove(&result);
     result
 }
@@ -46,7 +42,7 @@ fn pop_from_diff(source: &mut HashSet<u8>, a: u8, b: u8) -> u8 {
 fn solve_one(line: &str) -> usize {
     let mut parts = line.split(" | ");
     let input_str = parts.next().unwrap();
-    let input_counts = character_counts(&input_str);
+    let input_counts = character_counts(input_str);
     let mut input = input_str.split_whitespace().map(to_digit).collect();
     let mut key = [0; 10];
 
