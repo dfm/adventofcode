@@ -1,3 +1,4 @@
+pub mod counter;
 pub mod error;
 pub mod input_handler;
 pub mod solver;
