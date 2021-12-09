@@ -7,6 +7,9 @@ license = "Apache-2.0"
 description = "Holiday hacking"
 repository = "https://github.com/dfm/adventofcode"
 
+[lib]
+doctest = false
+
 [dependencies]
 anyhow = "1.0"
 aoc = { path = "../../aoc" }
