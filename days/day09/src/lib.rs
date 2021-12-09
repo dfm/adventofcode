@@ -24,7 +24,7 @@ impl Grid {
         for line in data.lines() {
             grid.data.push(10);
             for c in line.trim().chars() {
-                grid.data.push(c as u8 - '0' as u8);
+                grid.data.push(c as u8 - b'0');
             }
             grid.data.push(10);
         }
