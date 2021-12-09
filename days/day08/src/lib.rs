@@ -4,7 +4,7 @@ use std::collections::HashMap;
 
 pub struct Day08;
 
-type Hash = [u8; 10];
+type Hash = [u8; 6];
 type Map = HashMap<Hash, usize>;
 const BASELINE: &str = "abcefg cf acdeg acdfg bcdf abdfg abdefg acf abcdefg abcdfg";
 
@@ -27,9 +27,9 @@ fn get_character_counts(data: &str) -> [usize; 7] {
 }
 
 fn get_hash(counts: &[usize; 7], data: &str) -> Hash {
-    let mut result = [0; 10];
+    let mut result = [0; 6];
     for c in data.trim().chars() {
-        result[counts[c as usize - 'a' as usize]] += 1;
+        result[counts[c as usize - 'a' as usize] - 4] += 1;
     }
     result
 }
