@@ -1,7 +1,20 @@
-use anyhow::Result;
+use anyhow::{Error, Result};
 use aoc::solver::Solver;
 
 pub struct Day10;
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Parse {
+    Syntax(usize),
+    Incomplete(usize),
+}
+
+impl std::str::FromStr for Parse {
+    type Err = Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(parse(s))
+    }
+}
 
 fn score_stack(stack: &[char]) -> usize {
     let mut score = 0;
@@ -17,7 +30,7 @@ fn score_stack(stack: &[char]) -> usize {
     score
 }
 
-fn find_corrupt(line: &str) -> (usize, usize) {
+fn parse(line: &str) -> Parse {
     let mut stack = Vec::new();
     for c in line.chars() {
         match c {
@@ -25,34 +38,36 @@ fn find_corrupt(line: &str) -> (usize, usize) {
             _ => {
                 let open = stack.pop().unwrap();
                 match c {
-                    ')' if open != '(' => return (3, 0),
-                    ']' if open != '[' => return (57, 0),
-                    '}' if open != '{' => return (1197, 0),
-                    '>' if open != '<' => return (25137, 0),
+                    ')' if open != '(' => return Parse::Syntax(3),
+                    ']' if open != '[' => return Parse::Syntax(57),
+                    '}' if open != '{' => return Parse::Syntax(1197),
+                    '>' if open != '<' => return Parse::Syntax(25137),
                     _ => {}
                 }
             }
         }
     }
-    (0, score_stack(&stack))
+    Parse::Incomplete(score_stack(&stack))
 }
 
-impl Solver<&str> for Day10 {
-    fn part1(data: &str) -> Result<String> {
-        let result: usize = data.lines().map(|l| find_corrupt(l).0).sum();
+impl Solver<Vec<Parse>> for Day10 {
+    fn part1(data: Vec<Parse>) -> Result<String> {
+        let result: usize = data
+            .iter()
+            .filter_map(|v| match v {
+                Parse::Syntax(v) => Some(v),
+                _ => None,
+            })
+            .sum();
         Ok(result.to_string())
     }
 
-    fn part2(data: &str) -> Result<String> {
+    fn part2(data: Vec<Parse>) -> Result<String> {
         let mut result: Vec<_> = data
-            .lines()
-            .filter_map(|l| {
-                let (ok, score) = find_corrupt(l);
-                if ok == 0 {
-                    Some(score)
-                } else {
-                    None
-                }
+            .iter()
+            .filter_map(|v| match v {
+                Parse::Incomplete(v) => Some(v),
+                _ => None,
             })
             .collect();
         result.sort_unstable();
@@ -78,13 +93,18 @@ mod tests {
 <{([{{}}[<[[[<>{}]]]>[]]
 ";
 
+    fn get_data() -> Vec<Parse> {
+        let handler = &aoc::InputHandler::new(&DATA);
+        handler.into()
+    }
+
     #[test]
-    fn test_find_corrupt() {
-        assert_eq!(find_corrupt("{([(<{}[<>[]}>{[]{[(<()>").0, 1197);
-        assert_eq!(find_corrupt("[[<[([]))<([[{}[[()]]]").0, 3);
-        assert_eq!(find_corrupt("[{[{({}]{}}([{[{{{}}([]").0, 57);
-        assert_eq!(find_corrupt("[<(<(<(<{}))><([]([]()").0, 3);
-        assert_eq!(find_corrupt("<{([([[(<>()){}]>(<<{{").0, 25137);
+    fn test_parse() {
+        assert_eq!(parse("{([(<{}[<>[]}>{[]{[(<()>"), Parse::Syntax(1197));
+        assert_eq!(parse("[[<[([]))<([[{}[[()]]]"), Parse::Syntax(3));
+        assert_eq!(parse("[{[{({}]{}}([{[{{{}}([]"), Parse::Syntax(57));
+        assert_eq!(parse("[<(<(<(<{}))><([]([]()"), Parse::Syntax(3));
+        assert_eq!(parse("<{([([[(<>()){}]>(<<{{"), Parse::Syntax(25137));
     }
 
     #[test]
@@ -98,11 +118,11 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        assert_eq!(Day10::part1(DATA).unwrap(), "26397");
+        assert_eq!(Day10::part1(get_data()).unwrap(), "26397");
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(Day10::part2(DATA).unwrap(), "288957");
+        assert_eq!(Day10::part2(get_data()).unwrap(), "288957");
     }
 }
