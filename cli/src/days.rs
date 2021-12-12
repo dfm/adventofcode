@@ -13,9 +13,10 @@ use aoc_day08::Day08;
 use aoc_day09::Day09;
 use aoc_day10::Day10;
 use aoc_day11::Day11;
+use aoc_day12::Day12;
 // __USE
 
-pub const MAX_DAY: u8 = 11;
+pub const MAX_DAY: u8 = 12;
 
 macro_rules! run_solver {
     ( $day:tt, $data:expr ) => {
@@ -46,6 +47,7 @@ pub fn run_day_with_data(day: u8, handler: &InputHandler) -> Result<(String, Str
         9 => run_solver!(Day09, handler.into()),
         10 => run_solver!(Day10, handler.into()),
         11 => run_solver!(Day11, handler.into()),
+        12 => run_solver!(Day12, handler.into()),
         // __MATCH
         _ => Err(aoc::Error::NotImplemented.into()),
     }

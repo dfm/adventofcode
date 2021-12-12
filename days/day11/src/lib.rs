@@ -14,8 +14,8 @@ struct Grid {
 impl Grid {
     fn new(data: &str) -> Self {
         let mut energy = [0; SIZE * SIZE];
-        let mn = '0' as u8;
-        let mx = '9' as u8;
+        let mn = b'0';
+        let mx = b'9';
         let data = data
             .chars()
             .filter_map(|c| {

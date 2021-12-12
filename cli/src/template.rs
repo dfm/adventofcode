@@ -73,7 +73,7 @@ fn update_runner(day: u8) -> Result<()> {
             day
         ),
     );
-    let re = Regex::new(r"pub const MAX_DAY: u8 = (\d);")?;
+    let re = Regex::new(r"pub const MAX_DAY: u8 = (\d+);")?;
     let src = re
         .replace(&src, |caps: &regex::Captures| {
             let old_max = (&caps[1]).parse::<u8>().unwrap();
