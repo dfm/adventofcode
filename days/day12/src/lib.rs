@@ -19,12 +19,12 @@ fn can_visit(visited: &HashMap<String, usize>, current: String, max_visit: usize
 fn parse(data: &str) -> Graph {
     let mut graph = Graph::new();
     for line in data.lines() {
-        let mut parts = line.split("-");
+        let mut parts = line.split('-');
         let start = parts.next().unwrap();
         let end = parts.next().unwrap();
-        let target = graph.entry(start.to_string()).or_insert(Vec::new());
+        let target = graph.entry(start.to_string()).or_insert_with(Vec::new);
         target.push(end.to_string());
-        let target = graph.entry(end.to_string()).or_insert(Vec::new());
+        let target = graph.entry(end.to_string()).or_insert_with(Vec::new);
         target.push(start.to_string());
     }
     graph
@@ -45,7 +45,7 @@ fn find_paths(
         let target = visited.entry(current.to_string()).or_insert(0);
         *target += 1;
     }
-    for neighbor in graph.get(&current.clone()).unwrap() {
+    for neighbor in graph.get(&current).unwrap() {
         if !can_visit(&visited, neighbor.clone(), max_visit) {
             continue;
         }
