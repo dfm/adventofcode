@@ -6,9 +6,9 @@ pub struct Day12;
 
 const START: &str = "start";
 const END: &str = "end";
-type Graph = HashMap<String, Vec<String>>;
+type Graph<'a> = HashMap<&'a str, Vec<&'a str>>;
 
-fn can_visit(visited: &HashMap<String, usize>, current: String, max_visit: usize) -> bool {
+fn can_visit(visited: &HashMap<&str, usize>, current: &str, max_visit: usize) -> bool {
     if current == START {
         return false;
     }
@@ -22,44 +22,44 @@ fn parse(data: &str) -> Graph {
         let mut parts = line.split('-');
         let start = parts.next().unwrap();
         let end = parts.next().unwrap();
-        let target = graph.entry(start.to_string()).or_insert_with(Vec::new);
-        target.push(end.to_string());
-        let target = graph.entry(end.to_string()).or_insert_with(Vec::new);
-        target.push(start.to_string());
+        let target = graph.entry(start).or_insert_with(Vec::new);
+        target.push(end);
+        let target = graph.entry(end).or_insert_with(Vec::new);
+        target.push(start);
     }
     graph
 }
 
-fn find_paths(
-    graph: &Graph,
-    visited: &HashMap<String, usize>,
-    current: String,
+fn find_paths<'a>(
+    graph: &Graph<'a>,
+    visited: &HashMap<&str, usize>,
+    current: &'a str,
     max_visit: usize,
-) -> Vec<Vec<String>> {
+) -> Vec<Vec<&'a str>> {
     if current == END {
-        return vec![vec![END.to_string()]];
+        return vec![vec![END]];
     }
     let mut paths = Vec::new();
     let mut visited = visited.clone();
     if current.to_lowercase() == current {
-        let target = visited.entry(current.to_string()).or_insert(0);
+        let target = visited.entry(current).or_insert(0);
         *target += 1;
     }
     for neighbor in graph.get(&current).unwrap() {
-        if !can_visit(&visited, neighbor.clone(), max_visit) {
+        if !can_visit(&visited, neighbor, max_visit) {
             continue;
         }
-        for subpath in find_paths(graph, &visited, neighbor.clone(), max_visit).iter_mut() {
-            subpath.insert(0, current.clone());
+        for subpath in find_paths(graph, &visited, neighbor, max_visit).iter_mut() {
+            subpath.insert(0, current);
             paths.push(subpath.clone());
         }
     }
     paths
 }
 
-fn find_all_paths(graph: &Graph, max_visit: usize) -> Vec<Vec<String>> {
+fn find_all_paths<'a>(graph: &Graph<'a>, max_visit: usize) -> Vec<Vec<&'a str>> {
     let visited = HashMap::new();
-    find_paths(graph, &visited, START.to_string(), max_visit)
+    find_paths(graph, &visited, START, max_visit)
         .into_iter()
         .filter(|p| *p.last().unwrap() == END)
         .collect()
