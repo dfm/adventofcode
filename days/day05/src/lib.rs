@@ -1,4 +1,5 @@
 use anyhow::{Context, Error, Result};
+use aoc::counter::Counter;
 use aoc::solver::Solver;
 use regex::Regex;
 use std::collections::HashMap;
@@ -47,8 +48,7 @@ fn solve(data: Vec<Line>, filter: fn(&Line) -> bool) -> usize {
     let mut points = HashMap::new();
     for line in data.into_iter().filter(filter) {
         for point in line.get_trajectory() {
-            let counter = points.entry(point).or_insert(0);
-            *counter += 1;
+            points.increment(point, 1);
         }
     }
     points.into_values().filter(|&c| c >= 2).count()

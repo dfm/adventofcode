@@ -1,12 +1,21 @@
 use std::collections::HashMap;
 
-pub type Counter<T> = HashMap<T, usize>;
+pub trait Counter<Key: std::hash::Hash + Eq> {
+    fn counter_from_iter(iter: impl Iterator<Item = Key>) -> Self;
+    fn increment(&mut self, key: Key, amount: usize);
+}
 
-pub fn build_counter<T: Eq + std::hash::Hash>(iter: impl Iterator<Item = T>) -> Counter<T> {
-    let mut counter = Counter::new();
-    for item in iter {
-        let target = counter.entry(item).or_insert(0);
-        *target += 1;
+impl<Key: std::hash::Hash + Eq> Counter<Key> for HashMap<Key, usize> {
+    fn counter_from_iter(iter: impl Iterator<Item = Key>) -> Self {
+        let mut counter = Self::new();
+        for item in iter {
+            counter.increment(item, 1);
+        }
+        counter
     }
-    counter
+
+    fn increment(&mut self, key: Key, amount: usize) {
+        let target = self.entry(key).or_insert(0);
+        *target += amount;
+    }
 }

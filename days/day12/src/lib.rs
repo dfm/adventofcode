@@ -1,4 +1,5 @@
 use anyhow::Result;
+use aoc::counter::Counter;
 use aoc::solver::Solver;
 use std::collections::HashMap;
 
@@ -42,8 +43,7 @@ fn find_paths<'a>(
     let mut paths = Vec::new();
     let mut visited = visited.clone();
     if current.to_lowercase() == current {
-        let target = visited.entry(current).or_insert(0);
-        *target += 1;
+        visited.increment(current, 1);
     }
     for neighbor in graph.get(&current).unwrap() {
         if !can_visit(&visited, neighbor, max_visit) {
