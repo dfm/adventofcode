@@ -19,22 +19,30 @@ find your session key. Then save that key to a file called `.aoc` in the root of
 this repo, or as the `AOC_SESSION_KEY` environment variable.
 
 **Downloading data**:
-Once you have your session key set, download the inputs by running:
+Once you have your session key set, download the inputs, run the tests, and run
+with your inputs using:
 
 ```bash
-cargo run download
+make
 ```
 
 **Setting up a new day**:
 To copy the template and boilerplate for a new day, run:
 
 ```bash
-cargo run new
+make new
+```
+
+**Testing the code**:
+To run the unit tests, execute:
+
+```bash
+make test
 ```
 
 **Running the code**:
 To run the solver on your inputs, you can just run:
 
 ```bash
-cargo run
+make run
 ```
