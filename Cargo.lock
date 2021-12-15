@@ -104,7 +104,6 @@ dependencies = [
 name = "aoc-day06"
 version = "0.2021.0"
 dependencies = [
- "anyhow",
  "aoc",
 ]
 

@@ -11,5 +11,4 @@ repository = "https://github.com/dfm/adventofcode"
 doctest = false
 
 [dependencies]
-anyhow = "1.0"
 aoc = { path = "../../aoc" }
