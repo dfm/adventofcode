@@ -54,6 +54,7 @@ dependencies = [
  "aoc-day12",
  "aoc-day13",
  "aoc-day14",
+ "aoc-day15",
  "clap",
  "criterion",
  "regex",
@@ -161,6 +162,13 @@ dependencies = [
 
 [[package]]
 name = "aoc-day14"
+version = "0.2021.0"
+dependencies = [
+ "aoc",
+]
+
+[[package]]
+name = "aoc-day15"
 version = "0.2021.0"
 dependencies = [
  "aoc",

@@ -2,4 +2,4 @@
 opt-level = 3
 
 [workspace]
-members = ["aoc", "cli", "days/day01", "days/day02", "days/day02", "days/day03", "days/day04", "days/day05", "days/day06", "days/day07", "days/day08", "days/day09", "days/day10", "days/day11", "days/day12", "days/day13", "days/day14"]
+members = ["aoc", "cli", "days/day01", "days/day02", "days/day02", "days/day03", "days/day04", "days/day05", "days/day06", "days/day07", "days/day08", "days/day09", "days/day10", "days/day11", "days/day12", "days/day13", "days/day14", "days/day15"]

@@ -1,4 +1,3 @@
-use anyhow::Result;
 use aoc::solver::Solver;
 
 pub struct Day{{ day }};

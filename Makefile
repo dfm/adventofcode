@@ -1,6 +1,6 @@
 default: all
 
-all: format-check lint build test run
+all: format-check lint test run
 
 clean:
 	@cargo clean
