@@ -1,9 +1,8 @@
-use anyhow::Result;
 use aoc::solver::Solver;
 
 pub struct Day03;
 
-fn to_columns(data: &str) -> Result<Vec<Vec<bool>>> {
+fn to_columns(data: &str) -> Vec<Vec<bool>> {
     let lines = data.lines();
     let mut result: Vec<Vec<bool>> = vec![];
     lines.for_each(|line| {
@@ -13,7 +12,7 @@ fn to_columns(data: &str) -> Result<Vec<Vec<bool>>> {
             .zip(line.chars())
             .for_each(|(r, c)| r.push(c == '1'))
     });
-    Ok(result)
+    result
 }
 
 fn from_binary(mask: &[bool]) -> usize {
@@ -57,7 +56,7 @@ fn solve_part2(columns: &[Vec<bool>], cmp: fn(bool, bool) -> bool) -> usize {
 
 impl Solver<&str> for Day03 {
     fn part1(data: &str) -> usize {
-        let columns = to_columns(data).unwrap();
+        let columns = to_columns(data);
         let most_common = columns
             .iter()
             .map(|v| get_most_common(v))
@@ -68,7 +67,7 @@ impl Solver<&str> for Day03 {
     }
 
     fn part2(data: &str) -> usize {
-        let columns = to_columns(data).unwrap();
+        let columns = to_columns(data);
         let o2 = solve_part2(&columns, |a, b| a == b);
         let co2 = solve_part2(&columns, |a, b| a != b);
         co2 * o2
