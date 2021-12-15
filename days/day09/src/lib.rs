@@ -1,4 +1,3 @@
-use anyhow::Result;
 use aoc::solver::Solver;
 
 pub struct Day09;
@@ -76,12 +75,11 @@ impl Grid {
 }
 
 impl Solver<&str> for Day09 {
-    fn part1(data: &str) -> Result<String> {
-        let grid = Grid::new(data);
-        Ok(grid.find_minima().0.to_string())
+    fn part1(data: &str) -> usize {
+        Grid::new(data).find_minima().0
     }
 
-    fn part2(data: &str) -> Result<String> {
+    fn part2(data: &str) -> usize {
         let mut grid = Grid::new(data);
         let (_, minima) = grid.find_minima();
         let mut sizes = Vec::new();
@@ -89,8 +87,7 @@ impl Solver<&str> for Day09 {
             sizes.push(grid.expand_basin(x, y));
         }
         sizes.sort_unstable();
-        let result: usize = sizes.iter().rev().take(3).product();
-        Ok(result.to_string())
+        sizes.iter().rev().take(3).product()
     }
 }
 
@@ -107,11 +104,11 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        assert_eq!(Day09::part1(TEST_DATA).unwrap(), "15");
+        assert_eq!(Day09::part1(TEST_DATA), 15);
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(Day09::part2(TEST_DATA).unwrap(), "1134");
+        assert_eq!(Day09::part2(TEST_DATA), 1134);
     }
 }

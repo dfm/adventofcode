@@ -30,17 +30,17 @@ impl std::str::FromStr for Instr {
     }
 }
 
-impl Solver<Vec<Instr>> for Day02 {
-    fn part1(data: Vec<Instr>) -> Result<String> {
+impl Solver<Vec<Instr>, i32> for Day02 {
+    fn part1(data: Vec<Instr>) -> i32 {
         let result = data.iter().fold((0, 0), |(x, y), instr| match instr.0 {
             Dir::Forward => (x + instr.1, y),
             Dir::Down => (x, y + instr.1),
             Dir::Up => (x, y - instr.1),
         });
-        Ok(format!("{}", result.0 * result.1))
+        result.0 * result.1
     }
 
-    fn part2(data: Vec<Instr>) -> Result<String> {
+    fn part2(data: Vec<Instr>) -> i32 {
         let result = data
             .iter()
             .fold((0, 0, 0), |(aim, x, y), instr| match instr.0 {
@@ -48,7 +48,7 @@ impl Solver<Vec<Instr>> for Day02 {
                 Dir::Down => (aim + instr.1, x, y),
                 Dir::Up => (aim - instr.1, x, y),
             });
-        Ok(format!("{}", result.1 * result.2))
+        result.1 * result.2
     }
 }
 
@@ -83,12 +83,12 @@ forward 2
     #[test]
     fn test_part1() {
         let data = get_data();
-        assert_eq!(Day02::part1(data).unwrap(), "150");
+        assert_eq!(Day02::part1(data), 150);
     }
 
     #[test]
     fn test_part2() {
         let data = get_data();
-        assert_eq!(Day02::part2(data).unwrap(), "900");
+        assert_eq!(Day02::part2(data), 900);
     }
 }

@@ -1,4 +1,3 @@
-use anyhow::Result;
 use aoc::solver::Solver;
 
 pub struct Day11;
@@ -121,16 +120,14 @@ impl std::fmt::Display for Grid {
 }
 
 impl Solver<&str> for Day11 {
-    fn part1(data: &str) -> Result<String> {
+    fn part1(data: &str) -> usize {
         let mut grid = Grid::new(data);
-        let result: usize = (0..100).map(|_| grid.step()).sum();
-        Ok(result.to_string())
+        (0..100).map(|_| grid.step()).sum()
     }
 
-    fn part2(data: &str) -> Result<String> {
+    fn part2(data: &str) -> usize {
         let mut grid = Grid::new(data);
-        let result = (1..).find(|_| grid.step() == SIZE * SIZE).unwrap();
-        Ok(result.to_string())
+        (1..).find(|_| grid.step() == SIZE * SIZE).unwrap()
     }
 }
 
@@ -152,11 +149,11 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        assert_eq!(Day11::part1(DATA).unwrap(), "1656");
+        assert_eq!(Day11::part1(DATA), 1656);
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(Day11::part2(DATA).unwrap(), "195");
+        assert_eq!(Day11::part2(DATA), 195);
     }
 }

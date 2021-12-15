@@ -22,12 +22,15 @@ pub const MAX_DAY: u8 = 14;
 
 macro_rules! run_solver {
     ( $day:tt, $data:expr ) => {
-        Ok(($day::part1($data)?, $day::part2($data)?))
+        (
+            $day::part1($data).to_string(),
+            $day::part2($data).to_string(),
+        )
     };
 }
 
-pub fn run_day(day: u8) -> Result<(String, String)> {
-    let handler = load_data(day)?;
+pub fn run_day(day: u8) -> (String, String) {
+    let handler = load_data(day).unwrap();
     run_day_with_data(day, &handler)
 }
 
@@ -36,7 +39,7 @@ pub fn load_data(day: u8) -> Result<InputHandler> {
     InputHandler::from_file(&filename)
 }
 
-pub fn run_day_with_data(day: u8, handler: &InputHandler) -> Result<(String, String)> {
+pub fn run_day_with_data(day: u8, handler: &InputHandler) -> (String, String) {
     match day {
         1 => run_solver!(Day01, handler.into()),
         2 => run_solver!(Day02, handler.into()),
@@ -53,6 +56,6 @@ pub fn run_day_with_data(day: u8, handler: &InputHandler) -> Result<(String, Str
         13 => run_solver!(Day13, handler.into()),
         14 => run_solver!(Day14, handler.into()),
         // __MATCH
-        _ => Err(aoc::Error::NotImplemented.into()),
+        _ => unreachable!(),
     }
 }

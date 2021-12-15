@@ -1,4 +1,3 @@
-use anyhow::Result;
 use aoc::solver::Solver;
 use regex::Regex;
 use std::collections::HashSet;
@@ -97,17 +96,17 @@ impl std::fmt::Display for Paper {
     }
 }
 
-impl Solver<&str> for Day13 {
-    fn part1(data: &str) -> Result<String> {
+impl Solver<&str, usize, String> for Day13 {
+    fn part1(data: &str) -> usize {
         let mut paper = Paper::new(data);
         paper.fold(paper.folds[0]);
-        Ok(paper.unique().len().to_string())
+        paper.unique().len()
     }
 
-    fn part2(data: &str) -> Result<String> {
+    fn part2(data: &str) -> String {
         let mut paper = Paper::new(data);
         paper.folds();
-        Ok(paper.to_string())
+        paper.to_string()
     }
 }
 
@@ -140,14 +139,11 @@ fold along x=5
 
     #[test]
     fn test_part1() {
-        assert_eq!(Day13::part1(DATA).unwrap(), "17")
+        assert_eq!(Day13::part1(DATA), 17)
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(
-            Day13::part2(DATA).unwrap(),
-            "\n#####\n#...#\n#...#\n#...#\n#####\n"
-        )
+        assert_eq!(Day13::part2(DATA), "\n#####\n#...#\n#...#\n#...#\n#####\n")
     }
 }

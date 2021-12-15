@@ -1,4 +1,3 @@
-use anyhow::Result;
 use aoc::counter::Counter;
 use aoc::solver::Solver;
 use std::collections::HashMap;
@@ -83,12 +82,12 @@ fn solve(data: &str, num_iter: usize) -> usize {
 }
 
 impl Solver<&str> for Day14 {
-    fn part1(data: &str) -> Result<String> {
-        Ok(solve(data, 10).to_string())
+    fn part1(data: &str) -> usize {
+        solve(data, 10)
     }
 
-    fn part2(data: &str) -> Result<String> {
-        Ok(solve(data, 40).to_string())
+    fn part2(data: &str) -> usize {
+        solve(data, 40)
     }
 }
 
@@ -118,11 +117,11 @@ CN -> C
 
     #[test]
     fn test_part1() {
-        assert_eq!(Day14::part1(DATA).unwrap(), "1588");
+        assert_eq!(Day14::part1(DATA), 1588);
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(Day14::part2(DATA).unwrap(), "2188189693529");
+        assert_eq!(Day14::part2(DATA), 2188189693529);
     }
 }

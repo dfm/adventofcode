@@ -51,18 +51,16 @@ fn parse(line: &str) -> Parse {
 }
 
 impl Solver<Vec<Parse>> for Day10 {
-    fn part1(data: Vec<Parse>) -> Result<String> {
-        let result: usize = data
-            .iter()
+    fn part1(data: Vec<Parse>) -> usize {
+        data.iter()
             .filter_map(|v| match v {
                 Parse::Syntax(v) => Some(v),
                 _ => None,
             })
-            .sum();
-        Ok(result.to_string())
+            .sum()
     }
 
-    fn part2(data: Vec<Parse>) -> Result<String> {
+    fn part2(data: Vec<Parse>) -> usize {
         let mut result: Vec<_> = data
             .iter()
             .filter_map(|v| match v {
@@ -71,9 +69,7 @@ impl Solver<Vec<Parse>> for Day10 {
             })
             .collect();
         result.sort_unstable();
-        let result = result[result.len() / 2];
-
-        Ok(result.to_string())
+        *result[result.len() / 2]
     }
 }
 
@@ -118,11 +114,11 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        assert_eq!(Day10::part1(get_data()).unwrap(), "26397");
+        assert_eq!(Day10::part1(get_data()), 26397);
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(Day10::part2(get_data()).unwrap(), "288957");
+        assert_eq!(Day10::part2(get_data()), 288957);
     }
 }

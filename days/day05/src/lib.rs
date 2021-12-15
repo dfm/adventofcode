@@ -55,12 +55,12 @@ fn solve(data: Vec<Line>, filter: fn(&Line) -> bool) -> usize {
 }
 
 impl Solver<Vec<Line>> for Day05 {
-    fn part1(data: Vec<Line>) -> Result<String> {
-        Ok(solve(data, |&line| line.0.x == line.1.x || line.0.y == line.1.y).to_string())
+    fn part1(data: Vec<Line>) -> usize {
+        solve(data, |&line| line.0.x == line.1.x || line.0.y == line.1.y)
     }
 
-    fn part2(data: Vec<Line>) -> Result<String> {
-        Ok(solve(data, |&_| true).to_string())
+    fn part2(data: Vec<Line>) -> usize {
+        solve(data, |&_| true)
     }
 }
 
@@ -96,12 +96,12 @@ mod tests {
     #[test]
     fn test_part1() {
         let data = get_data();
-        assert_eq!(Day05::part1(data).unwrap(), "5");
+        assert_eq!(Day05::part1(data), 5);
     }
 
     #[test]
     fn test_part2() {
         let data = get_data();
-        assert_eq!(Day05::part2(data).unwrap(), "12");
+        assert_eq!(Day05::part2(data), 12);
     }
 }

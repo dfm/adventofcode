@@ -4,22 +4,28 @@ use aoc::solver::Solver;
 pub struct Day{{ day }};
 
 impl Solver<&str> for Day{{ day }} {
-    fn part1(_data: &str) -> Result<String> {
-        Ok("not implemented".to_string())
+    fn part1(data: &str) -> usize {
+        0
     }
 
-    fn part2(_data: &str) -> Result<String> {
-        Ok("not implemented".to_string())
+    fn part2(data: &str) -> usize {
+        0
     }
 }
 
 #[cfg(test)]
 mod tests {
-    // use super::*;
+    use super::*;
 
-    // #[test]
-    // fn test_part1() {}
+    const DATA: &str = "";
 
-    // #[test]
-    // fn test_part2() {}
+    #[test]
+    fn test_part1() {
+        assert_eq!(Day{{ day }}::part1(DATA), 0);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(Day{{ day }}::part2(DATA), 0);
+    }
 }

@@ -1,4 +1,3 @@
-use anyhow::Result;
 use aoc::counter::Counter;
 use aoc::solver::Solver;
 use std::collections::HashMap;
@@ -66,16 +65,14 @@ fn find_all_paths<'a>(graph: &Graph<'a>, max_visit: usize) -> Vec<Vec<&'a str>> 
 }
 
 impl Solver<&str> for Day12 {
-    fn part1(data: &str) -> Result<String> {
+    fn part1(data: &str) -> usize {
         let graph = parse(data);
-        let paths = find_all_paths(&graph, 1);
-        Ok(paths.len().to_string())
+        find_all_paths(&graph, 1).len()
     }
 
-    fn part2(data: &str) -> Result<String> {
+    fn part2(data: &str) -> usize {
         let graph = parse(data);
-        let paths = find_all_paths(&graph, 2);
-        Ok(paths.len().to_string())
+        find_all_paths(&graph, 2).len()
     }
 }
 
@@ -125,15 +122,15 @@ start-RW
 
     #[test]
     fn test_part1() {
-        assert_eq!(Day12::part1(DATA1).unwrap(), "10");
-        assert_eq!(Day12::part1(DATA2).unwrap(), "19");
-        assert_eq!(Day12::part1(DATA3).unwrap(), "226");
+        assert_eq!(Day12::part1(DATA1), 10);
+        assert_eq!(Day12::part1(DATA2), 19);
+        assert_eq!(Day12::part1(DATA3), 226);
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(Day12::part2(DATA1).unwrap(), "36");
-        assert_eq!(Day12::part2(DATA2).unwrap(), "103");
-        assert_eq!(Day12::part2(DATA3).unwrap(), "3509");
+        assert_eq!(Day12::part2(DATA1), 36);
+        assert_eq!(Day12::part2(DATA2), 103);
+        assert_eq!(Day12::part2(DATA3), 3509);
     }
 }

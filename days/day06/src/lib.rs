@@ -1,4 +1,3 @@
-use anyhow::Result;
 use aoc::solver::Solver;
 
 pub struct Day06;
@@ -29,12 +28,12 @@ fn solve(n: usize, data: &str) -> usize {
 }
 
 impl Solver<&str> for Day06 {
-    fn part1(data: &str) -> Result<String> {
-        Ok(solve(80, data).to_string())
+    fn part1(data: &str) -> usize {
+        solve(80, data)
     }
 
-    fn part2(data: &str) -> Result<String> {
-        Ok(solve(256, data).to_string())
+    fn part2(data: &str) -> usize {
+        solve(256, data)
     }
 }
 
@@ -53,12 +52,12 @@ mod tests {
     #[test]
     fn test_part1() {
         let data = "3,4,3,1,2";
-        assert_eq!(Day06::part1(&data).unwrap(), "5934");
+        assert_eq!(Day06::part1(&data), 5934);
     }
 
     #[test]
     fn test_part2() {
         let data = "3,4,3,1,2";
-        assert_eq!(Day06::part2(&data).unwrap(), "26984457539");
+        assert_eq!(Day06::part2(&data), 26984457539);
     }
 }

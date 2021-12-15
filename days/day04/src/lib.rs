@@ -1,34 +1,33 @@
-use anyhow::Result;
 use aoc::solver::Solver;
 
 pub struct Day04;
 type Int = u32;
 const SIZE: usize = 5;
 
-impl Solver<&str> for Day04 {
-    fn part1(data: &str) -> Result<String> {
+impl Solver<&str, u32> for Day04 {
+    fn part1(data: &str) -> u32 {
         let (draws, mut cards) = parse(data);
         for &n in draws.iter() {
             for card in cards.iter_mut() {
                 card.mark(n);
                 if card.check() {
-                    return Ok((card.score() * n).to_string());
+                    return card.score() * n;
                 }
             }
         }
-        Ok("Something went wrong".to_string())
+        unreachable!();
     }
 
-    fn part2(data: &str) -> Result<String> {
+    fn part2(data: &str) -> u32 {
         let (draws, mut cards) = parse(data);
         for &n in draws.iter() {
             cards.iter_mut().for_each(|c| c.mark(n));
             if cards.len() == 1 && cards[0].check() {
-                return Ok((cards[0].score() * n).to_string());
+                return cards[0].score() * n;
             }
             cards = cards.into_iter().filter(|c| !c.check()).collect();
         }
-        Ok("Something went wrong".to_string())
+        unreachable!();
     }
 }
 
@@ -171,13 +170,13 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        let result = Day04::part1(&TEST_DATA).unwrap();
-        assert_eq!(result, "4512");
+        let result = Day04::part1(&TEST_DATA);
+        assert_eq!(result, 4512);
     }
 
     #[test]
     fn test_part2() {
-        let result = Day04::part2(&TEST_DATA).unwrap();
-        assert_eq!(result, "1924");
+        let result = Day04::part2(&TEST_DATA);
+        assert_eq!(result, 1924);
     }
 }

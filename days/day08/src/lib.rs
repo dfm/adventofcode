@@ -1,4 +1,3 @@
-use anyhow::Result;
 use aoc::solver::Solver;
 use std::collections::HashMap;
 
@@ -52,7 +51,7 @@ fn solve_one(mapper: &Map, line: &str) -> usize {
 }
 
 impl Solver<&str> for Day08 {
-    fn part1(data: &str) -> Result<String> {
+    fn part1(data: &str) -> usize {
         let result: usize = data
             .lines()
             .map(|l| {
@@ -69,13 +68,12 @@ impl Solver<&str> for Day08 {
                     .count()
             })
             .sum();
-        Ok(result.to_string())
+        result
     }
 
-    fn part2(data: &str) -> Result<String> {
+    fn part2(data: &str) -> usize {
         let mapper = get_mapper();
-        let result: usize = data.lines().map(|l| solve_one(&mapper, l)).sum();
-        Ok(result.to_string())
+        data.lines().map(|l| solve_one(&mapper, l)).sum()
     }
 }
 
@@ -106,11 +104,11 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
 
     #[test]
     fn test_part1() {
-        assert_eq!(Day08::part1(&TEST_DATA).unwrap(), "26");
+        assert_eq!(Day08::part1(&TEST_DATA), 26);
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(Day08::part2(&TEST_DATA).unwrap(), "61229");
+        assert_eq!(Day08::part2(&TEST_DATA), 61229);
     }
 }

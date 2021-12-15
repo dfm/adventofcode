@@ -56,22 +56,22 @@ fn solve_part2(columns: &[Vec<bool>], cmp: fn(bool, bool) -> bool) -> usize {
 }
 
 impl Solver<&str> for Day03 {
-    fn part1(data: &str) -> Result<String> {
-        let columns = to_columns(data)?;
+    fn part1(data: &str) -> usize {
+        let columns = to_columns(data).unwrap();
         let most_common = columns
             .iter()
             .map(|v| get_most_common(v))
             .collect::<Vec<bool>>();
         let eps = from_binary(&most_common);
         let gamma = from_binary(&(most_common.iter().map(|&x| !x).collect::<Vec<bool>>()));
-        Ok(format!("{}", eps * gamma))
+        eps * gamma
     }
 
-    fn part2(data: &str) -> Result<String> {
-        let columns = to_columns(data)?;
+    fn part2(data: &str) -> usize {
+        let columns = to_columns(data).unwrap();
         let o2 = solve_part2(&columns, |a, b| a == b);
         let co2 = solve_part2(&columns, |a, b| a != b);
-        Ok(format!("{}", co2 * o2))
+        co2 * o2
     }
 }
 
@@ -94,7 +94,7 @@ mod tests {
 00010
 01010
 ";
-        assert_eq!(Day03::part1(&data).unwrap(), "198");
+        assert_eq!(Day03::part1(&data), 198);
     }
 
     #[test]
@@ -112,6 +112,6 @@ mod tests {
 00010
 01010
 ";
-        assert_eq!(Day03::part2(&data).unwrap(), "230");
+        assert_eq!(Day03::part2(&data), 230);
     }
 }
