@@ -103,15 +103,11 @@ impl<'a> Bits<'a> {
         value
     }
 
-    fn read_chunk(&mut self) -> (bool, usize) {
-        let flag = self.next().unwrap();
-        (flag, self.read_var_width(4))
-    }
-
     fn read_literal(&mut self) -> usize {
         let mut value = 0;
         loop {
-            let (flag, next_value) = self.read_chunk();
+            let flag = self.next().unwrap();
+            let next_value = self.read_var_width(4);
             value += next_value;
             if !flag {
                 break;
