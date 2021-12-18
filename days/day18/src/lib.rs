@@ -41,10 +41,7 @@ impl Token {
     }
 
     fn is_literal(&self) -> bool {
-        match self {
-            Token::Literal(_) => true,
-            _ => false,
-        }
+        matches!(self, Token::Literal(_))
     }
 
     fn split(self) -> (bool, Token) {
