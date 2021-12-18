@@ -11,26 +11,6 @@ struct Target {
     ymax: i32,
 }
 
-struct State {
-    x: i32,
-    y: i32,
-    vx: i32,
-    vy: i32,
-}
-
-impl State {
-    fn new(vx: i32, vy: i32) -> Self {
-        Self { x: 0, y: 0, vx, vy }
-    }
-
-    fn step(&mut self) {
-        self.x += self.vx;
-        self.y += self.vy;
-        self.vx -= self.vx.signum();
-        self.vy -= 1;
-    }
-}
-
 impl Target {
     fn new(data: &str) -> Self {
         let re = Regex::new("^target area: x=(?P<x1>-?[0-9]+)..(?P<x2>-?[0-9]+), y=(?P<y1>-?[0-9]+)..(?P<y2>-?[0-9]+)$").unwrap();
@@ -47,7 +27,7 @@ impl Target {
         }
     }
 
-    fn max_height(&self) -> i32 {
+    fn get_max_height(&self) -> i32 {
         let vy = -self.ymin - 1;
         vy * vy - vy * (vy - 1) / 2
     }
@@ -60,7 +40,7 @@ impl Target {
         let mut count = 0;
         for vx in vx_min..=vx_max {
             for vy in vy_min..=vy_max {
-                if self.integrate(vx, vy).is_some() {
+                if self.check_vel(vx, vy) {
                     count += 1;
                 }
             }
@@ -68,28 +48,43 @@ impl Target {
         count
     }
 
-    fn hits(&self, x: i32, y: i32) -> bool {
-        (self.xmin <= x) && (x <= self.xmax) && (self.ymin <= y) && (y <= self.ymax)
+    fn solve_for_time(&self, vy: i32, y: i32) -> Option<i32> {
+        let vy = vy as f32;
+        let y = y as f32;
+        let b = 2.0 * vy + 1.0;
+        let arg = b * b - 8.0 * y;
+        if arg < 0.0 {
+            None
+        } else {
+            Some((0.5 * (b + arg.sqrt())) as i32)
+        }
     }
 
-    fn integrate(&self, vx: i32, vy: i32) -> Option<i32> {
-        let mut max = 0;
-        let mut state = State::new(vx, vy);
-        while (state.x <= self.xmax) && (state.y >= self.ymin) {
-            state.step();
-            max = std::cmp::max(max, state.y);
-            if self.hits(state.x, state.y) {
-                return Some(max);
+    fn check_vel(&self, vx: i32, vy: i32) -> bool {
+        if let Some(tmin) = self.solve_for_time(vy, self.ymax) {
+            if let Some(tmax) = self.solve_for_time(vy, self.ymin) {
+                for t in tmin..=tmax {
+                    let tx = std::cmp::min(vx, t);
+                    let x = vx * tx - vx.signum() * tx * (tx - 1) / 2;
+                    let y = vy * t - t * (t - 1) / 2;
+                    if self.check_pos(x, y) {
+                        return true;
+                    }
+                }
             }
         }
-        None
+        false
+    }
+
+    fn check_pos(&self, x: i32, y: i32) -> bool {
+        (self.xmin <= x) && (x <= self.xmax) && (self.ymin <= y) && (y <= self.ymax)
     }
 }
 
 impl Solver<&str, i32, usize> for Day17 {
     fn part1(data: &str) -> i32 {
         let target = Target::new(data);
-        target.max_height()
+        target.get_max_height()
     }
 
     fn part2(data: &str) -> usize {
@@ -107,10 +102,10 @@ mod tests {
     #[test]
     fn test_integrate() {
         let target = Target::new(DATA);
-        assert_eq!(target.integrate(6, 3), Some(6));
-        assert_eq!(target.integrate(9, 0), Some(0));
-        assert_eq!(target.integrate(17, -4), None);
-        assert_eq!(target.integrate(6, 9), Some(45));
+        assert_eq!(target.check_vel(6, 3), true);
+        assert_eq!(target.check_vel(9, 0), true);
+        assert_eq!(target.check_vel(17, -4), false);
+        assert_eq!(target.check_vel(6, 9), true);
     }
 
     #[test]

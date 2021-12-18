@@ -24,7 +24,7 @@ lint:
 	@cargo clippy -- -D warnings
 
 bench:
-	@cargo run
+	@cargo bench
 
 run:
 	@cargo run
