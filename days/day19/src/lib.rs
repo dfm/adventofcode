@@ -376,3 +376,67 @@ mod tests {
         assert_eq!(Day19::part2(DATA), 3621);
     }
 }
+
+// // Alternative implementation:
+// use aoc::counter::Counter;
+// use std::iter::FromIterator;
+
+// type Coord = (i32, i32, i32);
+// type Rotation = (u8, u8, u8);
+
+// fn diff(x: &Coord, y: &Coord) -> Coord {
+//     (x.0 - y.0, x.1 - y.1, x.2 - y.2)
+// }
+
+// fn rotate(coord: &Coord, rotation: &Rotation) -> Coord {
+//     let x = coord.0;
+//     let y = coord.1;
+//     let z = coord.2;
+//     let (y, z) = rotate_impl(y, z, rotation.0);
+//     let (x, z) = rotate_impl(x, z, rotation.1);
+//     let (x, y) = rotate_impl(x, y, rotation.2);
+//     (x, y, z)
+// }
+
+// fn rotate_impl(x: i32, y: i32, angle: u8) -> (i32, i32) {
+//     match angle % 4 {
+//         0 => (x, y),
+//         1 => (-y, x),
+//         2 => (-x, -y),
+//         3 => (y, -x),
+//         _ => unreachable!(),
+//     }
+// }
+
+// fn count_delta(
+//     rotation: &Rotation,
+//     reference: &[Coord],
+//     target: &[Coord],
+// ) -> HashMap<Coord, usize> {
+//     let mut counter = HashMap::new();
+//     for x in target.iter() {
+//         let x = rotate(x, rotation);
+//         for y in reference.iter() {
+//             counter.increment(diff(&x, y), 1);
+//         }
+//     }
+//     counter
+// }
+
+// fn align_data(reference: &[Coord], target: &[Coord]) -> Option<HashSet<Coord>> {
+//     for rx in 0..4 {
+//         for ry in 0..4 {
+//             for rz in 0..4 {
+//                 let counter = count_delta(&(rx, ry, rz), reference, target);
+//                 if let Some((x, _)) = counter.iter().find(|(_, &n)| n >= 12) {
+//                     let mut result = HashSet::from_iter(reference.iter().cloned());
+//                     for y in target.iter() {
+//                         result.insert(diff(&rotate(y, &(rx, ry, rz)), x));
+//                     }
+//                     return Some(result);
+//                 }
+//             }
+//         }
+//     }
+//     None
+// }
