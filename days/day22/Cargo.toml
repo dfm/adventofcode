@@ -1,0 +1,16 @@
+[package]
+name = "aoc-day22"
+version = "0.2021.0"
+authors = ["Dan F-M <foreman.mackey@gmail.com>"]
+edition = "2018"
+license = "Apache-2.0"
+description = "Holiday hacking"
+repository = "https://github.com/dfm/adventofcode"
+
+[lib]
+doctest = false
+
+[dependencies]
+regex = "1.5"
+anyhow = "1.0"
+aoc = { path = "../../aoc" }
