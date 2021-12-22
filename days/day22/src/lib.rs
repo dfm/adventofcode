@@ -1,37 +1,23 @@
 use anyhow::{Context, Error, Result};
 use aoc::solver::Solver;
 use regex::Regex;
-use std::collections::HashSet;
 
 pub struct Day22;
 
 type Segment = (i64, i64);
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 pub struct Cube {
-    flip: bool,
-    x: Segment,
-    y: Segment,
-    z: Segment,
-}
-
-impl Cube {
-    fn fully_contains(&self, x: &Segment, y: &Segment, z: &Segment) -> bool {
-        (self.x.0 <= x.0)
-            && (x.1 <= self.x.1 + 1)
-            && (self.y.0 <= y.0)
-            && (y.1 <= self.y.1 + 1)
-            && (self.z.0 <= z.0)
-            && (z.1 <= self.z.1 + 1)
-    }
+    on: bool,
+    edges: Vec<Segment>,
 }
 
 impl std::str::FromStr for Cube {
     type Err = Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let re = Regex::new("^(?P<flip>[a-z]+) x=(?P<x1>-?[0-9]+)..(?P<x2>-?[0-9]+),y=(?P<y1>-?[0-9]+)..(?P<y2>-?[0-9]+),z=(?P<z1>-?[0-9]+)..(?P<z2>-?[0-9]+)$")?;
+        let re = Regex::new("^(?P<on>[a-z]+) x=(?P<x1>-?[0-9]+)..(?P<x2>-?[0-9]+),y=(?P<y1>-?[0-9]+)..(?P<y2>-?[0-9]+),z=(?P<z1>-?[0-9]+)..(?P<z2>-?[0-9]+)$")?;
         let c = re.captures(s).context("Matching regex")?;
-        let flip = c.name("flip").context("Parsing flip")?.as_str() == "on";
+        let on = c.name("on").context("Parsing flip")?.as_str() == "on";
         let x1 = c.name("x1").context("Parsing x1")?.as_str().parse()?;
         let x2 = c.name("x2").context("Parsing x2")?.as_str().parse()?;
         let y1 = c.name("y1").context("Parsing y1")?.as_str().parse()?;
@@ -39,66 +25,65 @@ impl std::str::FromStr for Cube {
         let z1 = c.name("z1").context("Parsing z1")?.as_str().parse()?;
         let z2 = c.name("z2").context("Parsing z2")?.as_str().parse()?;
         Ok(Cube {
-            flip,
-            x: (x1, x2),
-            y: (y1, y2),
-            z: (z1, z2),
+            on,
+            edges: vec![(x1, x2), (y1, y2), (z1, z2)],
         })
     }
 }
 
-fn isout(segment: Segment) -> bool {
-    let a = segment.0;
-    let b = segment.1;
-    ((a < -50) && (b < -50)) || ((a > 50) && (b > 50))
-}
-
-fn solve(data: Vec<Cube>) -> usize {
-    let mut count = 0;
-    let xs = build_grid(data.iter().map(|c| c.x));
-    println!("{}", xs.len());
-    let ys = build_grid(data.iter().map(|c| c.y));
-    let zs = build_grid(data.iter().map(|c| c.z));
-    for (x, dx) in xs.iter() {
-        for (y, dy) in ys.iter() {
-            for (z, dz) in zs.iter() {
-                for cube in data.iter().rev() {
-                    if cube.fully_contains(x, y, z) {
-                        if cube.flip {
-                            count += dx * dy * dz;
-                        }
-                        break;
-                    }
-                }
-            }
+impl Cube {
+    fn intersect(&self, other: &Self) -> Option<Self> {
+        let edges = self
+            .edges
+            .iter()
+            .zip(&other.edges)
+            .map(|(&(a1, a2), &(b1, b2))| (a1.max(b1), a2.min(b2)))
+            .collect::<Vec<_>>();
+        if edges.iter().any(|&e| e.0 > e.1) {
+            None
+        } else {
+            Some(Self {
+                on: !self.on,
+                edges,
+            })
         }
     }
-    count
-}
 
-fn build_grid(points: impl Iterator<Item = Segment>) -> Vec<((i64, i64), usize)> {
-    let mut xs = HashSet::new();
-    for s in points {
-        xs.insert(s.0);
-        xs.insert(s.1 + 1);
+    fn volume(&self) -> i64 {
+        let volume = self.edges.iter().map(|&(a, b)| b - a + 1).product();
+        if self.on {
+            volume
+        } else {
+            -volume
+        }
     }
-    let mut xs = xs.into_iter().collect::<Vec<_>>();
-    xs.sort_unstable();
-    xs.windows(2)
-        .map(|w| ((w[0], w[1]), (w[1] - w[0]) as usize))
-        .collect()
 }
 
-impl Solver<Vec<Cube>> for Day22 {
-    fn part1(data: Vec<Cube>) -> usize {
+fn solve(data: Vec<Cube>) -> i64 {
+    let mut cubes: Vec<Cube> = Vec::new();
+    for cube in data {
+        for n in 0..cubes.len() {
+            if let Some(inter) = cubes[n].intersect(&cube) {
+                cubes.push(inter);
+            }
+        }
+        if cube.on {
+            cubes.push(cube);
+        }
+    }
+    cubes.iter().map(Cube::volume).sum()
+}
+
+impl Solver<Vec<Cube>, i64> for Day22 {
+    fn part1(data: Vec<Cube>) -> i64 {
         let data = data
             .into_iter()
-            .filter(|c| !(isout(c.x) || isout(c.y) || isout(c.z)))
+            .filter(|c| c.edges.iter().all(|&e| -50 <= e.0 && e.1 <= 50))
             .collect::<Vec<_>>();
         solve(data)
     }
 
-    fn part2(data: Vec<Cube>) -> usize {
+    fn part2(data: Vec<Cube>) -> i64 {
         solve(data)
     }
 }
