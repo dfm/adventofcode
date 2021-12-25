@@ -303,9 +303,6 @@ impl Solver<&str> for Day23 {
     }
 }
 
-// #D#C#B#A#
-// #D#B#A#C#
-
 #[cfg(test)]
 mod tests {
     use super::*;

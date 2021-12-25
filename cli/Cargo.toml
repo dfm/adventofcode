@@ -41,6 +41,8 @@ aoc-day20 = { path = "../days/day20" }
 aoc-day21 = { path = "../days/day21" }
 aoc-day22 = { path = "../days/day22" }
 aoc-day23 = { path = "../days/day23" }
+aoc-day24 = { path = "../days/day24" }
+aoc-day25 = { path = "../days/day25" }
 
 [[bench]]
 name = "benchmark"
