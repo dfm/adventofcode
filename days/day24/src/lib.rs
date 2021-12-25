@@ -23,7 +23,7 @@ fn reverse_engineer(params: &[(Int, Int)], target: Int) -> Vec<Vec<(Int, Int)>> 
     let mut results = Vec::new();
     if let Some((&(a, c), rest)) = params.split_first() {
         if let Some(next_target) = get_params_for_output(a, c, target) {
-            if rest.len() == 0 {
+            if rest.is_empty() {
                 return vec![next_target];
             }
             for t in next_target {
@@ -41,16 +41,17 @@ fn reverse_engineer(params: &[(Int, Int)], target: Int) -> Vec<Vec<(Int, Int)>> 
 fn solve(data: &str) -> (Int, Int) {
     let a = data
         .lines()
-        .skip(5)
+        .rev()
+        .skip(12)
         .step_by(18)
         .map(|l| l.split_whitespace().last().unwrap().parse().unwrap());
     let c = data
         .lines()
-        .skip(15)
+        .rev()
+        .skip(2)
         .step_by(18)
         .map(|l| l.split_whitespace().last().unwrap().parse().unwrap());
     let params: Vec<(Int, Int)> = a.zip(c).collect();
-    let params: Vec<(Int, Int)> = params.into_iter().rev().collect();
     let results = reverse_engineer(&params, 0);
     results
         .iter()
