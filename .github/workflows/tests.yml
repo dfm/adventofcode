@@ -1,10 +1,9 @@
 name: Tests
-
 on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+    branches:
 
 jobs:
   test:
@@ -17,6 +16,15 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: tests-${{ hashFiles('**/Cargo.lock') }}
       - uses: actions-rs/cargo@v1
         with:
           command: test
@@ -33,6 +41,15 @@ jobs:
           toolchain: stable
           override: true
           components: rustfmt, clippy
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: lint-${{ hashFiles('**/Cargo.lock') }}
       - uses: actions-rs/cargo@v1
         with:
           command: fmt
