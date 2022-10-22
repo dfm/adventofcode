@@ -2,7 +2,6 @@ use anyhow::Result;
 use clap::Parser;
 use std::fs;
 use std::path::PathBuf;
-use toml_edit;
 
 fn get_path(year: usize, day: usize) -> PathBuf {
     let path = PathBuf::new();
