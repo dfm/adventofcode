@@ -51,6 +51,6 @@ where
 
 impl From<Input> for String {
     fn from(reader: Input) -> Self {
-        reader.data.to_string()
+        reader.data.clone()
     }
 }

@@ -19,6 +19,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "aoc-2022-1"
+version = "0.2022.0"
+dependencies = [
+ "aoc",
+]
+
+[[package]]
 name = "atty"
 version = "0.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"

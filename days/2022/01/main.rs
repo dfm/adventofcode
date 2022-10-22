@@ -1,14 +1,14 @@
 use aoc;
 
-fn part1(_input: Vec<usize>) -> usize {
+fn part1(_input: String) -> usize {
     0
 }
 
-fn part2(_input: Vec<usize>) -> usize {
+fn part2(_input: String) -> usize {
     0
 }
 
-aoc::main!({{year}}, {{day}}, part1, part2);
+aoc::main!(2022, 1, part1, part2);
 
 #[cfg(test)]
 mod tests {
