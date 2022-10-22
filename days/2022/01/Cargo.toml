@@ -1,0 +1,15 @@
+[package]
+name = "aoc-2022-1"
+version = "0.2022.0"
+authors = ["Dan F-M <foreman.mackey@gmail.com>"]
+license = "Apache-2.0"
+description = "Holiday hacking"
+repository = "https://github.com/dfm/adventofcode"
+edition = "2021"
+
+[[bin]]
+name = "aoc-2022-1"
+path = "main.rs"
+
+[dependencies]
+aoc = { path = "../../../aoc" }
