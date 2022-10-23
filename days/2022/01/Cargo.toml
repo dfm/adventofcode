@@ -7,9 +7,5 @@ description = "Holiday hacking"
 repository = "https://github.com/dfm/adventofcode"
 edition = "2021"
 
-[[bin]]
-name = "aoc-2022-1"
-path = "main.rs"
-
 [dependencies]
 aoc = { path = "../../../aoc" }

@@ -29,8 +29,8 @@ fn copy_files(year: usize, day: usize) -> Result<()> {
     copy_one_file(
         year,
         day,
-        &template_path.join("main.rs"),
-        &target_path.join("main.rs"),
+        &template_path.join("src/main.rs"),
+        &target_path.join("src/main.rs"),
     )?;
     Ok(())
 }

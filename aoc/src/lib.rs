@@ -1,15 +1,13 @@
-pub mod input;
 pub mod runner;
-pub use input::Input;
 pub use runner::run;
 
 #[macro_export]
 macro_rules! main {
-    ($($year:expr, $day:expr, $part1:expr, $part2:expr),*) => {
+    ($($year:expr, $day:expr, $parse:expr, $part1:expr, $part2:expr),*) => {
         fn main() {
             $(
-                aoc::run($year, $day, $part1).unwrap();
-                aoc::run($year, $day, $part2).unwrap();
+                println!("Part 1: {}", aoc::run($year, $day, $parse, $part1).unwrap());
+                println!("Part 2: {}", aoc::run($year, $day, $parse, $part2).unwrap());
             )*
         }
     };
@@ -19,8 +17,7 @@ macro_rules! main {
 macro_rules! test {
     ($($func:expr, $input:expr, $expect:expr),*) => {
         $(
-            let input = aoc::Input::new(&$input.to_string());
-            assert_eq!($func(input.into()), $expect);
+            assert_eq!($func($input), $expect);
         )*
     };
 }

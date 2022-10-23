@@ -1,31 +1,31 @@
-use crate::input::Input;
 use anyhow::{Context, Result};
 use std::env;
 use std::fs;
 use std::ops::FnOnce;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 /// The primary interface that we use for running our solutions
 ///
 /// This function downloads the dataset if needed, and then solves the problem
 /// using the provided function.
-pub fn run<F, I, O>(year: usize, day: usize, solve: F) -> Result<String>
+pub fn run<P, S, I, O>(year: usize, day: usize, parse: P, solve: S) -> Result<String>
 where
-    F: FnOnce(I) -> O,
-    I: From<Input>,
+    P: FnOnce(&str) -> I,
+    S: FnOnce(I) -> O,
     O: std::fmt::Display,
 {
     let data = load_data(year, day)?;
-    let result = solve(data.into());
-    println!("{}", result);
+    let input = parse(&data);
+    let result = solve(input);
     Ok(result.to_string())
 }
 
 /// Load the dataset for the given year and day, downloading if needed
-fn load_data(year: usize, day: usize) -> Result<Input> {
+fn load_data(year: usize, day: usize) -> Result<String> {
     download_data(year, day)?;
     let path = data_path(year, day)?;
-    Input::from_file(&path)
+    let data = fs::read_to_string(&path).context(format!("{:?}", path))?;
+    Ok(data)
 }
 
 // Functions for loading and checking the session key which can be stored in the
@@ -58,16 +58,7 @@ fn data_dir() -> Result<PathBuf> {
             path.push(dir);
             path
         }
-        _ => {
-            if let Ok(manifest_dir) = env::var("CARGO_MANIFEST_DIR") {
-                Path::new(&manifest_dir)
-                    .parent()
-                    .context("Finding path to manifest dir")?
-                    .to_path_buf()
-            } else {
-                env::current_dir()?
-            }
-        }
+        _ => env::current_dir()?,
     })
 }
 

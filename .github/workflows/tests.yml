@@ -25,6 +25,9 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: tests-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            tests-${{ hashFiles('**/Cargo.lock') }}
+            tests-
       - uses: actions-rs/cargo@v1
         with:
           command: test
