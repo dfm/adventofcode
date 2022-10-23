@@ -21,3 +21,12 @@ macro_rules! test {
         )*
     };
 }
+
+pub fn parse_to_vec<'a, I, T>(input: I) -> Vec<T>
+where
+    I: Iterator<Item = &'a str>,
+    T: std::str::FromStr,
+    <T as std::str::FromStr>::Err: std::fmt::Debug,
+{
+    input.map(|line| line.parse().unwrap()).collect()
+}

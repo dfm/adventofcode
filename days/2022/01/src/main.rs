@@ -1,7 +1,7 @@
-type Input = String;
+type Input = Vec<usize>;
 
 fn parse(input: &str) -> Input {
-    input.to_string()
+    aoc::parse_to_vec(input.lines())
 }
 
 fn part1(_input: Input) -> usize {
