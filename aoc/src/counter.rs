@@ -9,7 +9,7 @@ use std::collections::HashMap;
 /// use aoc::counter::Counter;
 ///
 /// let mut counter = HashMap::counter_from_iter(vec![1, 1, 5].into_iter());
-/// counter.increment(5);
+/// counter.increment(5, 1);
 /// ```
 pub trait Counter<Key: std::hash::Hash + Eq> {
     fn counter_from_iter(iter: impl Iterator<Item = Key>) -> Self;

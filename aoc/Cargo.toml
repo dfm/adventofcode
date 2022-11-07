@@ -7,9 +7,6 @@ description = "Holiday hacking"
 repository = "https://github.com/dfm/adventofcode"
 edition = "2021"
 
-[lib]
-doctest = false
-
 [dependencies]
 anyhow = "1.0.66"
 reqwest = { version = "0.11.12", features = ["blocking"] }
