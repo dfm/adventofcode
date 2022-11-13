@@ -1,3 +1,4 @@
+pub mod algorithm;
 pub mod counter;
 pub mod runner;
 pub use runner::run;
