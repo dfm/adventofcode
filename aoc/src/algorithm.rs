@@ -59,9 +59,9 @@ where
     N: Hash + Eq + Copy,
 {
     let mut distances: HashMap<N, usize> = HashMap::new();
-    let mut queue = BinaryHeap::new();
-
     distances.insert(start, 0);
+
+    let mut queue = BinaryHeap::new();
     queue.push(Node {
         node: start,
         distance: 0,
@@ -71,11 +71,9 @@ where
         if Some(node) == end {
             return distances;
         }
-
         if !is_shorter(&distances, node, distance) {
             continue;
         }
-
         for (next, delta) in graph.neighbors(&node) {
             let next = Node {
                 node: next,
@@ -87,8 +85,7 @@ where
             }
         }
     }
-
-    return distances;
+    distances
 }
 
 pub fn shortest_path<G, N>(graph: &G, start: N, end: N) -> Option<usize>
