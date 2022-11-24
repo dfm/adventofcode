@@ -4,11 +4,11 @@ fn parse(input: &str) -> Input {
     input.to_string()
 }
 
-fn part1(_input: Input) -> usize {
+fn part1(input: Input) -> usize {
     0
 }
 
-fn part2(_input: Input) -> usize {
+fn part2(input: Input) -> usize {
     0
 }
 
@@ -18,13 +18,15 @@ aoc::main!({{year}}, {{day}}, parse, part1, part2);
 mod tests {
     use super::*;
 
+    const DATA: &str = ""; 
+
     #[test]
-    fn test_part1() {
-        aoc::test!(part1, parse(""), 0);
+    fn year{{year}}_day{{day}}_part1() {
+        aoc::test!(part1, parse(DATA), 0);
     }
 
     #[test]
-    fn test_part2() {
-        aoc::test!(part2, parse(""), 0);
+    fn year{{year}}_day{{day}}_part2() {
+        aoc::test!(part2, parse(DATA), 0);
     }
 }

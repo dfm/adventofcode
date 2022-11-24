@@ -4,32 +4,6 @@ use std::{
     hash::Hash,
 };
 
-#[derive(Debug, Copy, Clone)]
-struct Node<N> {
-    node: N,
-    distance: usize,
-}
-
-impl<N> PartialEq for Node<N> {
-    fn eq(&self, other: &Self) -> bool {
-        self.distance.eq(&other.distance)
-    }
-}
-
-impl<N> Eq for Node<N> {}
-
-impl<N> Ord for Node<N> {
-    fn cmp(&self, other: &Self) -> Ordering {
-        other.distance.cmp(&self.distance)
-    }
-}
-
-impl<N> PartialOrd for Node<N> {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
 pub trait Graph<N> {
     fn neighbors(&self, node: &N) -> Vec<(N, usize)>;
 }
@@ -49,6 +23,32 @@ impl Graph<usize> for Vec<Vec<(usize, usize)>> {
     }
 }
 
+#[derive(Debug, Copy, Clone)]
+struct State<N> {
+    node: N,
+    distance: usize,
+}
+
+impl<N> PartialEq for State<N> {
+    fn eq(&self, other: &Self) -> bool {
+        self.distance.eq(&other.distance)
+    }
+}
+
+impl<N> Eq for State<N> {}
+
+impl<N> Ord for State<N> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        other.distance.cmp(&self.distance)
+    }
+}
+
+impl<N> PartialOrd for State<N> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
 fn is_shorter<N: Hash + Eq>(distances: &HashMap<N, usize>, node: N, distance: usize) -> bool {
     distances.get(&node).map_or(true, |&d| distance <= d)
 }
@@ -62,12 +62,12 @@ where
     distances.insert(start, 0);
 
     let mut queue = BinaryHeap::new();
-    queue.push(Node {
+    queue.push(State {
         node: start,
         distance: 0,
     });
 
-    while let Some(Node { node, distance }) = queue.pop() {
+    while let Some(State { node, distance }) = queue.pop() {
         if Some(node) == end {
             return distances;
         }
@@ -75,7 +75,7 @@ where
             continue;
         }
         for (next, delta) in graph.neighbors(&node) {
-            let next = Node {
+            let next = State {
                 node: next,
                 distance: distance + delta,
             };
@@ -134,19 +134,14 @@ mod tests {
         }
 
         let graph = vec![
-            // Node 0
             vec![Edge { node: 2, cost: 10 }, Edge { node: 1, cost: 1 }],
-            // Node 1
             vec![Edge { node: 3, cost: 2 }],
-            // Node 2
             vec![
                 Edge { node: 1, cost: 1 },
                 Edge { node: 3, cost: 3 },
                 Edge { node: 4, cost: 1 },
             ],
-            // Node 3
             vec![Edge { node: 0, cost: 7 }, Edge { node: 4, cost: 2 }],
-            // Node 4
             vec![],
         ];
 

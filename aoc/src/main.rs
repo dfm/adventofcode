@@ -35,13 +35,27 @@ fn copy_files(year: usize, day: usize) -> Result<()> {
     Ok(())
 }
 
-fn update_workspace(year: usize, day: usize) -> Result<()> {
+fn add_to_workspace(year: usize, day: usize) -> Result<()> {
     let path = get_path(year, day);
     let data = fs::read_to_string("Cargo.toml")?;
     let mut toml = data.parse::<toml_edit::Document>()?;
     let members = toml["workspace"]["members"].as_array_mut().unwrap();
     members.push(path.to_str().unwrap());
     fs::write("Cargo.toml", toml.to_string())?;
+    Ok(())
+}
+
+fn remove_from_workspace(year: usize, day: usize) -> Result<()> {
+    let path = get_path(year, day);
+    let path = path.to_str().unwrap();
+    let data = fs::read_to_string("Cargo.toml")?;
+    let mut toml = data.parse::<toml_edit::Document>()?;
+    let members = toml["workspace"]["members"].as_array_mut().unwrap();
+    let pos = members.iter().position(|x| x.as_str().unwrap() == path);
+    if let Some(pos) = pos {
+        members.remove(pos);
+        fs::write("Cargo.toml", toml.to_string())?;
+    }
     Ok(())
 }
 
@@ -53,6 +67,8 @@ struct Cli {
     year: Option<usize>,
     #[arg(short, long)]
     clobber: bool,
+    #[arg(short, long)]
+    remove: bool,
 }
 
 fn main() {
@@ -61,15 +77,27 @@ fn main() {
     let day = cli.day;
 
     let path = get_path(year, day);
+
+    if cli.remove {
+        if path.join("Cargo.toml").exists() {
+            println!("Removing {}", path.display());
+            fs::remove_dir_all(&path).unwrap();
+            remove_from_workspace(year, day).unwrap();
+        } else {
+            println!("{} doesn't exist; skipping.", path.display());
+        }
+        return;
+    }
+
     if path.join("Cargo.toml").exists() {
         if cli.clobber {
             fs::remove_dir_all(&path).unwrap();
         } else {
-            println!("{} already exists; skipping.", path.to_str().unwrap());
+            println!("{} already exists; skipping.", path.display());
             return;
         }
     }
 
     copy_files(year, day).unwrap();
-    update_workspace(year, day).unwrap();
+    add_to_workspace(year, day).unwrap();
 }

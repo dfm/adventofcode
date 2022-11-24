@@ -10,13 +10,15 @@ jobs:
     name: Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - uses: actions/cache@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+      # - uses: actions-rs/toolchain@v1
+      #   with:
+      #     profile: minimal
+      #     toolchain: stable
+      #     override: true
+      - name: Cache cargo directories
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/bin/
@@ -28,36 +30,42 @@ jobs:
           restore-keys: |
             tests-${{ hashFiles('**/Cargo.lock') }}
             tests-
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --all
+      - name: Tests
+        run: cargo test --all
+      - run: Format
+        run: cargo fmt --all -- --check
+      - run: Lint
+        run: cargo clippy -- -D warnings
+      # - uses: actions-rs/cargo@v1
+      #   with:
+      #     command: test
+      #     args: --all
 
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-          components: rustfmt, clippy
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: lint-${{ hashFiles('**/Cargo.lock') }}
-      - uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
-      - uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: -- -D warnings
+  # lint:
+  #   name: Lint
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions-rs/toolchain@v1
+  #       with:
+  #         profile: minimal
+  #         toolchain: stable
+  #         override: true
+  #         components: rustfmt, clippy
+  #     - uses: actions/cache@v3
+  #       with:
+  #         path: |
+  #           ~/.cargo/bin/
+  #           ~/.cargo/registry/index/
+  #           ~/.cargo/registry/cache/
+  #           ~/.cargo/git/db/
+  #           target/
+  #         key: lint-${{ hashFiles('**/Cargo.lock') }}
+  #     - uses: actions-rs/cargo@v1
+  #       with:
+  #         command: fmt
+  #         args: --all -- --check
+  #     - uses: actions-rs/cargo@v1
+  #       with:
+  #         command: clippy
+  #         args: -- -D warnings
