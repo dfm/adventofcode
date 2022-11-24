@@ -32,9 +32,9 @@ jobs:
             tests-
       - name: Tests
         run: cargo test --all
-      - run: Format
+      - name: Format
         run: cargo fmt --all -- --check
-      - run: Lint
+      - name: Lint
         run: cargo clippy -- -D warnings
       # - uses: actions-rs/cargo@v1
       #   with:
