@@ -27,8 +27,9 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: tests-${{ hashFiles('**/Cargo.lock') }}
+          key: tests-${{ hashFiles('**/Cargo.lock') }}-${{ matrix.command }}
           restore-keys: |
+            tests-${{ hashFiles('**/Cargo.lock') }}-
             tests-
       - name: Run command
         run: cargo ${{ matrix.command }}
