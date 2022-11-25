@@ -18,15 +18,15 @@ aoc::main!({{year}}, {{day}}, parse, part1, part2);
 mod tests {
     use super::*;
 
-    const DATA: &str = ""; 
+    const TEST_DATA: &str = ""; 
 
     #[test]
     fn year{{year}}_day{{day}}_part1() {
-        aoc::test!(part1, parse(DATA), 0);
+        aoc::test!(part1, parse(TEST_DATA), 0);
     }
 
     #[test]
     fn year{{year}}_day{{day}}_part2() {
-        aoc::test!(part2, parse(DATA), 0);
+        aoc::test!(part2, parse(TEST_DATA), 0);
     }
 }
