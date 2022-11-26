@@ -1,3 +1,4 @@
 /.aoc
 /data
-/target
+build
+vscode-build
