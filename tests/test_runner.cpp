@@ -14,7 +14,7 @@ TEST_CASE("[runner]") {
   aoc::registry::register_implementation(2021, 1, part1, part2);
   std::istringstream in("hello");
   std::ostringstream out;
-  // aoc::run_with_data(2021, 1, in, out);
+  aoc::run_with_data(2021, 1, in, out);
   // REQUIRE(out.str() ==
   //         std::string("* Dec 1, 2021 *\n=> Part 1: 1\n=> Part 2: 2\n"));
 }
