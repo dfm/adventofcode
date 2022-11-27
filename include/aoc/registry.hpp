@@ -8,6 +8,12 @@
 #include "./io.hpp"
 #include "./types.hpp"
 
+#define AOC_REGISTER(year, day, part1, part2)                        \
+  static const aoc::year_t __aoc_year = year;                        \
+  static const aoc::day_t __aoc_day = day;                           \
+  static const int __dummy = aoc::registry::register_implementation( \
+      __aoc_year, __aoc_day, std::function(part1), std::function(part2))
+
 namespace aoc {
 namespace registry {
 

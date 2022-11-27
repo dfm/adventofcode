@@ -1,7 +1,5 @@
 set(AOC_TESTS
-  test_io
-  test_runner
-)
+  test_io)
 
 foreach(name ${AOC_TESTS})
   add_executable(${name} ${name}.cpp)
