@@ -10,6 +10,25 @@
 #include <vector>
 
 namespace aoc {
+
+template <typename T>
+struct stream_iterator {
+  stream_iterator(std::istream &in) : d_in(in) {}
+  std::istream &d_in;
+  std::istream_iterator<T> begin() { return std::istream_iterator<T>(d_in); }
+  std::istream_iterator<T> end() { return std::istream_iterator<T>(); }
+};
+
+template <typename T>
+std::istream_iterator<T> begin(stream_iterator<T> r) {
+  return r.begin();
+}
+
+template <typename T>
+std::istream_iterator<T> end(stream_iterator<T> r) {
+  return r.end();
+}
+
 namespace io {
 
 template <typename T>
@@ -43,6 +62,20 @@ struct harness<std::istream_iterator<T> &> {
       std::function<Out(input_t)> func) {
     return [func](std::istream &in) {
       std::istream_iterator<T> stream(in);
+      return func(stream);
+    };
+  }
+};
+
+template <typename T>
+struct harness<stream_iterator<T> &> {
+  typedef stream_iterator<T> &input_t;
+
+  template <typename Out>
+  inline static typename wrapped<Out>::type wrap(
+      std::function<Out(input_t)> func) {
+    return [func](std::istream &in) {
+      stream_iterator<T> stream(in);
       return func(stream);
     };
   }

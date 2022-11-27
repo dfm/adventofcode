@@ -27,6 +27,15 @@ TEST_CASE("[io] istream_iterator") {
   REQUIRE(wrapped(in) == 8);
 }
 
+TEST_CASE("[io] stream_iterator") {
+  using In = aoc::stream_iterator<int>;
+  using Out = int;
+  auto func = [](In &in) -> Out { return std::reduce(in.begin(), in.end()); };
+  auto wrapped = aoc::io::harness<In &>::wrap<Out>(func);
+  std::istringstream in("0\n1\n3\n4\n");
+  REQUIRE(wrapped(in) == 8);
+}
+
 TEST_CASE("[io] vector") {
   using In = const std::vector<int> &;
   using Out = int;

@@ -33,11 +33,14 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(cpr)
 
 #
+# Main interface
+#
+add_subdirectory(src)
+
+#
 # Unit tests
 #
 if(AOC_BUILD_TESTS)
   message(STATUS "Building tests")
   add_subdirectory(tests)
 endif()
-
-add_subdirectory(src)

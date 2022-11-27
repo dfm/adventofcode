@@ -5,6 +5,7 @@
 #include "./registry.hpp"
 #include "./remote.hpp"
 #include "./runner.hpp"
+#include "./testing.hpp"
 #include "./types.hpp"
 
 #endif
