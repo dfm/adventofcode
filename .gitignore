@@ -1,3 +1,5 @@
 /.aoc
 /data
-/target
+build
+vscode-build
+src/2019
