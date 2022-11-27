@@ -1,35 +1,30 @@
 name: Tests
+
 on:
   push:
-    branches: [main]
-  pull_request:
     branches:
+      - main
+    tags:
+      - "*"
+  pull_request:
 
 jobs:
   test:
-    name: Cargo ${{ matrix.command }}
+    name: Tests
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        command:
-          - test --all
-          - fmt --all -- --check
-          - clippy -- -D warnings
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Cache cargo directories
+      - name: Cache build artifacts
         uses: actions/cache@v3
         with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: tests-${{ matrix.command }}-${{ hashFiles('**/Cargo.lock') }}
+          path: build
+          key: cmake-${{ hashFiles('**/CMakeLists.txt') }}
           restore-keys: |
-            tests-${{ matrix.command }}-
-            tests-
-      - name: Run command
-        run: cargo ${{ matrix.command }}
+            cmake-
+      - name: Compile
+        run: |
+          cmake -B build .
+          cmake --build build --parallel 2
+      - name: Test
+        run: ctest --output-on-failure --test-dir build
