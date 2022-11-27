@@ -30,7 +30,7 @@ struct harness<std::istream &> {
   template <typename Out>
   inline static typename wrapped<Out>::type wrap(
       std::function<Out(std::istream &)> func) {
-    return [&func](std::istream &in) { return func(in); };
+    return [func](std::istream &in) { return func(in); };
   }
 };
 
@@ -41,7 +41,7 @@ struct harness<std::istream_iterator<T> &> {
   template <typename Out>
   inline static typename wrapped<Out>::type wrap(
       std::function<Out(input_t)> func) {
-    return [&func](std::istream &in) {
+    return [func](std::istream &in) {
       std::istream_iterator<T> stream(in);
       return func(stream);
     };
@@ -55,7 +55,7 @@ struct harness<const std::vector<T> &> {
   template <typename Out>
   inline static typename wrapped<Out>::type wrap(
       std::function<Out(input_t)> func) {
-    return [&func](std::istream &in) {
+    return [func](std::istream &in) {
       std::vector<T> vec;
       std::istream_iterator<T> begin(in), end;
       std::copy(begin, end, std::back_inserter(vec));
@@ -71,7 +71,7 @@ struct harness<const std::string &> {
   template <typename Out>
   inline static typename wrapped<Out>::type wrap(
       std::function<Out(input_t)> func) {
-    return [&func](std::istream &in) {
+    return [func](std::istream &in) {
       std::string str;
       in >> str;
       return func(str);
@@ -82,7 +82,7 @@ struct harness<const std::string &> {
 template <typename Out>
 inline std::function<void(std::istream &, std::ostream &)> harness_to_runner(
     std::function<Out(std::istream &)> func) {
-  return [&func](std::istream &in, std::ostream &out) { out << func(in); };
+  return [func](std::istream &in, std::ostream &out) { out << func(in); };
 }
 
 }  // namespace io
