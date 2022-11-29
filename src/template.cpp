@@ -2,8 +2,6 @@
 
 namespace {
 
-namespace grammar {
-
 namespace dsl = lexy::dsl;
 typedef std::int64_t T;
 
@@ -17,14 +15,12 @@ struct parser {
   static constexpr auto value = lexy::as_list<std::vector<T>>;
 };
 
-}  // namespace grammar
-
 auto part1 = [](auto) { return 0; };
 
 auto part2 = [](auto) { return 0; };
 
 }  // namespace
 
-AOC_REGISTER({{year}}, {{day}}, grammar::parser, part1, part2);
+AOC_REGISTER({{year}}, {{day}}, parser, part1, part2);
 AOC_TEST_CASE(part1, "0", 0)
 AOC_TEST_CASE(part2, "0", 0)

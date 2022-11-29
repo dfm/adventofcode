@@ -1,3 +1,6 @@
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag(-fconcepts HAS_CONCEPTS)
+
 FetchContent_Declare(
   cli11
   GIT_REPOSITORY https://github.com/CLIUtils/CLI11.git
@@ -34,7 +37,10 @@ set(
 add_library(aoclib STATIC ${AOC_SOURCE})
 target_link_libraries(aoclib PUBLIC cpr::cpr foonathan::lexy::core)
 target_include_directories(aoclib PRIVATE ${cpr_SOURCE_DIR}/include)
-target_compile_options(aoclib PRIVATE -O3 -Wall -pedantic -Wextra -Werror)
+target_compile_options(aoclib PUBLIC -O3 -Wall -pedantic -Wextra -Werror)
+if(HAS_CONCEPTS)
+  target_compile_options(aoclib PUBLIC -fconcepts)
+endif()
 
 add_executable(aoc aoc/cli.cpp ${DAYS_SOURCE})
 target_link_libraries(aoc PRIVATE aoclib CLI11::CLI11 fmt::fmt)
@@ -43,12 +49,12 @@ target_include_directories(aoc PRIVATE ${doctest_SOURCE_DIR}/doctest)
 target_include_directories(aoc PRIVATE ${inja_SOURCE_DIR}/single_include)
 target_include_directories(aoc PRIVATE ${inja_SOURCE_DIR}/third_party/include)
 target_include_directories(aoc PRIVATE ${cli11_SOURCE_DIR}/include)
-target_compile_options(aoc PRIVATE -O3 -Wall -pedantic -Wextra -Werror)
+# target_compile_options(aoc PRIVATE -O3 -Wall -pedantic -Wextra -Werror)
 
 if(AOC_BUILD_TESTS)
   add_executable(tests tests.cpp ${DAYS_SOURCE})
   target_link_libraries(tests PRIVATE aoclib doctest::doctest)
   target_include_directories(tests PRIVATE ${doctest_SOURCE_DIR}/doctest)
-  target_compile_options(tests PRIVATE -O3 -Wall -pedantic -Wextra -Werror)
+  # target_compile_options(tests PRIVATE -O3 -Wall -pedantic -Wextra -Werror)
   add_test(tests tests)
 endif()
