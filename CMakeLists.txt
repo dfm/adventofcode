@@ -3,7 +3,6 @@ project(AdventOfCode VERSION 0.2022.0 LANGUAGES CXX)
 include(CTest)
 
 option(AOC_BUILD_TESTS "Enable building tests" ON)
-option(AOC_BUILD_REMOTE "Enable remote support" ON)
 
 # 
 # C++ standard
@@ -31,6 +30,13 @@ FetchContent_Declare(
   GIT_TAG        a2d35a1cb9f3f7e2f1469d6a189751331dc99f96
 )
 FetchContent_MakeAvailable(cpr)
+
+FetchContent_Declare(
+  lexy
+  GIT_REPOSITORY https://github.com/foonathan/lexy.git
+  GIT_TAG        5b7095dab03041b4daf7c6c521118645491b7062
+)
+FetchContent_MakeAvailable(lexy)
 
 #
 # Main interface

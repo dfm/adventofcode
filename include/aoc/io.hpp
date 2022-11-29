@@ -1,124 +1,54 @@
 #ifndef AOC_IO_HPP
 #define AOC_IO_HPP
 
-#include <algorithm>
+#include <cstdint>
 #include <functional>
 #include <istream>
-#include <iterator>
+#include <lexy/action/parse.hpp>
+#include <lexy/callback.hpp>
+#include <lexy/dsl.hpp>
+#include <lexy/input/string_input.hpp>
+#include <lexy_ext/report_error.hpp>
 #include <ostream>
-#include <string>
 #include <vector>
 
 namespace aoc {
 
-template <typename T>
-struct stream_iterator {
-  stream_iterator(std::istream &in) : d_in(in) {}
-  std::istream &d_in;
-  std::istream_iterator<T> begin() { return std::istream_iterator<T>(d_in); }
-  std::istream_iterator<T> end() { return std::istream_iterator<T>(); }
-};
-
-template <typename T>
-std::istream_iterator<T> begin(stream_iterator<T> r) {
-  return r.begin();
+template <typename Parser>
+auto parse(auto func) {
+  return [func](std::istream &in) {
+    std::string s(std::istreambuf_iterator<char>(in), {});
+    auto input = lexy::string_input(s);
+    auto result = lexy::parse<Parser>(input, lexy_ext::report_error);
+    if (!result.has_value()) {
+      throw std::runtime_error("Failed to parse input");
+    }
+    return func(result.value());
+  };
 }
 
-template <typename T>
-std::istream_iterator<T> end(stream_iterator<T> r) {
-  return r.end();
-}
-
-namespace io {
-
-template <typename T>
-struct wrapped {
-  typedef std::function<T(std::istream &)> type;
-};
-
-template <typename In>
-struct harness {
-  typedef In input_t;
-
-  template <typename Out>
-  inline static typename wrapped<Out>::type wrap(std::function<Out(input_t)>);
-};
-
-template <>
-struct harness<std::istream &> {
-  template <typename Out>
-  inline static typename wrapped<Out>::type wrap(
-      std::function<Out(std::istream &)> func) {
-    return [func](std::istream &in) { return func(in); };
-  }
-};
-
-template <typename T>
-struct harness<std::istream_iterator<T> &> {
-  typedef std::istream_iterator<T> &input_t;
-
-  template <typename Out>
-  inline static typename wrapped<Out>::type wrap(
-      std::function<Out(input_t)> func) {
-    return [func](std::istream &in) {
-      std::istream_iterator<T> stream(in);
-      return func(stream);
-    };
-  }
-};
-
-template <typename T>
-struct harness<stream_iterator<T> &> {
-  typedef stream_iterator<T> &input_t;
-
-  template <typename Out>
-  inline static typename wrapped<Out>::type wrap(
-      std::function<Out(input_t)> func) {
-    return [func](std::istream &in) {
-      stream_iterator<T> stream(in);
-      return func(stream);
-    };
-  }
-};
-
-template <typename T>
-struct harness<const std::vector<T> &> {
-  typedef const std::vector<T> &input_t;
-
-  template <typename Out>
-  inline static typename wrapped<Out>::type wrap(
-      std::function<Out(input_t)> func) {
-    return [func](std::istream &in) {
-      std::vector<T> vec;
-      std::istream_iterator<T> begin(in), end;
-      std::copy(begin, end, std::back_inserter(vec));
-      return func(vec);
-    };
-  }
-};
-
-template <>
-struct harness<const std::string &> {
-  typedef const std::string &input_t;
-
-  template <typename Out>
-  inline static typename wrapped<Out>::type wrap(
-      std::function<Out(input_t)> func) {
-    return [func](std::istream &in) {
-      std::string str;
-      in >> str;
-      return func(str);
-    };
-  }
-};
-
-template <typename Out>
-inline std::function<void(std::istream &, std::ostream &)> harness_to_runner(
-    std::function<Out(std::istream &)> func) {
+std::function<void(std::istream &, std::ostream &)> to_runner(auto func) {
   return [func](std::istream &in, std::ostream &out) { out << func(in); };
 }
 
-}  // namespace io
+namespace grammar {
+
+namespace dsl = lexy::dsl;
+
+template <typename Int = std::int64_t>
+struct signed_integer {
+  static constexpr auto rule = dsl::sign + dsl::integer<Int>;
+  static constexpr auto value = lexy::as_integer<Int>;
+};
+
+template <typename Int = std::int64_t>
+struct vector_of_signed_integers {
+  static constexpr auto rule =
+      dsl::terminator(dsl::eof).opt_list(dsl::p<signed_integer<Int>>);
+  static constexpr auto value = lexy::as_list<std::vector<Int>>;
+};
+
+}  // namespace grammar
 }  // namespace aoc
 
 #endif
