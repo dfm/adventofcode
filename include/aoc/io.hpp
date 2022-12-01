@@ -20,7 +20,7 @@ auto parse(auto func) {
     std::string s(std::istreambuf_iterator<char>(in), {});
     auto input = lexy::string_input(s);
     auto result = lexy::parse<Parser>(input, lexy_ext::report_error);
-    if (!result.has_value()) {
+    if (result.is_error()) {
       throw std::runtime_error("Failed to parse input");
     }
     return func(result.value());
