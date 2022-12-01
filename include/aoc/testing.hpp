@@ -7,13 +7,10 @@
 
 #include "./io.hpp"
 
-#define AOC_TEST_CASE_IMPL(year, day, parser, func, data, expect)      \
-  TEST_CASE("[" #year "-" #day "]") {                                  \
-    REQUIRE(aoc::testing::execute_part<parser>(func, data) == expect); \
+#define AOC_TEST_CASE(year, day, func, data, expect)                         \
+  TEST_CASE(#year "-" #day ": " #func " (" #expect ")") {                    \
+    REQUIRE(aoc::testing::execute_part<__aoc_parser>(func, data) == expect); \
   }
-
-#define AOC_TEST_CASE(func, data, expect) \
-  AOC_TEST_CASE_IMPL(__aoc_year, __aoc_day, __aoc_parser, func, data, expect)
 
 namespace aoc {
 namespace testing {

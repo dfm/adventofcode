@@ -1,8 +1,6 @@
 #include "aoc/remote.hpp"
 
-#ifndef AOC_OFFLINE_MODE
 #include <cpr/cpr.h>
-#endif
 
 #include <cstdlib>
 #include <exception>
@@ -22,7 +20,6 @@ fs::path data::path() const {
 }
 
 void data::download() const {
-#ifndef AOC_OFFLINE_MODE
   std::ostringstream url;
   url << "https://adventofcode.com/" << year << "/day/" << day << "/input";
   auto r = cpr::Get(cpr::Url{url.str()},
@@ -46,9 +43,6 @@ void data::download() const {
   }
 
   file << r.text;
-#else
-  throw std::runtime_error("Please compile with AOC_BUILD_REMOTE=ON");
-#endif
 }
 
 std::ifstream data::get() const {

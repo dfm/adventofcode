@@ -22,5 +22,5 @@ auto part2 = [](auto) { return 0; };
 }  // namespace
 
 AOC_REGISTER({{year}}, {{day}}, parser, part1, part2);
-AOC_TEST_CASE(part1, "0", 0)
-AOC_TEST_CASE(part2, "0", 0)
+AOC_TEST_CASE({{year}}, {{day}}, part1, "0", 0)
+AOC_TEST_CASE({{year}}, {{day}}, part2, "0", 0)
