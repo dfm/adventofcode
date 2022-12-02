@@ -27,10 +27,6 @@ auto parse(auto func) {
   };
 }
 
-std::function<void(std::istream &, std::ostream &)> to_runner(auto func) {
-  return [func](std::istream &in, std::ostream &out) { out << func(in); };
-}
-
 namespace dsl {
 
 template <typename Int = std::int64_t>

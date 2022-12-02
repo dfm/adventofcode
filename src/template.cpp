@@ -2,25 +2,29 @@
 
 namespace {
 
-namespace dsl = lexy::dsl;
-typedef std::int64_t T;
+namespace grammar {
 
-struct line {
-  static constexpr auto rule = dsl::sign + dsl::integer<T>;
-  static constexpr auto value = lexy::as_integer<T>;
+namespace dsl = lexy::dsl;
+
+struct number {
+  static constexpr auto rule = dsl::sign + dsl::integer<std::int64_t>;
+  static constexpr auto value = lexy::as_integer<std::int64_t>;
 };
 
 struct parser {
-  static constexpr auto rule = dsl::terminator(dsl::eof).opt_list(dsl::p<line>);
-  static constexpr auto value = lexy::as_list<std::vector<T>>;
+  static constexpr auto rule =
+      dsl::terminator(dsl::eof).opt_list(dsl::p<number>);
+  static constexpr auto value = lexy::as_list<std::vector<std::int64_t>>;
 };
 
-auto part1 = [](auto) { return 0; };
+}  // namespace grammar
 
-auto part2 = [](auto) { return 0; };
+AOC_IMPL({{year}}, {{day}}) {
+  using parser = grammar::parser;
+  static constexpr auto part1 = [](auto) { return 0; };
+  static constexpr auto part2 = [](auto) { return 0; };
+};
+
+AOC_TEST_CASE(0, 0, R"()")
 
 }  // namespace
-
-AOC_REGISTER({{year}}, {{day}}, parser, part1, part2);
-AOC_TEST_CASE({{year}}, {{day}}, part1, "0", 0)
-AOC_TEST_CASE({{year}}, {{day}}, part2, "0", 0)

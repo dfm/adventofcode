@@ -8,13 +8,11 @@
 #include "./io.hpp"
 #include "./types.hpp"
 
-#define AOC_REGISTER(year, day, parser, part1, part2)                \
-  static const aoc::year_t __aoc_year = year;                        \
-  static const aoc::day_t __aoc_day = day;                           \
-  using __aoc_parser = parser;                                       \
-  static const int __dummy = aoc::registry::register_implementation( \
-      __aoc_year, __aoc_day, aoc::parse<__aoc_parser>(part1),        \
-      aoc::parse<__aoc_parser>(part2))
+#define AOC_IMPL(YEAR, DAY)                                              \
+  struct implementation;                                                 \
+  static const int __dummy =                                             \
+      aoc::registry::register_implementation<implementation>(YEAR, DAY); \
+  struct implementation
 
 namespace aoc {
 namespace registry {
@@ -27,9 +25,15 @@ struct implementation {
 typedef std::map<std::pair<year_t, day_t>, implementation> registry_t;
 registry_t &get_registry();
 
-int register_implementation(year_t year, day_t day, auto part1, auto part2) {
+std::function<void(std::istream &, std::ostream &)> to_runner(auto func) {
+  return [func](std::istream &in, std::ostream &out) { out << func(in); };
+}
+
+template <typename T>
+int register_implementation(year_t year, day_t day) {
   get_registry()[std::make_pair(year, day)] =
-      implementation{to_runner(part1), to_runner(part2)};
+      implementation{to_runner(parse<typename T::parser>(T::part1)),
+                     to_runner(parse<typename T::parser>(T::part2))};
   return 0;
 }
 

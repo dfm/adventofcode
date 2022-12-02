@@ -7,9 +7,18 @@
 
 #include "./io.hpp"
 
-#define AOC_TEST_CASE(year, day, func, data, expect)                         \
-  TEST_CASE(#year "-" #day ": " #func " (" #expect ")") {                    \
-    REQUIRE(aoc::testing::execute_part<__aoc_parser>(func, data) == expect); \
+#define AOC_TEST_CASE(expect1, expect2, data)                      \
+  TEST_CASE("Part 1") {                                            \
+    auto input = std::istringstream(data);                         \
+    [[maybe_unused]] auto wrapped =                                \
+        aoc::parse<implementation::parser>(implementation::part1); \
+    REQUIRE(wrapped(input) == expect1);                            \
+  }                                                                \
+  TEST_CASE("Part 2") {                                            \
+    auto input = std::istringstream(data);                         \
+    [[maybe_unused]] auto wrapped =                                \
+        aoc::parse<implementation::parser>(implementation::part2); \
+    REQUIRE(wrapped(input) == expect2);                            \
   }
 
 namespace aoc {

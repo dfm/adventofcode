@@ -47,29 +47,29 @@ inline std::int64_t play(const char a, const char b) {
   return score(a, choice);
 }
 
-auto part1 = [](auto data) {
-  auto total = 0;
-  for (const auto& round : data) {
-    total += score(round.first, round.second - 'X' + 'A');
-  }
-  return total;
+AOC_IMPL(2022, 2) {
+  using parser = grammar::parser;
+
+  static constexpr auto part1 = [](auto data) {
+    auto total = 0;
+    for (const auto& round : data) {
+      total += score(round.first, round.second - 'X' + 'A');
+    }
+    return total;
+  };
+
+  static constexpr auto part2 = [](auto data) {
+    auto total = 0;
+    for (const auto& round : data) {
+      total += play(round.first, round.second);
+    }
+    return total;
+  };
 };
 
-auto part2 = [](auto data) {
-  auto total = 0;
-  for (const auto& round : data) {
-    total += play(round.first, round.second);
-  }
-  return total;
-};
-
-const static std::string test_data = R"(A Y
+AOC_TEST_CASE(15, 12, R"(A Y
 B X
 C Z
-)";
+)")
 
 }  // namespace
-
-AOC_REGISTER(2022, 2, grammar::parser, part1, part2);
-AOC_TEST_CASE(2022, 2, part1, test_data, 15)
-AOC_TEST_CASE(2022, 2, part2, test_data, 12)
