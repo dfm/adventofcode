@@ -22,7 +22,7 @@ registry::implementation get_implementation(year_t year, day_t day) {
 
 void run(year_t year, day_t day, std::ostream& out) {
   auto implementation = get_implementation(year, day);
-  out << "* Dec " << day << ", " << year << " *" << std::endl;
+  out << std::endl << "* Dec " << day << ", " << year << " *" << std::endl;
 
   auto in1 = remote::data(year, day).get();
   out << "=> Part 1: ";

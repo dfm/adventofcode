@@ -2,24 +2,13 @@
 
 namespace {
 
-enum class choice {
-  rock = 0,
-  paper,
-  scissors,
-};
-
 namespace grammar {
 namespace dsl = lexy::dsl;
 
-struct character {
-  static constexpr auto rule = dsl::capture(dsl::ascii::upper);
-  static constexpr auto value = lexy::callback<char>(
-      [](auto lex) { return static_cast<char>(*lex.begin()); });
-};
-
 struct round {
   static constexpr auto whitespace = dsl::ascii::space;
-  static constexpr auto rule = dsl::p<character> + dsl::p<character>;
+  static constexpr auto rule =
+      dsl::p<aoc::dsl::character> + dsl::p<aoc::dsl::character>;
   static constexpr auto value = lexy::construct<std::pair<char, char>>;
 };
 
@@ -44,14 +33,6 @@ inline std::int64_t score(const char a, const char b) {
   return score;
 }
 
-auto part1 = [](auto data) {
-  auto total = 0;
-  for (const auto& round : data) {
-    total += score(round.first, round.second - 'X' + 'A');
-  }
-  return total;
-};
-
 inline std::int64_t play(const char a, const char b) {
   char choice;
   if (b == 'X') {
@@ -65,6 +46,14 @@ inline std::int64_t play(const char a, const char b) {
   }
   return score(a, choice);
 }
+
+auto part1 = [](auto data) {
+  auto total = 0;
+  for (const auto& round : data) {
+    total += score(round.first, round.second - 'X' + 'A');
+  }
+  return total;
+};
 
 auto part2 = [](auto data) {
   auto total = 0;

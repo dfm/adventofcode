@@ -31,24 +31,28 @@ std::function<void(std::istream &, std::ostream &)> to_runner(auto func) {
   return [func](std::istream &in, std::ostream &out) { out << func(in); };
 }
 
-namespace grammar {
-
-namespace dsl = lexy::dsl;
+namespace dsl {
 
 template <typename Int = std::int64_t>
 struct signed_integer {
-  static constexpr auto rule = dsl::sign + dsl::integer<Int>;
+  static constexpr auto rule = lexy::dsl::sign + lexy::dsl::integer<Int>;
   static constexpr auto value = lexy::as_integer<Int>;
 };
 
 template <typename Int = std::int64_t>
 struct vector_of_signed_integers {
-  static constexpr auto rule =
-      dsl::terminator(dsl::eof).opt_list(dsl::p<signed_integer<Int>>);
+  static constexpr auto rule = lexy::dsl::terminator(lexy::dsl::eof)
+                                   .opt_list(lexy::dsl::p<signed_integer<Int>>);
   static constexpr auto value = lexy::as_list<std::vector<Int>>;
 };
 
-}  // namespace grammar
+struct character {
+  static constexpr auto rule = lexy::dsl::capture(lexy::dsl::ascii::upper);
+  static constexpr auto value = lexy::callback<char>(
+      [](auto lex) { return static_cast<char>(*lex.begin()); });
+};
+
+}  // namespace dsl
 }  // namespace aoc
 
 #endif

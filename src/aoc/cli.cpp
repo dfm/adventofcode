@@ -33,9 +33,9 @@ int main(int argc, char** argv) {
     } else {
       year = tm->tm_year + 1900;
     }
-  }
-  if (day == 0 && month == 12) {
-    day = tm->tm_mday;
+    if (day == 0 && month == 12) {
+      day = tm->tm_mday;
+    }
   }
 
   std::cout << "Year: " << year << std::endl;
