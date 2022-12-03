@@ -3,7 +3,7 @@ default: compile
 build/Makefile:
 	@cmake -B build .
 
-build/src/aoc: build/Makefile
+build/src/aoc: build/Makefile src/*/day*.cpp
 	@cmake --build build --parallel 2
 
 compile: build/src/aoc
