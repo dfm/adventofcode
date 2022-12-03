@@ -39,9 +39,8 @@ AOC_IMPL(2022, 3) {
   static constexpr auto part1 = [](auto data) {
     std::int64_t total = 0;
     for (const auto& line : data) {
-      auto middle = (line.end() - line.begin()) / 2 + line.begin();
-      auto first = std::string(line.begin(), middle);
-      auto second = std::string(middle, line.end());
+      auto first = line.substr(0, line.size() / 2);
+      auto second = line.substr(line.size() / 2, line.size());
       std::sort(first.begin(), first.end());
       std::sort(second.begin(), second.end());
       std::string inter;
