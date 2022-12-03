@@ -1,4 +1,4 @@
-default: compile
+default: run-all
 
 build/Makefile:
 	@cmake -B build .
@@ -14,7 +14,7 @@ test: compile
 run: compile
 	build/src/aoc
 
-run-all: compile
+run-all: test
 	build/src/aoc -y 2022
 
 new: compile
