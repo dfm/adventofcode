@@ -14,10 +14,13 @@ test: compile
 run: compile
 	build/src/aoc
 
+run-all: compile
+	build/src/aoc -y 2022
+
 new: compile
 	build/src/aoc -s
 
 clean:
 	@rm -rf build
 
-.PHONY: compile test run new clean
+.PHONY: compile test run run-all new clean
