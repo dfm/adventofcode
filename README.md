@@ -10,7 +10,34 @@ It's not pretty, but sometimes it works(?):
 
 [![Tests](https://github.com/dfm/adventofcode/workflows/Tests/badge.svg)](https://github.com/dfm/adventofcode/actions?query=workflow%3ATests)
 
-## Usage notes
+## Project Layout
+
+The infrastructure and solver scaffolding is implemented in `include/aoc` and
+`src/aoc`, with unit tests in `tests`. The daily solvers are in `src/2022` with
+tests implemented inline. A solver is implemented (following the code in `src/template.cpp.template`) as follows:
+
+```cpp
+AOC_IMPL(YEAR, DAY) {
+  using parser = grammar::parser;
+  static constexpr auto part1 = [](auto data) { return 0; };
+  static constexpr auto part2 = [](auto data) { return 0; };
+};
+```
+
+where `parser` is a [lexy](https://github.com/foonathan/lexy) parser for the
+input data, and `part1` and `part2` are functions accepting the parsed input.
+
+Tests are implemented using the `AOC_TEST_CASE` macro, which expands into a
+[doctest](https://github.com/doctest/doctest) `TEST_CASE`:
+
+```cpp
+AOC_TEST_CASE(EXPECTED_PART1_RESULT, EXPECTED_PART2_RESULT, R"(some
+test
+input
+)")
+```
+
+## Usage Notes
 
 **Session key:** To automatically download the inputs for a specific day, you'll
 need to have your AofC session key saved somewhere. To find it, log into [the

@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
 
     auto path = fs::current_path();
     path /= "src";
-    auto template_path = path / "template.cpp";
+    auto template_path = path / "template.cpp.template";
     std::ifstream template_file(template_path);
     if (!template_file.is_open()) {
       std::cerr << "Failed to open " << template_path << " for reading"
