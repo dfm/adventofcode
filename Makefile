@@ -11,16 +11,19 @@ compile: build/src/aoc
 test: compile
 	build/src/tests
 
+unit-test: compile
+	@ctest --output-on-failure --test-dir build
+
 run: compile
 	build/src/aoc
 
 run-all: test
-	build/src/aoc -y 2022
+	build/src/aoc --year 2022
 
 new: compile
-	build/src/aoc -s
+	build/src/aoc --new
 
 clean:
 	@rm -rf build
 
-.PHONY: compile test run run-all new clean
+.PHONY: compile test unit-test run run-all new clean

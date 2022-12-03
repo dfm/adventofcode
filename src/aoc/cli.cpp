@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
   aoc::day_t day = 0;
   app.add_option("-y,--year", year, "What year is it?");
   app.add_option("-d,--day", day, "Pick a day, any day");
-  app.add_flag("-s,--start", start, "Start a new day");
+  app.add_flag("-n,--new", start, "Start a new day");
   CLI11_PARSE(app, argc, argv);
 
   auto now =
