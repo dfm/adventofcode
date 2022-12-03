@@ -52,3 +52,26 @@ To run the solver on a specific day, use
 ```bash
 build/src/aoc -y YEAR -d DAY
 ```
+
+## Dependencies
+
+Besides the C++20 standard library, I'm using the following external
+dependencies (all included using CMake `FetchContent`):
+
+- [lexy](https://github.com/foonathan/lexy) for parsing the input
+- [doctest](https://github.com/doctest/doctest) for unit testing
+
+To build the infrastructure, I'm also using the following dependencies:
+
+- [CLI11](https://github.com/CLIUtils/CLI11) for building the command line
+  interface
+- [cpr](https://github.com/libcpr/cpr) for interacting with the AoC website
+- [inja](https://github.com/pantor/inja) for formatting the daily template
+- [fmt](https://github.com/fmtlib/fmt) for a backward-compatible `std::format`
+  implementation, because my compiler doesn't support it
+
+## License
+
+Copyright 2019-2022 Daniel Foreman-Mackey
+
+Licensed under the [Apache License](/LICENSE).
