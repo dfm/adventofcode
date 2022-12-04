@@ -4,7 +4,7 @@ build/Makefile:
 	@cmake -B build .
 
 build/aoc: build/Makefile src/*/day*.cpp
-	@cmake --build build --parallel 2
+	@cmake --build build --parallel 4
 
 compile: build/aoc
 
