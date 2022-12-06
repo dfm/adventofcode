@@ -7,7 +7,6 @@
 #include <fstream>
 #include <inja/inja.hpp>
 #include <iostream>
-#include <regex>
 
 #include "aoc/aoc.hpp"
 

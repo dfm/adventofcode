@@ -3,10 +3,8 @@ default: run-all
 build/Makefile:
 	@cmake -B build .
 
-build/aoc: build/Makefile src/*/day*.cpp
+compile: build/Makefile
 	@cmake --build build --parallel 4
-
-compile: build/aoc
 
 test: compile
 	build/aoctest

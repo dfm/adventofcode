@@ -11,7 +11,6 @@ struct parser {
 
 TEST_CASE("[io] lexy") {
   auto func = [](auto in) { return in; };
-  auto wrapped = aoc::parse<parser>(func);
-  std::istringstream in("1");
-  REQUIRE(wrapped(in) == 1);
+  auto wrapped = aoc::parse_from_string<parser>(func);
+  REQUIRE(wrapped("1") == 1);
 }

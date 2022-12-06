@@ -4,6 +4,7 @@
 
 #include <cstdlib>
 #include <exception>
+#include <fstream>
 #include <sstream>
 
 namespace fs = std::filesystem;
@@ -45,20 +46,12 @@ void data::download() const {
   file << r.text;
 }
 
-std::ifstream data::get() const {
+fs::path data::get() const {
   auto filename = path();
   if (!fs::exists(filename)) {
     download();
   }
-
-  std::ifstream file(filename);
-  if (!file.is_open()) {
-    std::ostringstream msg;
-    msg << "Failed to open file " << filename << " for reading";
-    throw std::runtime_error(msg.str());
-  }
-
-  return file;
+  return filename;
 }
 
 std::string get_session_key() {

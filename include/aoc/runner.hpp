@@ -1,9 +1,9 @@
 #ifndef AOC_RUNNER_HPP
 #define AOC_RUNNER_HPP
 
-#include <iostream>
+#include <ostream>
 
-#include "./types.hpp"
+#include "types.hpp"
 
 namespace aoc {
 

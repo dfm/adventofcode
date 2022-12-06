@@ -72,7 +72,7 @@ set(
   src/aoc/runner.cpp)
 
 add_library(aoclib STATIC ${AOC_SOURCE})
-target_link_libraries(aoclib PUBLIC cpr::cpr foonathan::lexy::core)
+target_link_libraries(aoclib PUBLIC cpr::cpr foonathan::lexy::core foonathan::lexy::file)
 target_include_directories(aoclib PRIVATE ${cpr_SOURCE_DIR}/include)
 target_compile_options(aoclib PUBLIC -O3 -Wall -pedantic -Wextra -Werror)
 if(HAS_CONCEPTS)

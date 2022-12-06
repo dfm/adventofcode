@@ -1,41 +1,61 @@
 #ifndef AOC_IO_HPP
 #define AOC_IO_HPP
 
-#include <cstdint>
-#include <functional>
-#include <istream>
+#include <filesystem>
 #include <lexy/action/parse.hpp>
 #include <lexy/callback.hpp>
 #include <lexy/dsl.hpp>
+#include <lexy/input/file.hpp>
 #include <lexy/input/string_input.hpp>
 #include <lexy_ext/report_error.hpp>
 #include <ostream>
+#include <sstream>
 #include <vector>
 
 namespace aoc {
 
 template <typename Parser>
-auto parse(auto func) {
-  return [func](std::istream &in) {
-    std::string s(std::istreambuf_iterator<char>(in), {});
-    auto input = lexy::string_input(s);
-    auto result = lexy::parse<Parser>(input, lexy_ext::report_error);
-    if (result.is_error()) {
-      throw std::runtime_error("Failed to parse input");
+auto parse(auto input) {
+  auto result = lexy::parse<Parser>(input, lexy_ext::report_error);
+  if (result.is_error()) {
+    throw std::runtime_error("Failed to parse input");
+  }
+  return result.value();
+}
+
+template <typename Parser>
+auto parse_from_file(auto func) {
+  return [func](const std::filesystem::path &path) {
+    auto file = lexy::read_file<lexy::ascii_encoding>(path.string().c_str());
+    if (!file) {
+      std::ostringstream msg;
+      msg << "Failed to open " << path << " for reading";
+      throw std::runtime_error(msg.str());
     }
-    return func(result.value());
+    auto input = file.buffer();
+    auto value = parse<Parser>(input);
+    return func(value);
+  };
+}
+
+template <typename Parser>
+auto parse_from_string(auto func) {
+  return [func](const std::string &data) {
+    auto input = lexy::string_input(data);
+    auto value = parse<Parser>(input);
+    return func(value);
   };
 }
 
 namespace dsl {
 
-template <typename Int = std::int64_t>
+template <typename Int = int>
 struct signed_integer {
   static constexpr auto rule = lexy::dsl::sign + lexy::dsl::integer<Int>;
   static constexpr auto value = lexy::as_integer<Int>;
 };
 
-template <typename Int = std::int64_t>
+template <typename Int = int>
 struct vector_of_signed_integers {
   static constexpr auto rule = lexy::dsl::terminator(lexy::dsl::eof)
                                    .opt_list(lexy::dsl::p<signed_integer<Int>>);
