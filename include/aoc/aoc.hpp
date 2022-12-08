@@ -15,6 +15,7 @@
 #ifndef AOC_AOC_HPP
 #define AOC_AOC_HPP
 
+#include "algorithms.hpp"
 #include "io.hpp"
 #include "registry.hpp"
 #include "remote.hpp"
