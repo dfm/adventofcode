@@ -53,8 +53,8 @@ struct dir {
 };
 
 struct file {
-  static constexpr auto rule =
-      dsl::else_ >> dsl::integer<size_t> + dsl::ascii::space + dsl::p<str>;
+  static constexpr auto rule = dsl::else_ >> (dsl::integer<size_t> +
+                                              dsl::ascii::space + dsl::p<str>);
   static constexpr auto value = lexy::callback<instr_t>(
       [](auto n, auto s) { return instr_t(cmd_t::_output, n, s); });
 };
@@ -65,50 +65,55 @@ struct instr {
   static constexpr auto value = lexy::forward<instr_t>;
 };
 
-struct parser {
-  static constexpr auto rule =
-      dsl::terminator(dsl::eof).opt_list(dsl::p<instr>);
-  static constexpr auto value = lexy::as_list<std::vector<instr_t>>;
-};
+struct tree {
+  std::vector<std::string> _path;
+  std::unordered_map<std::string, std::pair<size_t, size_t>> _tree;
+  size_t _depth = 0;
 
-}  // namespace grammar
-
-inline auto build_tree(auto data) {
-  std::unordered_map<std::string, std::pair<size_t, size_t>> tree;
-  std::vector<std::string> current_path;
-  size_t depth = 0;
-  for (const auto &i : data) {
-    if (i.cmd == grammar::cmd_t::_cd) {
-      if (i.arg == "/") {
-        current_path.resize(0);
-        current_path.push_back(".");
-        depth = 0;
-      } else if (i.arg == "..") {
-        current_path.pop_back();
-        depth--;
+  void push_back(instr_t &&inst) {
+    if (inst.cmd == grammar::cmd_t::_cd) {
+      if (inst.arg == "/") {
+        _path.resize(0);
+        _path.push_back(".");
+        _depth = 0;
+      } else if (inst.arg == "..") {
+        _path.pop_back();
+        _depth--;
       } else {
-        current_path.push_back(i.arg);
-        depth++;
+        _path.push_back(inst.arg);
+        _depth++;
       }
-    } else if (i.cmd == grammar::cmd_t::_output && !i.is_dir) {
+    } else if (inst.cmd == grammar::cmd_t::_output && !inst.is_dir) {
       std::ostringstream id;
-      for (const auto &dir : current_path) {
+      for (const auto &dir : _path) {
         id << dir << "/";
-        if (auto search = tree.find(id.str()); search != tree.end()) {
-          search->second.first += i.size;
+        if (auto search = _tree.find(id.str()); search != _tree.end()) {
+          search->second.first += inst.size;
         } else {
-          tree.insert({id.str(), {i.size, depth}});
+          _tree.insert({id.str(), {inst.size, _depth}});
         }
       }
     }
   }
-  return tree;
-}
+
+  auto begin() { return _tree.begin(); }
+  auto end() { return _tree.end(); }
+  std::pair<size_t, size_t> &operator[](const std::string &key) {
+    return _tree[key];
+  }
+};
+
+struct parser {
+  static constexpr auto rule =
+      dsl::terminator(dsl::eof).opt_list(dsl::p<instr>);
+  static constexpr auto value = lexy::as_list<tree>;
+};
+
+}  // namespace grammar
 
 AOC_IMPL(2022, 7) {
   using parser = grammar::parser;
-  static constexpr auto part1 = [](auto data) {
-    auto tree = build_tree(data);
+  static constexpr auto part1 = [](auto tree) {
     size_t total = 0;
     for (const auto &s : tree) {
       if (s.second.first < 100000) {
@@ -117,8 +122,7 @@ AOC_IMPL(2022, 7) {
     }
     return total;
   };
-  static constexpr auto part2 = [](auto data) {
-    auto tree = build_tree(data);
+  static constexpr auto part2 = [](auto tree) {
     size_t target = tree[std::string("./")].first - 40000000;
     size_t result = std::numeric_limits<size_t>::max();
     for (const auto &s : tree) {
