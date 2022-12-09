@@ -1,7 +1,8 @@
+#include <type_traits>
+
 #include "aoc/aoc.hpp"
 
 namespace {
-
 namespace grammar {
 namespace dsl = lexy::dsl;
 struct parser {
@@ -10,20 +11,30 @@ struct parser {
 };
 }  // namespace grammar
 
+template <size_t dx, size_t dy, std::enable_if_t<(dx + 1 == dy), bool> = true>
+inline bool match_impl(size_t n, const std::string &msg) {
+  return (msg[n + dx] == msg[n + dy]);
+}
+
+template <size_t dx, size_t dy, std::enable_if_t<(dx + 1 < dy), bool> = true>
+inline bool match_impl(size_t n, const std::string &msg) {
+  return (msg[n + dx] == msg[n + dy]) | match_impl<dx, dy - 1>(n, msg);
+}
+
+template <size_t dx, size_t width, std::enable_if_t<(dx == 0), bool> = true>
+inline bool match(size_t n, const std::string &msg) {
+  return match_impl<dx, width>(n, msg);
+}
+
+template <size_t dx, size_t width, std::enable_if_t<(dx != 0), bool> = true>
+inline bool match(size_t n, const std::string &msg) {
+  return match_impl<dx, width>(n, msg) | match<dx - 1, width>(n, msg);
+}
+
 template <size_t width>
 size_t find_first_unique(const std::string &msg) {
-  for (size_t n = width - 1; n < msg.size(); ++n) {
-    bool unique = true;
-    for (size_t i = 0; unique && (i < width); ++i) {
-      for (size_t j = i + 1; unique && (j < width); ++j) {
-        if (msg[n - j] == msg[n - i]) {
-          unique = false;
-        }
-      }
-    }
-    if (unique) {
-      return n + 1;
-    }
+  for (size_t n = 0; n < msg.size() - width; ++n) {
+    if (!match<width - 2, width - 1>(n, msg)) return n + width;
   }
   return 0;
 }
