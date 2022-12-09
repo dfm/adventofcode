@@ -1,6 +1,10 @@
 #ifndef AOC_ALGORITHMS_HPP
 #define AOC_ALGORITHMS_HPP
 
+#include <cstddef>
+#include <cstdint>
+#include <functional>
+
 namespace aoc {
 
 template <typename I>
@@ -40,6 +44,17 @@ class range {
   iterator begin_;
   iterator end_;
 };
+
+// MAGIC: from boost
+// ref:
+// https://stackoverflow.com/questions/2590677/how-do-i-combine-hash-values-in-c0x
+inline void hash_combine(size_t &) {}
+template <typename T, typename... Rest>
+inline void hash_combine(size_t &seed, const T &v, Rest... rest) {
+  std::hash<T> hasher;
+  seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+  hash_combine(seed, rest...);
+}
 
 }  // namespace aoc
 

@@ -11,21 +11,10 @@ struct instruction_t {
   std::int32_t distance;
 };
 
-// MAGIC: from boost
-// ref:
-// https://stackoverflow.com/questions/2590677/how-do-i-combine-hash-values-in-c0x
-inline void hash_combine(size_t&) {}
-template <typename T, typename... Rest>
-inline void hash_combine(size_t& seed, const T& v, Rest... rest) {
-  std::hash<T> hasher;
-  seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-  hash_combine(seed, rest...);
-}
-
 struct vec_hash {
   size_t operator()(const vec_t& v) const {
     size_t h = 0;
-    hash_combine(h, v.first, v.second);
+    aoc::hash_combine(h, v.first, v.second);
     return h;
   }
 };
