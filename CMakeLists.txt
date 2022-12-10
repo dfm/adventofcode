@@ -3,6 +3,7 @@ project(AdventOfCode VERSION 0.2022.0 LANGUAGES CXX)
 include(CTest)
 
 option(AOC_BUILD_TESTS "Enable building tests" ON)
+option(AOC_ANIMATE "Enable animations" OFF)
 
 # 
 # C++ standard
@@ -80,7 +81,7 @@ if(HAS_CONCEPTS)
 endif()
 
 #
-# Library
+# CLI
 #
 file(
   GLOB DAYS_SOURCE
@@ -91,10 +92,15 @@ message(STATUS "Found days: ${DAYS_SOURCE}")
 add_executable(aoc src/aoc/cli.cpp ${DAYS_SOURCE})
 target_link_libraries(aoc PRIVATE aoclib CLI11::CLI11 fmt::fmt)
 target_compile_definitions(aoc PRIVATE DOCTEST_CONFIG_DISABLE)
-target_include_directories(aoc PRIVATE ${doctest_SOURCE_DIR}/doctest)
-target_include_directories(aoc PRIVATE ${inja_SOURCE_DIR}/single_include)
-target_include_directories(aoc PRIVATE ${inja_SOURCE_DIR}/third_party/include)
-target_include_directories(aoc PRIVATE ${cli11_SOURCE_DIR}/include)
+target_include_directories(aoc PRIVATE 
+  ${doctest_SOURCE_DIR}/doctest
+  ${inja_SOURCE_DIR}/single_include
+  ${inja_SOURCE_DIR}/third_party/include
+  ${cli11_SOURCE_DIR}/include)
+
+if(AOC_ANIMATE)
+  target_compile_definitions(aoc PRIVATE AOC_ANIMATE)
+endif()
 
 if(AOC_BUILD_TESTS)
   message(STATUS "Building tests")

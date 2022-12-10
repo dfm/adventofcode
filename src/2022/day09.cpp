@@ -3,6 +3,10 @@
 
 #include "aoc/aoc.hpp"
 
+#ifdef AOC_ANIMATE
+#include <iostream>
+#endif
+
 namespace {
 
 typedef std::pair<std::int32_t, std::int32_t> vec_t;
@@ -69,7 +73,9 @@ inline vec_t step(const vec_t& step, vec_t& head, vec_t& tail) {
 template <size_t count>
 struct problem_t {
   std::array<vec_t, count> knots;
+
   const vec_t& tail() const { return knots[count - 1]; }
+
   void move(const vec_t& v) {
     vec_t delta = v;
     for (size_t k = 0; k < count - 1; ++k) {
@@ -79,12 +85,55 @@ struct problem_t {
     knots[count - 1].first += delta.first;
     knots[count - 1].second += delta.second;
   }
+
+#ifdef AOC_ANIMATE
+  void show(const std::unordered_set<vec_t, vec_hash>& visited) {
+    std::int32_t min_x = 0, max_x = 0, min_y = 0, max_y = 0;
+    for (const auto& k : knots) {
+      min_x = std::min(min_x, k.first);
+      max_x = std::max(max_x, k.first);
+      min_y = std::min(min_y, k.second);
+      max_y = std::max(max_y, k.second);
+    }
+    for (const auto& k : visited) {
+      min_x = std::min(min_x, k.first);
+      max_x = std::max(max_x, k.first);
+      min_y = std::min(min_y, k.second);
+      max_y = std::max(max_y, k.second);
+    }
+
+    for (std::int32_t y = max_y; y >= min_y; --y) {
+      for (std::int32_t x = min_x; x <= max_x; ++x) {
+        bool found = false;
+        for (size_t k = 0; k < count; ++k) {
+          if (knots[k].first == x && knots[k].second == y) {
+            found = true;
+            break;
+          }
+        }
+        if (found)
+          std::cout << "o";
+        else if (visited.contains(vec_t{x, y}))
+          std::cout << "#";
+        else
+          std::cout << ".";
+      }
+      std::cout << std::endl;
+    }
+  }
+#endif
+
   size_t run(const std::vector<instruction_t>& data) {
     std::unordered_set<vec_t, vec_hash> visited;
     for (const auto& instruction : data) {
       for (std::int64_t i = 0; i < instruction.distance; ++i) {
         move(instruction.dir);
         visited.insert(tail());
+
+#ifdef AOC_ANIMATE
+        system("clear");
+        show(visited);
+#endif
       }
     }
     return visited.size();
