@@ -1,3 +1,4 @@
+#include <numeric>
 #include <optional>
 
 #include "aoc/aoc.hpp"
@@ -117,10 +118,8 @@ inline int_t exec_op(const op_args_t& op_args, const int_t& value) {
 
 template <int_t max_iter, int_t norm>
 inline int_t run(std::vector<monkey_t>& data) {
-  int_t mod = 1;
-  for (const auto& m : data) {
-    mod *= m.mod;
-  }
+  auto mod = std::accumulate(data.begin(), data.end(), int_t(1),
+                             [](auto a, auto b) { return a * b.mod; });
   std::vector<int_t> counts(data.size());
   for (int_t i = 0; i < max_iter; ++i) {
     int_t n = 0;
