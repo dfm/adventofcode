@@ -1,20 +1,18 @@
 #include <limits>
-#include <queue>
-#include <unordered_map>
 
 #include "aoc/aoc.hpp"
 
 namespace {
 
-typedef std::uint64_t distance_t;
-typedef std::pair<size_t, size_t> node_t;
-typedef std::pair<node_t, distance_t> neighbor_t;
-
-struct node_hash {
-  size_t operator()(const node_t& v) const {
-    size_t h = 0;
-    aoc::hash_combine(h, v.first, v.second);
-    return h;
+template <typename N, typename D>
+struct distance_map {
+  size_t _width = 0;
+  std::vector<std::optional<D>> _data;
+  std::optional<D> get(const N& pos) const {
+    return _data[pos.first + pos.second * _width];
+  }
+  void set(const N& pos, const D& value) {
+    _data[pos.first + pos.second * _width] = std::optional<D>{value};
   }
 };
 
@@ -23,17 +21,26 @@ struct grid {
   size_t _start = 0;
   size_t _end = 0;
   std::vector<int> _data;
+
+  typedef std::uint64_t distance_type;
+  typedef std::pair<size_t, size_t> node_type;
+  typedef std::pair<node_type, distance_type> neighbor_type;
+
   inline size_t width() const { return _width; }
   inline size_t height() const { return _data.size() / _width; }
-  inline node_t start() const { return {_start % _width, _start / _width}; }
-  inline node_t end() const { return {_end % _width, _end / _width}; }
+  inline node_type start() const { return {_start % _width, _start / _width}; }
+  inline node_type end() const { return {_end % _width, _end / _width}; }
   inline int value(size_t x, size_t y) const {
-    if (x >= width() || y >= height()) return 100;
+    if (x >= width() || y >= height()) return -2;
     return _data[_width * y + x];
   }
 
-  std::vector<neighbor_t> neighbors(const node_t& current) const {
-    std::vector<neighbor_t> neighbors;
+  distance_map<node_type, distance_type> to_distance_map() const {
+    return {_width, std::vector<std::optional<distance_type>>(_data.size())};
+  }
+
+  std::vector<neighbor_type> neighbors(const node_type& current) const {
+    std::vector<neighbor_type> neighbors;
     auto x0 = current.first;
     auto y0 = current.second;
     auto z0 = value(x0, y0);
@@ -41,60 +48,13 @@ struct grid {
     if (x0 > 0) deltas.push_back({x0 - 1, y0});
     if (y0 > 0) deltas.push_back({x0, y0 - 1});
     for (const auto& d : deltas) {
-      if (value(d.first, d.second) <= z0 + 1) {
-        neighbors.push_back(
-            std::make_pair(std::make_pair(d.first, d.second), 1));
+      if (value(d.first, d.second) >= z0 - 1) {
+        neighbors.push_back({{d.first, d.second}, 1});
       }
     }
     return neighbors;
   };
 };
-
-template <typename V, typename D>
-struct distance_cmp {
-  constexpr bool operator()(const std::pair<V, D>& lhs,
-                            const std::pair<V, D>& rhs) const {
-    return lhs.second > rhs.second;  // Backwards
-  }
-};
-
-template <typename Map, typename Node, typename Distance = std::uint64_t>
-inline bool is_shorter(const Map& map, const Node& node,
-                       const Distance& distance) {
-  if (auto lookup = map.find(node); lookup != map.end()) {
-    return distance < (*lookup).second;
-  }
-  return true;
-}
-
-template <typename Graph, typename Node, typename Distance = std::uint64_t,
-          typename Hash = std::hash<Node>>
-Distance shortest_path(const Graph& graph, const Node& start, const Node& end) {
-  using S = std::pair<Node, Distance>;
-
-  std::unordered_map<Node, Distance, Hash> distances;
-  distances.insert({start, Distance(0)});
-
-  std::priority_queue<S, std::vector<S>, distance_cmp<Node, Distance>> queue;
-  queue.push({start, Distance(0)});
-
-  for (; !queue.empty(); queue.pop()) {
-    const auto& next = queue.top();
-    const auto& node = next.first;
-    const auto& distance = next.second;
-    if (node == end) {
-      return distance;
-    }
-    for (const auto& neighbor : graph.neighbors(node)) {
-      auto propose = std::make_pair(neighbor.first, neighbor.second + distance);
-      if (is_shorter(distances, propose.first, propose.second)) {
-        queue.push(propose);
-        distances.insert_or_assign(propose.first, propose.second);
-      }
-    }
-  }
-  return 0;
-}
 
 namespace grammar {
 
@@ -132,18 +92,17 @@ AOC_IMPL(2022, 12) {
   static constexpr auto part1 = [](auto data) {
     auto start = data.start();
     auto end = data.end();
-    return shortest_path<grid, node_t, distance_t, node_hash>(data, start, end);
+    return aoc::shortest_path(data, end, start).value();
   };
   static constexpr auto part2 = [](auto data) {
-    distance_t result = std::numeric_limits<distance_t>::max();
+    auto result = std::numeric_limits<std::uint64_t>::max();
     auto end = data.end();
+    auto distances = aoc::shortest_path(data, end);
     for (size_t y = 0; y < data.height(); ++y) {
       for (size_t x = 0; x < data.width(); ++x) {
         if (data.value(x, y) != 0) continue;
-        auto len = shortest_path<grid, node_t, distance_t, node_hash>(
-            data, {x, y}, end);
-        if (len == 0) continue;
-        result = std::min(result, len);
+        auto len = distances.get({x, y});
+        if (len) result = std::min(result, len.value());
       }
     }
     return result;
