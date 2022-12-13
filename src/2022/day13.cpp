@@ -100,10 +100,11 @@ comp_t compare(const packet::packet_value& a, const packet::packet_value& b) {
       a.v);
 }
 
-bool packet::operator<(const packet::packet_value& a,
-                       const packet::packet_value& b) {
+namespace packet {
+bool operator<(const packet_value& a, const packet_value& b) {
   return compare(a, b) == comp_t::right;
 }
+}  // namespace packet
 
 AOC_IMPL(2022, 13) {
   using parser = grammar::parser;
