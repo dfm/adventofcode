@@ -95,7 +95,7 @@ AOC_IMPL(2022, 12) {
     return aoc::shortest_path(data, end, start).value();
   };
   static constexpr auto part2 = [](auto data) {
-    auto result = std::numeric_limits<std::uint64_t>::max();
+    auto result = std::numeric_limits<grid::distance_type>::max();
     auto end = data.end();
     auto distances = aoc::shortest_path(data, end);
     for (size_t y = 0; y < data.height(); ++y) {
