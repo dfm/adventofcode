@@ -18,8 +18,6 @@ struct packet_value {
   friend bool operator<(const packet_value& a, const packet_value& b);
 };
 
-using packet_pair = std::pair<packet_value, packet_value>;
-
 }  // namespace packet
 
 namespace grammar {
@@ -56,15 +54,11 @@ struct packet_value {
   static constexpr auto value = lexy::forward<packet::packet_value>;
 };
 
-struct packet_pair {
-  static constexpr auto rule = dsl::p<packet_value> + dsl::p<packet_value>;
-  static constexpr auto value = lexy::construct<packet::packet_pair>;
-};
-
 struct parser {
   static constexpr auto rule =
-      dsl::terminator(dsl::eof).opt_list(dsl::p<packet_pair>);
-  static constexpr auto value = lexy::as_list<std::vector<packet::packet_pair>>;
+      dsl::terminator(dsl::eof).opt_list(dsl::p<packet_value>);
+  static constexpr auto value =
+      lexy::as_list<std::vector<packet::packet_value>>;
 };
 
 }  // namespace grammar
@@ -115,31 +109,27 @@ AOC_IMPL(2022, 13) {
   using parser = grammar::parser;
   static constexpr auto part1 = [](auto data) {
     size_t result = 0;
-    for (size_t n = 0; n < data.size(); ++n) {
-      auto flag = compare(data[n].first, data[n].second);
+    for (size_t n = 0; n < data.size(); n += 2) {
+      auto flag = compare(data[n], data[n + 1]);
       if (flag == comp_t::right) {
-        result += n + 1;
+        result += n / 2 + 1;
       }
     }
     return result;
   };
-  static constexpr auto part2 = [](auto data) {
+  static constexpr auto part2 = [](auto packets) {
     auto spacers =
-        lexy::parse<grammar::packet_pair>(lexy::zstring_input("[[2]]\n[[6]]\n"),
-                                          lexy_ext::report_error)
+        lexy::parse<grammar::parser>(lexy::zstring_input("[[2]]\n[[6]]\n"),
+                                     lexy_ext::report_error)
             .value();
-    std::vector<packet::packet_value> packets = {spacers.first, spacers.second};
-    for (const auto& p : data) {
-      packets.push_back(p.first);
-      packets.push_back(p.second);
-    }
+    packets.insert(packets.end(), spacers.begin(), spacers.end());
     std::sort(packets.begin(), packets.end());
 
     size_t result = 1;
     size_t n = 1;
     for (const auto& p : packets) {
-      if (compare(p, spacers.first) == comp_t::same) result *= n;
-      if (compare(p, spacers.second) == comp_t::same) result *= n;
+      if (compare(p, spacers[0]) == comp_t::same) result *= n;
+      if (compare(p, spacers[1]) == comp_t::same) result *= n;
       ++n;
     }
     return result;
