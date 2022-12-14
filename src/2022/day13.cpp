@@ -14,8 +14,6 @@ struct packet_value {
 
   template <typename T>
   packet_value(T t) : v(std::move(t)) {}
-
-  friend bool operator<(const packet_value& a, const packet_value& b);
 };
 
 }  // namespace packet
@@ -104,6 +102,10 @@ namespace packet {
 bool operator<(const packet_value& a, const packet_value& b) {
   return compare(a, b) == comp_t::right;
 }
+
+bool operator==(const packet_value& a, const packet_value& b) {
+  return compare(a, b) == comp_t::same;
+}
 }  // namespace packet
 
 AOC_IMPL(2022, 13) {
@@ -129,8 +131,8 @@ AOC_IMPL(2022, 13) {
     size_t result = 1;
     size_t n = 1;
     for (const auto& p : packets) {
-      if (compare(p, spacers[0]) == comp_t::same) result *= n;
-      if (compare(p, spacers[1]) == comp_t::same) result *= n;
+      if (p == spacers[0]) result *= n;
+      if (p == spacers[1]) result *= n;
       ++n;
     }
     return result;

@@ -6,6 +6,7 @@
 #include <functional>
 #include <optional>
 #include <queue>
+#include <utility>
 
 namespace aoc {
 
@@ -19,6 +20,15 @@ inline void hash_combine(size_t& seed, const T& v, Rest... rest) {
   seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
   hash_combine(seed, rest...);
 }
+
+struct pair_hash {
+  template <typename A, typename B>
+  size_t operator()(const std::pair<A, B>& v) const {
+    size_t h = 0;
+    hash_combine(h, v.first, v.second);
+    return h;
+  }
+};
 
 template <typename I>
 class range {
