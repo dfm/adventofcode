@@ -1,4 +1,3 @@
-#include <iostream>
 #include <unordered_set>
 
 #include "aoc/aoc.hpp"
@@ -100,20 +99,6 @@ struct problem {
     }
     blocked.insert(sand);
     return sand;
-  }
-
-  void print() const {
-    for (int_t y = min_y; y <= max_y; ++y) {
-      for (int_t x = min_x; x <= max_x; ++x) {
-        if (blocked.contains({x, y})) {
-          std::cout << "#";
-        } else {
-          std::cout << ".";
-        }
-      }
-      std::cout << std::endl;
-    }
-    std::cout << std::endl;
   }
 };
 
