@@ -193,22 +193,35 @@ template <int_t max_time>
 int_t search2(const std::vector<int_t>& rates,
               const std::vector<int_t>& distances) {
   int_t result = 0;
-  auto result1 = search<max_time>(rates, distances, 0, 0, 0, 0, 0);
-  std::sort(result1.begin(), result1.end(),
-            [](const auto& a, const auto& b) { return a.first < b.first; });
-  result1.erase(result1.begin(), result1.end() - 5000);
-  std::unordered_map<std::uint32_t, int_t> cache;
-  for (auto [value, open] : result1) {
-    auto query = cache.find(open);
-    if (query == cache.end()) {
-      auto result2 =
-          find_best(search<max_time>(rates, distances, 0, 0, 0, 0, open));
-      cache.insert({open, result2});
-      result = std::max(result, value + result2);
-    } else {
-      result = std::max(result, value + query->second);
+  auto paths = search<max_time>(rates, distances, 0, 0, 0, 0, 0);
+  std::sort(paths.begin(), paths.end(),
+            [](const auto& a, const auto& b) { return a.first > b.first; });
+  auto num_paths = paths.size();
+  for (size_t i = 0; i < num_paths; ++i) {
+    auto [v1, p1] = paths[i];
+    for (size_t j = i + 1; j < num_paths; ++j) {
+      auto [v2, p2] = paths[j];
+      if (v1 + v2 <= result) break;
+      if (p1 & p2) continue;
+      result = std::max(result, v1 + v2);
     }
   }
+  // std::sort(result1.begin(), result1.end(),
+  //           [](const auto& a, const auto& b) { return a.first < b.first;
+  //           });
+  // std::unordered_map<std::uint32_t, int_t> cache;
+  // for (auto [value, open] : result1) {
+  //   auto query = cache.find(open);
+  //   if (query == cache.end()) {
+  //     auto result2 =
+  //         find_best(search<max_time>(rates, distances, 0, 0, 0, 0,
+  //         open));
+  //     cache.insert({open, result2});
+  //     result = std::max(result, value + result2);
+  //   } else {
+  //     result = std::max(result, value + query->second);
+  //   }
+  // }
   return result;
 }
 
