@@ -24,6 +24,40 @@ struct distance_cmp {
   }
 };
 
+template <typename Value, typename Container>
+struct Iterator {
+  using iterator_category = std::forward_iterator_tag;
+  using value_type = Value;
+  using pointer = Value*;
+  using reference = Value&;
+
+  inline void advance() { current = container->next(); }
+
+  Iterator() {}
+  Iterator(Container* container) : container(container) { advance(); }
+  reference operator*() { return current; }
+  pointer operator->() { return &current; }
+  Iterator& operator++() {
+    advance();
+    return *this;
+  }
+  Iterator operator++(int) {
+    Iterator tmp = *this;
+    advance();
+    return tmp;
+  }
+  friend bool operator==(const Iterator& a, const Iterator& b) {
+    return a.current == b.current;
+  };
+  friend bool operator!=(const Iterator& a, const Iterator& b) {
+    return a.current != b.current;
+  };
+
+ private:
+  Value current;
+  Container* container;
+};
+
 }  // namespace detail
 
 template <typename DistanceMap, typename Node, typename Distance>
@@ -50,6 +84,9 @@ template <typename Graph, typename Node = typename Graph::node_type,
           typename DistanceMap = std::unordered_map<Node, Distance>>
 struct shortest_path {
   using Cursor = std::pair<Node, Distance>;
+  using Iterator =
+      detail::Iterator<std::optional<Cursor>,
+                       shortest_path<Graph, Node, Distance, DistanceMap>>;
 
   Graph graph;
   DistanceMap distance_map;
@@ -81,6 +118,9 @@ struct shortest_path {
     return current;
   }
 
+  Iterator begin() { return Iterator(this); }
+  Iterator end() { return Iterator(); }
+
   inline DistanceMap run() {
     while (next()) {
     }
@@ -88,10 +128,8 @@ struct shortest_path {
   }
 
   inline std::optional<Distance> run(const Node& to) {
-    while (true) {
-      auto propose = next();
-      if (!propose) break;
-      auto [node, distance] = propose.value();
+    for (auto it = begin(); it != end(); it++) {
+      auto [node, distance] = it->value();
       if (node == to) return distance;
     }
     return {};
