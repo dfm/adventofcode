@@ -9,7 +9,7 @@ namespace {
 enum direction_t { left = 0, right };
 using int_t = std::int64_t;
 using coord_t = std::pair<int_t, int_t>;
-using board_t = std::unordered_set<coord_t, aoc::pair_hash>;
+using board_t = std::unordered_set<coord_t>;
 
 struct piece_t {
   size_t width;
@@ -136,7 +136,7 @@ AOC_IMPL(2022, 17) {
   };
   static constexpr auto part2 = [](auto data) {
     game_t game(data);
-    std::unordered_set<std::pair<int_t, int_t>, aoc::pair_hash> seen;
+    std::unordered_set<std::pair<int_t, int_t>> seen;
     int_t start = 0;
     int_t start_value = 0;
     int_t period = 0;

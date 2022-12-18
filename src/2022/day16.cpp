@@ -60,19 +60,6 @@ struct parser {
 
 }  // namespace grammar
 
-template <typename N, typename D, typename H = std::hash<N>>
-struct distance_map {
-  std::unordered_map<N, D, H> _data;
-  std::optional<D> get(const N& pos) const {
-    auto search = _data.find(pos);
-    if (search == _data.end()) {
-      return {};
-    }
-    return search->second;
-  }
-  void set(const N& pos, const D& value) { _data.insert_or_assign(pos, value); }
-};
-
 struct graph {
   std::unordered_map<std::string, node> _nodes;
   std::vector<int_t> _rates;
@@ -83,7 +70,8 @@ struct graph {
   using node_type = std::string;
   using neighbor_type = edge_t;
 
-  distance_map<node_type, distance_type> to_distance_map() const { return {}; }
+  // distance_map<node_type, distance_type> to_distance_map() const { return {};
+  // }
 
   std::vector<neighbor_type> neighbors(const node_type& current) const {
     std::vector<neighbor_type> neighbors;
@@ -140,8 +128,8 @@ struct graph {
 
     for (const auto& n1 : _nodes) {
       _rates[node_map[n1.second.name]] = n1.second.rate;
-      auto values = aoc::shortest_path(*this, n1.second.name);
-      for (const auto& n2 : values._data) {
+      auto values = aoc::graph::shortest_path(*this, n1.second.name).run();
+      for (const auto& n2 : values) {
         if (n1.second.name != n2.first) {
           auto from = node_map[n1.second.name];
           auto to = node_map[n2.first];

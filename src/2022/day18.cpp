@@ -9,13 +9,6 @@ namespace {
 
 using int_t = std::int64_t;
 using coord_t = std::tuple<int_t, int_t, int_t>;
-struct coord_hash {
-  size_t operator()(const coord_t& v) const {
-    size_t h = 0;
-    aoc::hash_combine(h, std::get<0>(v), std::get<1>(v), std::get<2>(v));
-    return h;
-  }
-};
 
 namespace grammar {
 
@@ -42,7 +35,7 @@ struct parser {
 }  // namespace grammar
 
 template <size_t dim>
-inline int_t surface_area(const std::unordered_set<coord_t, coord_hash>& points,
+inline int_t surface_area(const std::unordered_set<coord_t>& points,
                           const coord_t& target) {
   int_t result = 0;
   coord_t query = target;
@@ -77,14 +70,14 @@ inline bool is_outside(const coord_t& min, const coord_t& max,
   return x < xmn || x > xmx || y < ymn || y > ymx || z < zmn || z > zmx;
 }
 
-inline bool can_reach_outside(
-    std::unordered_map<coord_t, bool, coord_hash>& cache,
-    const std::unordered_set<coord_t, coord_hash>& points, const coord_t& min,
-    const coord_t& max, const coord_t& target) {
+inline bool can_reach_outside(std::unordered_map<coord_t, bool>& cache,
+                              const std::unordered_set<coord_t>& points,
+                              const coord_t& min, const coord_t& max,
+                              const coord_t& target) {
   auto q = cache.find(target);
   if (q != cache.end()) return q->second;
   bool result = false;
-  std::unordered_set<coord_t, coord_hash> seen;
+  std::unordered_set<coord_t> seen;
   std::stack<coord_t> todo;
   todo.push(target);
   while (!todo.empty()) {
@@ -110,8 +103,8 @@ inline bool can_reach_outside(
 }
 
 template <size_t dim>
-inline int_t surface_area(std::unordered_map<coord_t, bool, coord_hash>& cache,
-                          const std::unordered_set<coord_t, coord_hash>& points,
+inline int_t surface_area(std::unordered_map<coord_t, bool>& cache,
+                          const std::unordered_set<coord_t>& points,
                           const coord_t& min, const coord_t& max,
                           const coord_t& target) {
   int_t result = 0;
@@ -126,7 +119,7 @@ inline int_t surface_area(std::unordered_map<coord_t, bool, coord_hash>& cache,
 AOC_IMPL(2022, 18) {
   using parser = grammar::parser;
   static constexpr auto part1 = [](auto data) {
-    std::unordered_set<coord_t, coord_hash> points(data.begin(), data.end());
+    std::unordered_set<coord_t> points(data.begin(), data.end());
     return std::accumulate(data.begin(), data.end(), int_t(0),
                            [&points](auto carry, const auto& c) {
                              return carry + surface_area<0>(points, c) +
@@ -135,8 +128,8 @@ AOC_IMPL(2022, 18) {
                            });
   };
   static constexpr auto part2 = [](auto data) {
-    std::unordered_set<coord_t, coord_hash> points(data.begin(), data.end());
-    std::unordered_map<coord_t, bool, coord_hash> cache;
+    std::unordered_set<coord_t> points(data.begin(), data.end());
+    std::unordered_map<coord_t, bool> cache;
     coord_t min{min_element<0>(data), min_element<1>(data),
                 min_element<2>(data)};
     coord_t max{max_element<0>(data), max_element<1>(data),

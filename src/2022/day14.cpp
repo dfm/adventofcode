@@ -43,7 +43,7 @@ inline T sign(const T& a) {
 }
 
 struct problem {
-  std::unordered_set<coord_t, aoc::pair_hash> blocked;
+  std::unordered_set<coord_t> blocked;
   int_t min_x = std::numeric_limits<int_t>::max(),
         max_x = std::numeric_limits<int_t>::min(), min_y = 0,
         max_y = std::numeric_limits<int_t>::min();

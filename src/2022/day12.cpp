@@ -3,19 +3,6 @@
 #include "aoc/aoc.hpp"
 
 namespace {
-
-template <typename N, typename D>
-struct distance_map {
-  size_t _width = 0;
-  std::vector<std::optional<D>> _data;
-  std::optional<D> get(const N& pos) const {
-    return _data[pos.first + pos.second * _width];
-  }
-  void set(const N& pos, const D& value) {
-    _data[pos.first + pos.second * _width] = std::optional<D>{value};
-  }
-};
-
 struct grid {
   size_t _width = 0;
   size_t _start = 0;
@@ -35,9 +22,9 @@ struct grid {
     return _data[_width * y + x];
   }
 
-  distance_map<node_type, distance_type> to_distance_map() const {
-    return {_width, std::vector<std::optional<distance_type>>(_data.size())};
-  }
+  // distance_map<node_type, distance_type> to_distance_map() const {
+  //   return {_width, std::vector<std::optional<distance_type>>(_data.size())};
+  // }
 
   std::vector<neighbor_type> neighbors(const node_type& current) const {
     std::vector<neighbor_type> neighbors;
@@ -92,17 +79,16 @@ AOC_IMPL(2022, 12) {
   static constexpr auto part1 = [](auto data) {
     auto start = data.start();
     auto end = data.end();
-    return aoc::shortest_path(data, end, start).value();
+    return aoc::graph::shortest_path(data, end).run(start).value();
   };
   static constexpr auto part2 = [](auto data) {
     auto result = std::numeric_limits<grid::distance_type>::max();
     auto end = data.end();
-    auto distances = aoc::shortest_path(data, end);
+    auto distances = aoc::graph::shortest_path(data, end).run();
     for (size_t y = 0; y < data.height(); ++y) {
       for (size_t x = 0; x < data.width(); ++x) {
         if (data.value(x, y) != 0) continue;
-        auto len = distances.get({x, y});
-        if (len) result = std::min(result, len.value());
+        result = std::min(result, distances[{x, y}]);
       }
     }
     return result;

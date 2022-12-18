@@ -54,7 +54,7 @@ AOC_IMPL(2022, 15) {
   using parser = grammar::parser;
   static constexpr auto part1 = [](auto data) {
     int_t row = data.size() < 20 ? 10 : 2000000;
-    std::unordered_set<coord_t, aoc::pair_hash> beacons;
+    std::unordered_set<coord_t> beacons;
     for (const auto &s : data) {
       beacons.insert(s.beacon);
     }

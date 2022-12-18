@@ -15,14 +15,6 @@ struct instruction_t {
   std::int32_t distance;
 };
 
-struct vec_hash {
-  size_t operator()(const vec_t& v) const {
-    size_t h = 0;
-    aoc::hash_combine(h, v.first, v.second);
-    return h;
-  }
-};
-
 namespace grammar {
 
 namespace dsl = lexy::dsl;
@@ -87,7 +79,7 @@ struct problem_t {
   }
 
 #ifdef AOC_ANIMATE
-  void show(const std::unordered_set<vec_t, vec_hash>& visited) {
+  void show(const std::unordered_set<vec_t>& visited) {
     std::int32_t min_x = 0, max_x = 0, min_y = 0, max_y = 0;
     for (const auto& k : knots) {
       min_x = std::min(min_x, k.first);
@@ -124,7 +116,7 @@ struct problem_t {
 #endif
 
   size_t run(const std::vector<instruction_t>& data) {
-    std::unordered_set<vec_t, vec_hash> visited;
+    std::unordered_set<vec_t> visited;
     for (const auto& instruction : data) {
       for (std::int64_t i = 0; i < instruction.distance; ++i) {
         move(instruction.dir);
