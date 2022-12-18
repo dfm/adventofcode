@@ -71,12 +71,10 @@ inline int_t max_element(const std::vector<coord_t>& data) {
 
 inline bool is_outside(const coord_t& min, const coord_t& max,
                        const coord_t& target) {
-  return std::get<0>(target) < std::get<0>(min) ||
-         std::get<1>(target) < std::get<1>(min) ||
-         std::get<2>(target) < std::get<2>(min) ||
-         std::get<0>(target) > std::get<0>(max) ||
-         std::get<1>(target) > std::get<1>(max) ||
-         std::get<2>(target) > std::get<2>(max);
+  auto [xmn, ymn, zmn] = min;
+  auto [xmx, ymx, zmx] = max;
+  auto [x, y, z] = target;
+  return x < xmn || x > xmx || y < ymn || y > ymx || z < zmn || z > zmx;
 }
 
 inline bool can_reach_outside(
@@ -90,33 +88,22 @@ inline bool can_reach_outside(
   std::stack<coord_t> todo;
   todo.push(target);
   while (!todo.empty()) {
-    auto next = todo.top();
+    auto c = todo.top();
     todo.pop();
-
-    if (points.contains(next) || seen.contains(next)) continue;
-
-    if (is_outside(min, max, next)) {
+    if (points.contains(c) || seen.contains(c)) continue;
+    if (is_outside(min, max, c)) {
       result = true;
       break;
     }
-    seen.insert(next);
+    seen.insert(c);
 
-    std::get<0>(next) += 1;
-    todo.push(next);
-    std::get<0>(next) -= 2;
-    todo.push(next);
-    std::get<0>(next) += 1;
-
-    std::get<1>(next) += 1;
-    todo.push(next);
-    std::get<1>(next) -= 2;
-    todo.push(next);
-    std::get<1>(next) += 1;
-
-    std::get<2>(next) += 1;
-    todo.push(next);
-    std::get<2>(next) -= 2;
-    todo.push(next);
+    auto [x, y, z] = c;
+    todo.push({x - 1, y, z});
+    todo.push({x + 1, y, z});
+    todo.push({x, y - 1, z});
+    todo.push({x, y + 1, z});
+    todo.push({x, y, z - 1});
+    todo.push({x, y, z + 1});
   }
   cache.insert_or_assign(target, result);
   return result;
