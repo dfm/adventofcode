@@ -206,22 +206,6 @@ int_t search2(const std::vector<int_t>& rates,
       result = std::max(result, v1 + v2);
     }
   }
-  // std::sort(result1.begin(), result1.end(),
-  //           [](const auto& a, const auto& b) { return a.first < b.first;
-  //           });
-  // std::unordered_map<std::uint32_t, int_t> cache;
-  // for (auto [value, open] : result1) {
-  //   auto query = cache.find(open);
-  //   if (query == cache.end()) {
-  //     auto result2 =
-  //         find_best(search<max_time>(rates, distances, 0, 0, 0, 0,
-  //         open));
-  //     cache.insert({open, result2});
-  //     result = std::max(result, value + result2);
-  //   } else {
-  //     result = std::max(result, value + query->second);
-  //   }
-  // }
   return result;
 }
 
