@@ -25,11 +25,10 @@ struct blueprint {
         clay_bot_cost(clay_bot_cost),
         obsidian_bot_cost(obsidian_bot_cost),
         geode_bot_cost(geode_bot_cost) {
-    max_cost =
-        std::make_tuple(std::max(std::max(std::max(ore_bot_cost, clay_bot_cost),
-                                          obsidian_bot_cost.first),
-                                 geode_bot_cost.first),
-                        obsidian_bot_cost.second, geode_bot_cost.second);
+    max_cost = std::make_tuple(
+        std::max(std::max(clay_bot_cost, obsidian_bot_cost.first),
+                 geode_bot_cost.first),
+        obsidian_bot_cost.second, geode_bot_cost.second);
   }
 };
 
