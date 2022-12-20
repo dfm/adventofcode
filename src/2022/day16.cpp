@@ -70,9 +70,6 @@ struct graph {
   using node_type = std::string;
   using neighbor_type = edge_t;
 
-  // distance_map<node_type, distance_type> to_distance_map() const { return {};
-  // }
-
   std::vector<neighbor_type> neighbors(const node_type& current) const {
     std::vector<neighbor_type> neighbors;
     auto search = _nodes.find(current);
