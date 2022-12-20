@@ -1,5 +1,4 @@
 #include <array>
-#include <iostream>
 #include <queue>
 #include <unordered_map>
 #include <unordered_set>
@@ -102,43 +101,81 @@ struct graph {
     auto time_left = max_time - time;
     auto [r, c, b, g] = materials;
     auto [b_r, b_c, b_b, b_g] = bots;
-    auto out_r = r + b_r;
-    auto out_c = c + b_c;
-    auto out_b = b + b_b;
-    auto out_g = g + b_g;
     auto [cost_b_r, cost_b_c] = bp.obsidian_bot_cost;
     auto [cost_g_r, cost_g_b] = bp.geode_bot_cost;
     auto [max_r, max_c, max_b] = bp.max_cost;
 
-    // Can we build geode bot? Let's do it if we can...
-    if (r >= cost_g_r && b >= cost_g_b) {
-      results.push_back({{time + 1,
-                          {out_r - cost_g_r, out_c, out_b - cost_g_b, out_g},
-                          {b_r, b_c, b_b, b_g + 1}},
-                         1});
-    } else {
-      results.push_back({{time + 1, {out_r, out_c, out_b, out_g}, bots}, 1});
+    if (b_b) {
+      int_t dt = std::max(int_t(0), std::max((cost_g_r - r + b_r - 1) / b_r,
+                                             (cost_g_b - b + b_b - 1) / b_b)) +
+                 1;
+      if (dt >= time_left) {
+        dt = time_left;
+        results.push_back(
+            {{time + dt,
+              {r + b_r * dt, c + b_c * dt, b + b_b * dt, g + b_g * dt},
+              {b_r, b_c, b_b, b_g}},
+             1});
+      } else {
+        results.push_back({{time + dt,
+                            {r + b_r * dt - cost_g_r, c + b_c * dt,
+                             b + b_b * dt - cost_g_b, g + b_g * dt},
+                            {b_r, b_c, b_b, b_g + 1}},
+                           1});
+      }
+    }
 
-      if (r >= cost_b_r && c >= cost_b_c && b_b < max_b &&
-          b_b * time_left + out_b < time_left * max_b) {
-        results.push_back({{time + 1,
-                            {out_r - cost_b_r, out_c - cost_b_c, out_b, out_g},
+    if (b_c && b_b < max_b) {
+      int_t dt = std::max((cost_b_r - r + b_r - 1) / b_r,
+                          std::max(int_t(0), (cost_b_c - c + b_c - 1) / b_c)) +
+                 1;
+      if (dt >= time_left) {
+        dt = time_left;
+        results.push_back(
+            {{time + dt,
+              {r + b_r * dt, c + b_c * dt, b + b_b * dt, g + b_g * dt},
+              {b_r, b_c, b_b, b_g}},
+             1});
+      } else {
+        results.push_back({{time + dt,
+                            {r + b_r * dt - cost_b_r, c + b_c * dt - cost_b_c,
+                             b + b_b * dt, g + b_g * dt},
                             {b_r, b_c, b_b + 1, b_g}},
                            1});
       }
+    }
 
-      if (r >= bp.clay_bot_cost && b_c < max_c &&
-          b_c * time_left + out_c < time_left * max_c) {
-        results.push_back({{time + 1,
-                            {out_r - bp.clay_bot_cost, out_c, out_b, out_g},
+    if (b_c < max_c && b_c * time_left + c < time_left * max_c) {
+      int_t dt = std::max(int_t(0), (bp.clay_bot_cost - r + b_r - 1) / b_r) + 1;
+      if (dt >= time_left) {
+        dt = time_left;
+        results.push_back(
+            {{time + dt,
+              {r + b_r * dt, c + b_c * dt, b + b_b * dt, g + b_g * dt},
+              {b_r, b_c, b_b, b_g}},
+             1});
+      } else {
+        results.push_back({{time + dt,
+                            {r + b_r * dt - bp.clay_bot_cost, c + b_c * dt,
+                             b + b_b * dt, g + b_g * dt},
                             {b_r, b_c + 1, b_b, b_g}},
                            1});
       }
+    }
 
-      if (r >= bp.ore_bot_cost && b_r < max_r &&
-          b_r * time_left + out_c < time_left * max_r) {
-        results.push_back({{time + 1,
-                            {out_r - bp.ore_bot_cost, out_c, out_b, out_g},
+    if (b_r < max_r && b_r * time_left + r < time_left * max_r) {
+      int_t dt = std::max(int_t(0), (bp.ore_bot_cost - r + b_r - 1) / b_r) + 1;
+      if (dt >= time_left) {
+        dt = time_left;
+        results.push_back(
+            {{time + dt,
+              {r + b_r * dt, c + b_c * dt, b + b_b * dt, g + b_g * dt},
+              {b_r, b_c, b_b, b_g}},
+             1});
+      } else {
+        results.push_back({{time + dt,
+                            {r + b_r * dt - bp.ore_bot_cost, c + b_c * dt,
+                             b + b_b * dt, g + b_g * dt},
                             {b_r + 1, b_c, b_b, b_g}},
                            1});
       }
@@ -146,6 +183,11 @@ struct graph {
     return results;
   }
 };
+
+int_t opt_sim(int_t n) {
+  if (n <= 0) return 0;
+  return n + opt_sim(n - 1);
+}
 
 template <int_t max_time>
 int_t bfs(const graph& g) {
@@ -161,21 +203,13 @@ int_t bfs(const graph& g) {
   while (!todo.empty()) {
     auto next = todo.front();
     todo.pop();
-    auto num_geodes = std::get<3>(std::get<1>(next));
-    if (num_geodes < cache[std::get<0>(next)]) continue;
 
-    // auto [time, materials, bots] = next;
-    // if (num_geodes > 0) {
-    //   std::cout << best << " / " << time << ": ";
-    //   std::cout << std::get<0>(materials) << " ";
-    //   std::cout << std::get<1>(materials) << " ";
-    //   std::cout << std::get<2>(materials) << " ";
-    //   std::cout << std::get<3>(materials) << " / ";
-    //   std::cout << std::get<0>(bots) << " ";
-    //   std::cout << std::get<1>(bots) << " ";
-    //   std::cout << std::get<2>(bots) << " ";
-    //   std::cout << std::get<3>(bots) << std::endl;
-    // }
+    auto [time, materials, bots] = next;
+    auto num_geodes = std::get<3>(materials);
+
+    auto dt = max_time - time;
+    auto opt_geodes = num_geodes + dt * std::get<3>(bots) + opt_sim(dt - 1);
+    if (opt_geodes < best) continue;
 
     best = std::max(best, num_geodes);
     cache[std::get<0>(next)] = best;
@@ -212,7 +246,7 @@ AOC_IMPL(2022, 19) {
 };
 
 AOC_TEST_CASE(
-    33, 3348,
+    33, 3472,
     R"(Blueprint 1: Each ore robot costs 4 ore. Each clay robot costs 2 ore. Each obsidian robot costs 3 ore and 14 clay. Each geode robot costs 2 ore and 7 obsidian.
 Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsidian robot costs 3 ore and 8 clay. Each geode robot costs 3 ore and 12 obsidian.
 )")
