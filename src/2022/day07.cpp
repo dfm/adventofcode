@@ -1,6 +1,9 @@
+#include <range/v3/all.hpp>
 #include <unordered_map>
 
 #include "aoc/aoc.hpp"
+
+namespace rv = ranges::views;
 
 namespace {
 
@@ -67,30 +70,30 @@ struct instr {
 
 struct tree {
   std::vector<std::string> _path;
-  std::unordered_map<std::string, std::pair<size_t, size_t>> _tree;
-  size_t _depth = 0;
+  std::unordered_map<std::string, size_t> _tree;
+  // size_t _depth = 0;
 
   void push_back(instr_t &&inst) {
     if (inst.cmd == grammar::cmd_t::_cd) {
       if (inst.arg == "/") {
         _path.resize(0);
         _path.push_back(".");
-        _depth = 0;
+        // _depth = 0;
       } else if (inst.arg == "..") {
         _path.pop_back();
-        _depth--;
+        // _depth--;
       } else {
         _path.push_back(inst.arg);
-        _depth++;
+        // _depth++;
       }
     } else if (inst.cmd == grammar::cmd_t::_output && !inst.is_dir) {
       std::ostringstream id;
       for (const auto &dir : _path) {
         id << dir << "/";
         if (auto search = _tree.find(id.str()); search != _tree.end()) {
-          search->second.first += inst.size;
+          search->second += inst.size;
         } else {
-          _tree.insert({id.str(), {inst.size, _depth}});
+          _tree.insert({id.str(), inst.size});
         }
       }
     }
@@ -98,9 +101,7 @@ struct tree {
 
   auto begin() { return _tree.begin(); }
   auto end() { return _tree.end(); }
-  std::pair<size_t, size_t> &operator[](const std::string &key) {
-    return _tree[key];
-  }
+  size_t &operator[](const std::string &key) { return _tree[key]; }
 };
 
 struct parser {
@@ -114,24 +115,16 @@ struct parser {
 AOC_IMPL(2022, 7) {
   using parser = grammar::parser;
   static constexpr auto part1 = [](auto tree) {
-    size_t total = 0;
-    for (const auto &s : tree) {
-      if (s.second.first < 100000) {
-        total += s.second.first;
-      }
-    }
-    return total;
+    return ranges::accumulate(
+        tree | rv::filter([](const auto &x) { return x.second < 100000; }) |
+            rv::transform([](const auto &x) { return x.second; }),
+        0);
   };
   static constexpr auto part2 = [](auto tree) {
-    size_t target = tree[std::string("./")].first - 40000000;
-    size_t result = std::numeric_limits<size_t>::max();
-    for (const auto &s : tree) {
-      auto delta = s.second.first;
-      if (delta >= target) {
-        result = std::min(result, delta);
-      }
-    }
-    return result;
+    size_t target = tree[std::string("./")] - 40000000;
+    return ranges::min(
+        tree | rv::transform([](const auto &x) { return x.second; }) |
+        rv::filter([&target](const auto &x) { return x >= target; }));
   };
 };
 

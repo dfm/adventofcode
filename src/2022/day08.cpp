@@ -1,4 +1,8 @@
+#include <range/v3/all.hpp>
+
 #include "aoc/aoc.hpp"
+
+namespace rv = ranges::views;
 
 namespace {
 
@@ -29,14 +33,13 @@ struct grid {
   }
 
   inline std::pair<bool, size_t> operator()(int x, int y) const {
-    using rng = aoc::range<int>;
     auto h = value(x, y);
     auto fx = [&](int i) { return value(i, y) >= h; };
     auto fy = [&](int i) { return value(x, i) >= h; };
-    auto left = search(rng(x - 1, -1, -1), fx);
-    auto right = search(rng(x + 1, width()), fx);
-    auto up = search(rng(y - 1, -1, -1), fy);
-    auto down = search(rng(y + 1, height()), fy);
+    auto left = search(rv::reverse(rv::iota(0, x)), fx);
+    auto right = search(rv::iota(x + 1, width()), fx);
+    auto up = search(rv::reverse(rv::iota(0, y)), fy);
+    auto down = search(rv::iota(y + 1, height()), fy);
     return {left.first | right.first | up.first | down.first,
             left.second * right.second * up.second * down.second};
   }

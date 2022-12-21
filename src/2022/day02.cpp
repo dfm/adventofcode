@@ -1,4 +1,8 @@
+#include <range/v3/all.hpp>
+
 #include "aoc/aoc.hpp"
+
+namespace rv = ranges::views;
 
 namespace {
 
@@ -51,19 +55,18 @@ AOC_IMPL(2022, 2) {
   using parser = grammar::parser;
 
   static constexpr auto part1 = [](auto data) {
-    auto total = 0;
-    for (const auto& round : data) {
-      total += score(round.first, round.second - 'X' + 'A');
-    }
-    return total;
+    return ranges::accumulate(data | rv::transform([](const auto& round) {
+                                return score(round.first,
+                                             round.second - 'X' + 'A');
+                              }),
+                              0);
   };
 
   static constexpr auto part2 = [](auto data) {
-    auto total = 0;
-    for (const auto& round : data) {
-      total += play(round.first, round.second);
-    }
-    return total;
+    return ranges::accumulate(data | rv::transform([](const auto& round) {
+                                return play(round.first, round.second);
+                              }),
+                              0);
   };
 };
 

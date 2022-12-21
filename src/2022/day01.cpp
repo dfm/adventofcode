@@ -1,7 +1,10 @@
 #include <algorithm>
 #include <numeric>
+#include <range/v3/all.hpp>
 
 #include "aoc/aoc.hpp"
+
+namespace rv = ranges::views;
 
 namespace {
 typedef std::int64_t T;
@@ -27,22 +30,19 @@ AOC_IMPL(2022, 1) {
   using parser = grammar::parser;
 
   static constexpr auto part1 = [](auto data) {
-    T max = 0;
-    for (const auto &elf : data) {
-      auto value = std::reduce(elf.begin(), elf.end());
-      max = std::max(max, value);
-    }
-    return max;
+    auto counts = data | rv::transform([](const auto &elf) {
+                    return std::reduce(elf.begin(), elf.end());
+                  });
+    return ranges::max(counts);
   };
 
   static constexpr auto part2 = [](auto data) {
-    std::vector<T> counts(data.size());
-    for (std::size_t n = 0; n < data.size(); ++n) {
-      counts[n] = std::reduce(data[n].begin(), data[n].end());
-    }
-    std::sort(counts.begin(), counts.end());
-    return counts[counts.size() - 3] + counts[counts.size() - 2] +
-           counts[counts.size() - 1];
+    auto counts = data | rv::transform([](const auto &elf) {
+                    return std::reduce(elf.begin(), elf.end());
+                  });
+    std::vector<T> sorted(counts.begin(), counts.end());
+    std::sort(sorted.begin(), sorted.end(), std::greater());
+    return ranges::accumulate(sorted | rv::take(3), 0);
   };
 };
 

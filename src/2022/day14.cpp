@@ -1,6 +1,9 @@
+#include <range/v3/all.hpp>
 #include <unordered_set>
 
 #include "aoc/aoc.hpp"
+
+namespace rv = ranges::views;
 
 namespace {
 
@@ -54,12 +57,13 @@ struct problem {
         auto dx = sign(s[n + 1].first - s[n].first);
         auto dy = sign(s[n + 1].second - s[n].second);
         if (dx != 0) {
-          auto rng = aoc::range(s[n].first, s[n + 1].first + dx, dx);
+          auto rng = rv::iota(s[n].first, s[n + 1].first + dx) | rv::stride(dx);
           for (const auto& x : rng) {
             blocked.insert({x, s[n].second});
           }
         } else if (dy != 0) {
-          auto rng = aoc::range(s[n].second, s[n + 1].second + dy, dy);
+          auto rng =
+              rv::iota(s[n].second, s[n + 1].second + dy) | rv::stride(dy);
           for (const auto& y : rng) {
             blocked.insert({s[n].first, y});
           }

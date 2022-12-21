@@ -19,6 +19,13 @@ include_directories(include)
 #
 include(FetchContent)
 FetchContent_Declare(
+  range-v3
+  GIT_REPOSITORY https://github.com/ericniebler/range-v3.git
+  GIT_TAG        a81477931a8aa2ad025c6bda0609f38e09e4d7ec
+)
+FetchContent_MakeAvailable(range-v3)
+
+FetchContent_Declare(
   doctest
   GIT_REPOSITORY https://github.com/doctest/doctest.git
   GIT_TAG        b7c21ec5ceeadb4951b00396fc1e4642dd347e5f
@@ -73,7 +80,7 @@ set(
   src/aoc/runner.cpp)
 
 add_library(aoclib STATIC ${AOC_SOURCE})
-target_link_libraries(aoclib PUBLIC cpr::cpr foonathan::lexy::core foonathan::lexy::file)
+target_link_libraries(aoclib PUBLIC range-v3::range-v3 cpr::cpr foonathan::lexy::core foonathan::lexy::file)
 target_include_directories(aoclib PRIVATE ${cpr_SOURCE_DIR}/include)
 target_compile_options(aoclib PUBLIC -O3 -Wall -pedantic -Wextra -Werror)
 if(HAS_CONCEPTS)
