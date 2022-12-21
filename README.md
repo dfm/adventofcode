@@ -87,6 +87,7 @@ dependencies (all included using CMake `FetchContent`):
 
 - [lexy](https://github.com/foonathan/lexy) for parsing the input
 - [doctest](https://github.com/doctest/doctest) for unit testing
+- [range-v3](https://github.com/ericniebler/range-v3) for ranges and views
 
 To build the infrastructure, I'm also using the following dependencies:
 
