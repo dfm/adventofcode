@@ -24,15 +24,17 @@ void run(year_t year, day_t day, std::ostream& out) {
   auto implementation = get_implementation(year, day);
   out << std::endl << "* Dec " << day << ", " << year << " *" << std::endl;
 
-  auto in1 = remote::data(year, day).get();
+  auto input_filename = remote::data(year, day).get();
   out << "=> Part 1: ";
-  implementation.part1(in1, out);
+  auto time1 = implementation.part1(input_filename, out);
   out << std::endl;
 
-  auto in2 = remote::data(year, day).get();
+  // auto in2 = remote::data(year, day).get();
   out << "=> Part 2: ";
-  implementation.part2(in2, out);
+  auto time2 = implementation.part2(input_filename, out);
   out << std::endl;
+
+  out << "=> Time (us): " << time1 << " / " << time2 << std::endl;
 }
 
 void run_all(year_t year, std::ostream& out) {

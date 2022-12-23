@@ -1,6 +1,7 @@
 #ifndef AOC_REGISTRY_HPP
 #define AOC_REGISTRY_HPP
 
+#include <chrono>
 #include <filesystem>
 #include <functional>
 #include <map>
@@ -19,18 +20,28 @@
 namespace aoc {
 namespace registry {
 
+using ticks_t = decltype(std::chrono::duration_cast<std::chrono::microseconds>(
+                             std::chrono::steady_clock::now() -
+                             std::chrono::steady_clock::now())
+                             .count());
+
 struct implementation {
-  std::function<void(const std::filesystem::path &, std::ostream &)> part1;
-  std::function<void(const std::filesystem::path &, std::ostream &)> part2;
+  std::function<ticks_t(const std::filesystem::path &, std::ostream &)> part1;
+  std::function<ticks_t(const std::filesystem::path &, std::ostream &)> part2;
 };
 
 typedef std::map<std::pair<year_t, day_t>, implementation> registry_t;
 registry_t &get_registry();
 
-std::function<void(const std::filesystem::path &, std::ostream &)> to_runner(
+std::function<ticks_t(const std::filesystem::path &, std::ostream &)> to_runner(
     auto func) {
-  return [func](const std::filesystem::path &in, std::ostream &out) {
-    out << func(in);
+  return [func](const std::filesystem::path &in, std::ostream &out) -> ticks_t {
+    auto begin = std::chrono::steady_clock::now();
+    auto result = func(in);
+    auto end = std::chrono::steady_clock::now();
+    out << result;
+    return std::chrono::duration_cast<std::chrono::microseconds>(end - begin)
+        .count();
   };
 }
 

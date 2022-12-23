@@ -88,7 +88,10 @@ AOC_IMPL(2022, 12) {
     for (size_t y = 0; y < data.height(); ++y) {
       for (size_t x = 0; x < data.width(); ++x) {
         if (data.value(x, y) != 0) continue;
-        result = std::min(result, distances[{x, y}]);
+        auto value = distances[{x, y}];
+        if (value > 0) {
+          result = std::min(result, value);
+        }
       }
     }
     return result;
