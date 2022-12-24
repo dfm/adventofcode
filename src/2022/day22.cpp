@@ -1,5 +1,7 @@
+#include <array>
 #include <iostream>
 #include <range/v3/all.hpp>
+#include <unordered_map>
 
 #include "aoc/aoc.hpp"
 
@@ -24,10 +26,66 @@ struct coord_t {
     this->y += other.y;
     return *this;
   }
+
+  bool operator==(const coord_t& other) const {
+    return x == other.x && y == other.y;
+  }
 };
+
+struct hash_coord {
+  std::size_t operator()(const coord_t& key) const {
+    std::size_t h = 0;
+    aoc::hash_combine(h, key.x, key.y);
+    return h;
+  }
+};
+
 struct position_t {
   coord_t location;
   coord_t pointing;
+};
+
+enum direction_t { north = 0, east, south, west };
+using edge_t = std::vector<std::pair<coord_t, direction_t>>;
+using edges_t = std::unordered_map<coord_t, edge_t, hash_coord>;
+
+inline std::pair<coord_t, edge_t> make_edge(auto x, auto y, auto x1, auto y1,
+                                            auto d1, auto x2, auto y2, auto d2,
+                                            auto x3, auto y3, auto d3, auto x4,
+                                            auto y4, auto d4) {
+  return {{static_cast<int_t>(x), static_cast<int_t>(y)},
+          {{{static_cast<int_t>(x1), static_cast<int_t>(y1)}, d1},
+           {{static_cast<int_t>(x2), static_cast<int_t>(y2)}, d2},
+           {{static_cast<int_t>(x3), static_cast<int_t>(y3)}, d3},
+           {{static_cast<int_t>(x4), static_cast<int_t>(y4)}, d4}}};
+}
+
+struct test_data {
+  static edges_t edges() {
+    edges_t result{
+        make_edge(2, 0, 0, 1, north, 3, 2, east, 2, 1, north, 1, 1, north),
+        make_edge(0, 1, 2, 0, north, 1, 1, east, 2, 2, south, 3, 2, south),
+        make_edge(1, 1, 2, 0, west, 2, 1, west, 2, 2, west, 0, 1, east),
+        make_edge(2, 1, 2, 0, south, 3, 2, north, 2, 2, north, 1, 1, east),
+        make_edge(2, 2, 2, 1, south, 3, 2, west, 0, 1, south, 1, 1, south),
+        make_edge(3, 2, 2, 1, east, 2, 0, east, 0, 1, east, 2, 2, east),
+    };
+    return result;
+  }
+};
+
+struct real_data {
+  static edges_t edges() {
+    edges_t result{
+        make_edge(1, 0, 0, 3, west, 2, 0, west, 1, 1, north, 0, 2, west),
+        make_edge(2, 0, 0, 3, south, 1, 2, east, 1, 1, east, 1, 0, east),
+        make_edge(1, 1, 1, 0, south, 2, 0, south, 1, 2, north, 0, 2, north),
+        make_edge(0, 2, 1, 1, west, 1, 2, west, 0, 3, north, 1, 0, west),
+        make_edge(1, 2, 1, 1, south, 2, 0, east, 0, 3, east, 0, 2, east),
+        make_edge(0, 3, 0, 2, south, 1, 2, south, 2, 0, north, 1, 0, north),
+    };
+    return result;
+  }
 };
 
 struct grid {
@@ -44,7 +102,7 @@ struct grid {
     _width = ranges::max(data |
                          rv::transform([](const auto& x) { return x.size(); }));
     _height = data.size();
-    _sector_size = _width / 4;
+    _sector_size = std::max(_width, _height) / 4;
     for (const auto& row : data) {
       for (const auto& el : row) {
         _data.push_back(el);
@@ -69,38 +127,92 @@ struct grid {
     return _data[y * _width + x];
   }
 
-  coord_t wrap_part1(const position_t& pos) const {
+  position_t wrap_part1(const position_t& pos) const {
     coord_t proposed = pos.location;
     coord_t delta = {-pos.pointing.x, -pos.pointing.y};
     while (get(proposed + delta) != square::space) {
       proposed += delta;
     }
-    return proposed;
+    return {proposed, pos.pointing};
   }
 
-  std::pair<int_t, coord_t> sector_coords(const coord_t& c) const {
+  // ***** Part 2: *****
+  inline int_t wrap_into_range(int_t n) const {
+    while (n < 0) n += 4;
+    return n % 4;
+  }
+
+  inline coord_t rotate(const coord_t& c, int_t n) const {
     auto [x, y] = c;
-    auto xs = x / _sector_size;
-    auto ys = y / _sector_size;
-    int_t sector = 0;
-    if (xs == 2 && ys == 0) {
-      sector = 1;
-    } else if (xs == 0 && ys == 1) {
-      sector = 2;
-    } else if (xs == 1 && ys == 1) {
-      sector = 3;
-    } else if (xs == 2 && ys == 1) {
-      sector = 4;
-    } else if (xs == 2 && ys == 2) {
-      sector = 5;
-    } else if (xs == 3 && ys == 2) {
-      sector = 5;
+    n = wrap_into_range(n);
+    int_t size = _sector_size - 1;
+    if (n == 0) {
+      return {x, y};
+    } else if (n == 1) {
+      return {y, size - x};
+    } else if (n == 2) {
+      return {size - x, size - y};
     }
-    return {sector, {x % _sector_size, y % _sector_size}};
+    return {size - y, x};
   }
 
-  // coord_t wrap_part2(const position_t& pos) const {
-  // }
+  inline coord_t transform_location(const coord_t& c, int_t from,
+                                    int_t to) const {
+    auto [x, y] = rotate(c, from);
+    to = wrap_into_range(to - from);
+
+    // We've rotated so that we're always leaving from north now...
+    coord_t result;
+    int_t size = _sector_size - 1;
+    if (to == static_cast<int_t>(direction_t::north)) {
+      result = {size - x, y};
+    } else if (to == static_cast<int_t>(direction_t::east)) {
+      result = {size - y, size - x};
+    } else if (to == static_cast<int_t>(direction_t::south)) {
+      result = {x, size - y};
+    } else {
+      result = {y, x};
+    }
+
+    // Rotate back
+    return rotate(result, -from);
+  }
+
+  position_t wrap_part2(const edges_t& edge_map, const position_t& pos) const {
+    auto [x, y] = pos.location;
+    auto [px, py] = pos.pointing;
+    coord_t from_sector_id{x / _sector_size, y / _sector_size};
+    coord_t from_sector_coords{x % _sector_size, y % _sector_size};
+
+    direction_t from;
+    if (py == -1)
+      from = north;
+    else if (px == 1)
+      from = east;
+    else if (py == 1)
+      from = south;
+    else
+      from = west;
+
+    auto q = edge_map.find(from_sector_id);
+    if (q == edge_map.end()) throw std::runtime_error("Invalid sector id");
+    const auto& [to_sector_id, to] = q->second[static_cast<size_t>(from)];
+    const auto& [x2, y2] = transform_location(from_sector_coords, from, to);
+
+    coord_t final_pointing;
+    if (to == north)
+      final_pointing = {0, 1};
+    else if (to == east)
+      final_pointing = {-1, 0};
+    else if (to == south)
+      final_pointing = {0, -1};
+    else
+      final_pointing = {1, 0};
+
+    return {{to_sector_id.x * _sector_size + x2,
+             to_sector_id.y * _sector_size + y2},
+            final_pointing};
+  }
 
   void move(const step& instr, auto wrapper) {
     const auto& [direction, amount] = instr;
@@ -116,8 +228,10 @@ struct grid {
           return;
         } else if (value == square::space) {
           auto proposed = wrapper(_pos);
-          if (get(proposed) != square::wall) {
-            _pos.location = proposed;
+          if (get(proposed.location) != square::wall) {
+            _pos = proposed;
+          } else {
+            return;
           }
         } else {
           _pos.location = {x, y};
@@ -128,10 +242,7 @@ struct grid {
 
   int_t run(auto wrapper) {
     for (const auto& s : _path) {
-      // std::cout << "Step: " << s.first << " " << s.second << std::endl;
       move(s, wrapper);
-      // std::cout << _pos.location.x << ", " << _pos.location.y << std::endl;
-      // std::cout << _pos.pointing.x << ", " << _pos.pointing.y << std::endl;
     }
     int_t result = 1000 * (_pos.location.y + 1) + 4 * (_pos.location.x + 1);
     if (_pos.pointing.y == 1) {
@@ -145,7 +256,7 @@ struct grid {
     return result;
   }
 
-  void show() const {
+  [[maybe_unused]] void show() const {
     for (int_t y = 0; y < _height; ++y) {
       for (int_t x = 0; x < _width; ++x) {
         std::cout << _data[y * _width + x];
@@ -236,14 +347,15 @@ AOC_IMPL(2022, 22) {
   static constexpr auto part1 = [](auto grid) {
     return grid.run([&grid](const auto& pos) { return grid.wrap_part1(pos); });
   };
-  static constexpr auto part2 = [](auto /* grid */) {
-    return 0;
-    // return grid.run([&grid](const auto& pos) { return grid.wrap_part2(pos);
-    // });
+  static constexpr auto part2 = [](auto grid) {
+    const auto& edges =
+        grid._sector_size == 4 ? test_data::edges() : real_data::edges();
+    return grid.run(
+        [&](const auto& pos) { return grid.wrap_part2(edges, pos); });
   };
 };
 
-AOC_TEST_CASE(6032, 0 /*5031*/, R"(        ...#
+AOC_TEST_CASE(6032, 5031, R"(        ...#
         .#..
         #...
         ....
