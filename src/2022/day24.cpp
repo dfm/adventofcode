@@ -51,6 +51,7 @@ struct grid {
     _height = _y;
   }
 
+  inline int_t period() const { return std::lcm(_width - 2, _height - 2); }
   std::pair<int_t, int_t> start() const { return {1, 0}; }
   std::pair<int_t, int_t> finish() const { return {_width - 2, _height - 1}; }
 
@@ -94,6 +95,7 @@ struct grid {
   }
 
   std::unordered_set<std::pair<int_t, int_t>> const& get_open(size_t time) {
+    // time = time % static_cast<size_t>(period());
     if (_cache.size() == 0) {
       update_cache();
     }
@@ -105,7 +107,8 @@ struct grid {
 
   std::vector<neighbor_type> neighbors(const node_type& current) {
     const auto& [time, x, y] = current;
-    const auto& open = get_open(time + 1);
+    auto next_time = (time + 1) % static_cast<size_t>(period());
+    const auto& open = get_open(next_time);
     std::vector<neighbor_type> results;
     for (const auto& [dx, dy] : neighbors_to_try) {
       auto xp = x + dx;
@@ -116,7 +119,7 @@ struct grid {
           continue;
       }
       if (open.contains({xp, yp})) {
-        results.push_back({{time + 1, xp, yp}, 1});
+        results.push_back({{next_time, xp, yp}, 1});
       }
     }
     return results;
@@ -165,7 +168,7 @@ size_t find_path(grid& g, size_t time, const std::pair<int_t, int_t>& from,
       throw std::runtime_error("Failed to find path");
     }
     const auto& [t, x, y] = node.value().first;
-    if (x == to.first && y == to.second) return t;
+    if (x == to.first && y == to.second) return node.value().second;
   }
   return 0;
 }
@@ -177,8 +180,8 @@ AOC_IMPL(2022, 24) {
   };
   static constexpr auto part2 = [](auto grid) {
     auto time = find_path(grid, 0, grid.start(), grid.finish());
-    time = find_path(grid, time, grid.finish(), grid.start());
-    return find_path(grid, time, grid.start(), grid.finish());
+    time += find_path(grid, time, grid.finish(), grid.start());
+    return time + find_path(grid, time, grid.start(), grid.finish());
     ;
   };
 };
