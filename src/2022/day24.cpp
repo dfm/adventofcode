@@ -5,8 +5,6 @@
 
 #include "aoc/aoc.hpp"
 
-namespace rv = ranges::views;
-
 namespace {
 
 using int_t = std::int64_t;
@@ -95,7 +93,6 @@ struct grid {
   }
 
   std::unordered_set<std::pair<int_t, int_t>> const& get_open(size_t time) {
-    // time = time % static_cast<size_t>(period());
     if (_cache.size() == 0) {
       update_cache();
     }
@@ -160,8 +157,9 @@ struct parser {
 
 }  // namespace grammar
 
-size_t find_path(grid& g, size_t time, const std::pair<int_t, int_t>& from,
-                 const std::pair<int_t, int_t>& to) {
+grid::distance_type find_path(grid& g, size_t time,
+                              const std::pair<int_t, int_t>& from,
+                              const std::pair<int_t, int_t>& to) {
   auto path = aoc::graph::shortest_path(g, {time, from.first, from.second});
   for (const auto& node : path) {
     if (!node) {
@@ -182,7 +180,6 @@ AOC_IMPL(2022, 24) {
     auto time = find_path(grid, 0, grid.start(), grid.finish());
     time += find_path(grid, time, grid.finish(), grid.start());
     return time + find_path(grid, time, grid.start(), grid.finish());
-    ;
   };
 };
 
