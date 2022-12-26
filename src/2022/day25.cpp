@@ -65,14 +65,14 @@ std::string to_snafu(const std::uint64_t& n) {
 
 AOC_IMPL(2022, 25) {
   using parser = grammar::parser;
-  static constexpr auto part1 = []([[maybe_unused]] auto data) {
+  static constexpr auto part1 = [](auto data) {
     auto sum = ranges::accumulate(data | rv::transform(from_snafu), int_t(0));
     return to_snafu(sum);
   };
-  static constexpr auto part2 = [](auto) { return 0; };
+  static constexpr auto part2 = [](auto) { return 50; };
 };
 
-AOC_TEST_CASE("2=-1=0", 0, R"(1=-0-2
+AOC_TEST_CASE("2=-1=0", 50, R"(1=-0-2
 12111
 2=0=
 21
