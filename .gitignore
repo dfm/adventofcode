@@ -1,1 +1,5 @@
 build
+.aoc
+data
+vscode-build/
+src

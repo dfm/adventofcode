@@ -1,0 +1,28 @@
+west
+take whirled peas
+east
+south
+east
+take mutex
+east
+take astronaut ice cream
+east
+take ornament
+west
+south
+take tambourine
+north
+west
+south
+east
+take mug
+west
+south
+west
+south
+take easter egg
+west
+drop whirled peas
+drop ornament
+drop mug
+west
