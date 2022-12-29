@@ -14,7 +14,7 @@ from advent.io import get_data
 def cli(year: int, day: Optional[int], test: bool):
     module_path = Path(__file__).absolute().parent
 
-    click.echo(f"Year: {year}")
+    click.echo(f"Year: {year}\n")
     year_path = module_path / f"year{year:04d}"
 
     if day is None:
