@@ -1,0 +1,31 @@
+[project]
+name = "advent"
+version = "0.2015.0"
+description = "Holiday hackin"
+authors = [{ name = "Dan Foreman-Mackey", email = "dfm@dfm.io" }]
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache License" }
+classifiers = [
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Development Status :: 3 - Alpha",
+  "License :: OSI Approved :: Apache Software License",
+]
+dependencies = ["click", "requests", "setuptools"]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.scripts]
+advent = "advent:cli"
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.black]
+line-length = 88
+
+[tool.pytest.ini_options]
+python_files = "day*.py test_*.py"
