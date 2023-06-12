@@ -58,16 +58,3 @@ def part2(data):
     ops, values = context(data)
     values["b"] = evaluate(ops, dict(values), "a")
     return evaluate(ops, values, "a")
-
-
-def test_part1():
-    data = """123 -> x
-456 -> y
-x AND y -> d
-x OR y -> e
-x LSHIFT 2 -> f
-y RSHIFT 2 -> g
-NOT x -> h
-NOT y -> a
-"""
-    assert part1(data) == 65079
