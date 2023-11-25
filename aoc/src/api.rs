@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 use std::{fs, path::PathBuf};
 
-pub const YEAR: u32 = 2022;
+pub const YEAR: u32 = 2023;
 
 fn work_dir(name: &str) -> Result<PathBuf> {
   let mut path = dirs::home_dir().context("Failed to find home directory")?;

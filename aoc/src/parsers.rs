@@ -3,9 +3,10 @@ use nom::{
   branch::alt,
   character::complete::{char, digit1, newline},
   combinator::{opt, recognize},
+  error::ParseError,
   multi::separated_list1,
   sequence::pair,
-  IResult, ParseTo,
+  IResult, ParseTo, Parser,
 };
 
 type Result<'a, O = &'a str> = IResult<&'a str, O>;
@@ -14,18 +15,29 @@ pub fn finish<O>(result: Result<O>) -> anyhow::Result<O> {
   let (rest, result) = result
     .map_err(|e| e.to_owned())
     .context("Failed to apply parser")?;
-  if rest.is_empty() {
+  if rest.trim().is_empty() {
     Ok(result)
   } else {
-    Err(anyhow!("Incomplete parsing: {}", rest))
+    Err(anyhow!("Incomplete parsing: '{}'", rest))
   }
 }
 
-pub fn newline_separated<P, O>(p: P, i: &str) -> Result<Vec<O>>
+pub fn newline_separated<'a, O, E, F>(f: F) -> impl FnMut(&'a str) -> IResult<&'a str, Vec<O>, E>
 where
-  P: FnMut(&str) -> Result<O>,
+  E: ParseError<&'a str>,
+  F: Copy + Parser<&'a str, O, E>,
 {
-  separated_list1(newline, p)(i)
+  move |i: &str| separated_list1(newline, f)(i)
+}
+
+pub fn double_newline_separated<'a, O, E, F>(
+  f: F,
+) -> impl FnMut(&'a str) -> IResult<&'a str, Vec<O>, E>
+where
+  E: ParseError<&'a str>,
+  F: Parser<&'a str, O, E>,
+{
+  separated_list1(pair(newline, newline), f)
 }
 
 pub fn integer<T: std::str::FromStr>(i: &str) -> Result<T> {

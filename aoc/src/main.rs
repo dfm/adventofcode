@@ -1,5 +1,6 @@
 use anyhow::Result;
-use chrono::{DateTime, Datelike, Utc};
+use aoc::template::copy_template;
+use chrono::{Datelike, Utc};
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
@@ -23,6 +24,7 @@ enum Commands {
 
 fn main() -> Result<()> {
   let cli = Cli::parse();
+  let today: u32 = Utc::now().day();
 
   match cli.command {
     Some(Commands::Login) => {
@@ -32,12 +34,11 @@ fn main() -> Result<()> {
       println!("Saved session key")
     }
     Some(Commands::New) => {
-
+      copy_template(cli.day.unwrap_or(today))?;
     }
     None => {
       let days = if cli.today {
-        let today: DateTime<Utc> = Utc::now();
-        vec![today.day()]
+        vec![today]
       } else if let Some(day) = cli.day {
         vec![day]
       } else {
@@ -52,12 +53,17 @@ fn main() -> Result<()> {
         println!("\nDay {}:", day);
         let input = aoc::api::get_input(day)?;
         let ((p1, p2), (d0, d1, d2)) = aoc::y2023::solve(day, &input)?;
-        println!("Parsing took {} ns", d0.subsec_nanos());
-        println!("=> Part 1: {} ({} ns)", p1, d1.subsec_nanos());
-        println!("=> Part 2: {} ({} ns)", p2, d2.subsec_nanos());
+        println!("Parsing took {:.2} us", format_duration(&d0));
+        println!("=> Part 1: {} ({:.2} us)", p1, format_duration(&d1));
+        println!("=> Part 2: {} ({:.2} us)", p2, format_duration(&d2));
       }
     }
   }
 
   Ok(())
+}
+
+fn format_duration(d: &std::time::Duration) -> f64 {
+  let t = d.subsec_nanos() as f64;
+  t / 1e3f64
 }

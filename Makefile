@@ -7,6 +7,9 @@ all: format lint test run
 clean:
 	cargo clean
 
+new:
+	cargo run -- new
+
 test:
 	cargo test --all
 
