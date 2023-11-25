@@ -18,6 +18,7 @@ struct Cli {
 #[derive(Subcommand)]
 enum Commands {
   Login,
+  New,
 }
 
 fn main() -> Result<()> {
@@ -30,6 +31,9 @@ fn main() -> Result<()> {
       std::fs::write(session_key_path, session_key)?;
       println!("Saved session key")
     }
+    Some(Commands::New) => {
+
+    }
     None => {
       let days = if cli.today {
         let today: DateTime<Utc> = Utc::now();
@@ -41,11 +45,16 @@ fn main() -> Result<()> {
       };
 
       for day in days {
+        if !aoc::y2023::DAYS.contains(&day) {
+          println!("\nSkipping {}; not implemented", day);
+          continue;
+        }
         println!("\nDay {}:", day);
         let input = aoc::api::get_input(day)?;
-        let (p1, p2) = aoc::y2023::solve(day, &input)?;
-        println!("=> Part 1: {}", p1);
-        println!("=> Part 2: {}", p2);
+        let ((p1, p2), (d0, d1, d2)) = aoc::y2023::solve(day, &input)?;
+        println!("Parsing took {} ns", d0.subsec_nanos());
+        println!("=> Part 1: {} ({} ns)", p1, d1.subsec_nanos());
+        println!("=> Part 2: {} ({} ns)", p2, d2.subsec_nanos());
       }
     }
   }

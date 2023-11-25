@@ -44,8 +44,9 @@ fn impl_available_days(modules: &[(u32, String)]) -> TokenStream2 {
 fn impl_solve(modules: &[(u32, String)]) -> TokenStream2 {
   let expanded: TokenStream2 = modules.iter().map(format_solve_match).collect();
   quote! {
+      use std::time::{Duration, Instant};
       use anyhow::Result;
-      pub fn solve(day: u32, input: &str) -> Result<(String, String)> {
+      pub fn solve(day: u32, input: &str) -> Result<((String, String), (Duration, Duration, Duration))> {
           match day {
               #expanded
               _ => panic!("Unavailable day: {}", day)
@@ -59,10 +60,24 @@ fn format_solve_match(data: &(u32, String)) -> TokenStream2 {
   let module = Ident::new(name, Span::call_site());
   quote! {
       #number => {
+          let time = Instant::now();
           let data = #module::parse(&input)?;
-          let r1 = #module::part1(&data);
-          let r2 = #module::part2(&data);
-          Ok((format!("{}", r1), format!("{}", r2)))
+          let parse_time = time.elapsed();
+
+          let time = Instant::now();
+          let result1 = #module::part1(&data);
+          let part1_time = time.elapsed();
+
+          let time = Instant::now();
+          let result2 = #module::part2(&data);
+          let part2_time = time.elapsed();
+
+          Ok(
+            (
+              (format!("{}", result1), format!("{}", result2)),
+              (parse_time, part1_time, part2_time)
+            )
+          )
       }
   }
 }

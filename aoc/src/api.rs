@@ -1,6 +1,8 @@
 use anyhow::{Context, Result};
 use std::{fs, path::PathBuf};
 
+pub const YEAR: u32 = 2022;
+
 fn work_dir(name: &str) -> Result<PathBuf> {
   let mut path = dirs::home_dir().context("Failed to find home directory")?;
   path.push(name);
@@ -20,7 +22,7 @@ fn config_dir() -> Result<PathBuf> {
 
 fn data_path(day: u32) -> Result<PathBuf> {
   let mut path = cache_dir()?;
-  path.push("2023");
+  path.push(format!("{}", YEAR));
   fs::create_dir_all(path.clone())
     .with_context(|| format!("Failed to create: {}", path.display()))?;
   path.push(format!("{:02}.txt", day));
@@ -37,7 +39,7 @@ pub fn get_input(day: u32) -> Result<String> {
   let path = data_path(day)?;
   if !path.exists() {
     let key = fs::read_to_string(session_key_path()?).context("Failed to load session key")?;
-    let url = format!("https://adventofcode.com/2023/day/{}/input", day);
+    let url = format!("https://adventofcode.com/{}/day/{}/input", YEAR, day);
     let client = reqwest::blocking::Client::new();
     let mut response = client
       .get(url)
