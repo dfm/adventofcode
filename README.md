@@ -13,7 +13,27 @@ It's not pretty, but sometimes it works(?):
 
 ## Project Layout
 
-TBD
+The solutions for each day live in `aoc/src/y2023/dDD.rs` where `DD` is the
+relevant day of the month. To implement a new solution, create a new file for
+the appropriate day, and it will be automatically discovered by
+[MAGIC](https://github.com/dfm/adventofcode/tree/9a3c55aeac3c67f6008f702b0893b80a36b60caa/aoc-derive).
+This can be automated by running:
+
+```bash
+make new
+```
+
+or 
+
+```bash
+cargo run -- new
+```
+
+You can specify the day to create using:
+
+```bash
+cargo run -- new --day 12
+```
 
 ## Usage Notes
 
@@ -21,7 +41,26 @@ TBD
 need to have your AofC session key saved somewhere. To find it, log into [the
 AoC website](https://adventofcode.com), and use the developer tools to look at
 the cookies to find your session key. Then save that key to a file called
-`~/.config/aoc/key`.
+`~/.config/aoc/key`. Then, the data files will be downloaded into
+`~/.cache/aoc/2023` as text files.
+
+To run today's solution, use:
+
+```bash
+make
+```
+
+which expands into:
+
+```bash
+cargo run -- --today
+```
+
+To run all the checks and solutions, use:
+
+```bash
+make all
+```
 
 ## License
 
