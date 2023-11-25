@@ -1,0 +1,17 @@
+[package]
+name = "aoc-derive"
+version = { workspace = true }
+authors = { workspace = true }
+edition = { workspace = true }
+homepage = { workspace = true }
+repository = { workspace = true }
+license = { workspace = true }
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1.0.66"
+quote = "1.0.33"
+regex = "1.10.2"
+syn = "2.0.29"

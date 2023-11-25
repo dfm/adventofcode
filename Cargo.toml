@@ -1,0 +1,10 @@
+[workspace]
+members = ["aoc-derive", "aoc"]
+
+[workspace.package]
+version = "0.1.0"
+authors = ["Dan Foreman-Mackey <dfm@dfm.io>"]
+edition = "2021"
+homepage = "https://github.com/dfm/adventofcode"
+repository = "https://github.com/dfm/adventofcode"
+license = "Apache-2.0"
