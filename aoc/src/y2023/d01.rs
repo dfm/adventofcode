@@ -25,8 +25,13 @@ pub fn part1(data: &str) -> i64 {
 pub fn part2(data: &str) -> i64 {
   data
     .lines()
-    .map(all_digits)
-    .map(|d| 10 * d[0] + d[d.len() - 1])
+    .map(|line| {
+      let d: Vec<_> = (0..line.len()).filter_map(|i| {
+        alt((digit, text_digit))(&line[i..line.len()])
+          .map_or_else(|_| None, |(_, n)| Some(n))
+      }).collect();
+      10 * d[0] + d[d.len() - 1]
+    })
     .sum()
 }
 
@@ -47,16 +52,6 @@ fn text_digit(i: &str) -> crate::parsers::Result<i64> {
     value(8, tag("eight")),
     value(9, tag("nine")),
   ))(i)
-}
-
-fn all_digits(data: &str) -> Vec<i64> {
-  let mut numbers = Vec::new();
-  let mut string = data.to_string();
-  while !string.is_empty() {
-    let _ = alt((digit, text_digit))(&string).map(|(_, n)| numbers.push(n));
-    string = string[1..string.len()].to_string();
-  }
-  numbers
 }
 
 #[cfg(test)]
