@@ -9,7 +9,7 @@ use nom::{
   IResult, ParseTo, Parser,
 };
 
-type Result<'a, O = &'a str> = IResult<&'a str, O>;
+pub type Result<'a, O = &'a str> = IResult<&'a str, O>;
 
 pub fn finish<O>(result: Result<O>) -> anyhow::Result<O> {
   let (rest, result) = result
