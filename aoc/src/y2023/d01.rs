@@ -1,8 +1,4 @@
 use anyhow::Result;
-use nom::branch::alt;
-use nom::bytes::complete::tag;
-use nom::character::complete::one_of;
-use nom::combinator::value;
 
 pub fn parse(data: &str) -> Result<String> {
   Ok(data.to_string())
@@ -26,33 +22,39 @@ pub fn part2(data: &str) -> i64 {
   data
     .lines()
     .map(|line| {
-      let d: Vec<_> = (0..line.len()).filter_map(|i| {
-        alt((digit, text_digit))(&line[i..line.len()])
-          .map_or_else(|_| None, |(_, n)| Some(n))
-      }).collect();
+      let len = line.len();
+      let chars = line.as_bytes();
+      let d: Vec<_> = (0..len)
+        .filter_map(|i| {
+          let c = chars[i];
+          if (b'1'..=b'9').contains(&c) {
+            return Some(c as i64 - b'0' as i64);
+          }
+          for &(key, val) in NUM_MAP {
+            let end = i + key.len();
+            if end <= line.len() && line[i..end] == *key {
+              return Some(val);
+            }
+          }
+          None
+        })
+        .collect();
       10 * d[0] + d[d.len() - 1]
     })
     .sum()
 }
 
-fn digit(i: &str) -> crate::parsers::Result<i64> {
-  let (o, i) = one_of("123456789")(i)?;
-  Ok((o, i as i64 - '0' as i64))
-}
-
-fn text_digit(i: &str) -> crate::parsers::Result<i64> {
-  alt((
-    value(1, tag("one")),
-    value(2, tag("two")),
-    value(3, tag("three")),
-    value(4, tag("four")),
-    value(5, tag("five")),
-    value(6, tag("six")),
-    value(7, tag("seven")),
-    value(8, tag("eight")),
-    value(9, tag("nine")),
-  ))(i)
-}
+const NUM_MAP: &[(&str, i64)] = &[
+  ("one", 1),
+  ("two", 2),
+  ("three", 3),
+  ("four", 4),
+  ("five", 5),
+  ("six", 6),
+  ("seven", 7),
+  ("eight", 8),
+  ("nine", 9),
+];
 
 #[cfg(test)]
 mod tests {
