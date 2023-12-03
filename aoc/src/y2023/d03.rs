@@ -103,7 +103,7 @@ pub fn part2(grid: &Grid) -> i64 {
   let mut acc = 0;
   for (_, n) in inv {
     if n.len() == 2 {
-      let r:i64 = n.iter().product();
+      let r: i64 = n.iter().product();
       acc += r;
     }
   }
