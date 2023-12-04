@@ -5,43 +5,48 @@ pub fn parse(data: &str) -> Result<String> {
 }
 
 pub fn part1(data: &str) -> i64 {
-  data
-    .lines()
-    .map(|line| {
-      let d: Vec<_> = line
-        .chars()
-        .filter(|c| '1' <= *c && *c <= '9')
-        .map(|c| c as i64 - '0' as i64)
-        .collect();
-      10 * d[0] + d[d.len() - 1]
-    })
-    .sum()
+  solve(data, |_| None, |_| None)
 }
 
 pub fn part2(data: &str) -> i64 {
+  solve(
+    data,
+    |s| find_text(s, str::starts_with),
+    |s| find_text(s, str::ends_with),
+  )
+}
+
+fn solve<F, B>(data: &str, fwd: F, bwd: B) -> i64
+where
+  F: Copy + Fn(&str) -> Option<i64>,
+  B: Copy + Fn(&str) -> Option<i64>,
+{
   data
     .lines()
     .map(|line| {
       let len = line.len();
-      let chars = line.as_bytes();
-      let d: Vec<_> = (0..len)
-        .filter_map(|i| {
-          let c = chars[i];
-          if (b'1'..=b'9').contains(&c) {
-            return Some(c as i64 - b'0' as i64);
-          }
-          for &(key, val) in NUM_MAP {
-            let end = i + key.len();
-            if end <= line.len() && line[i..end] == *key {
-              return Some(val);
-            }
-          }
-          None
-        })
-        .collect();
-      10 * d[0] + d[d.len() - 1]
+      let a = line
+        .chars()
+        .enumerate()
+        .find_map(|(n, c)| char_to_digit(c).or_else(|| fwd(&line[n..len])))
+        .unwrap();
+      let b = line
+        .chars()
+        .rev()
+        .enumerate()
+        .find_map(|(n, c)| char_to_digit(c).or_else(|| bwd(&line[0..len - n])))
+        .unwrap();
+      10 * a + b
     })
     .sum()
+}
+
+fn char_to_digit(c: char) -> Option<i64> {
+  if c.is_ascii_digit() {
+    Some((c as i64) - ('0' as i64))
+  } else {
+    None
+  }
 }
 
 const NUM_MAP: &[(&str, i64)] = &[
@@ -55,6 +60,18 @@ const NUM_MAP: &[(&str, i64)] = &[
   ("eight", 8),
   ("nine", 9),
 ];
+
+fn find_text<'a, F>(s: &'a str, f: F) -> Option<i64>
+where
+  F: Fn(&'a str, &'a str) -> bool,
+{
+  for &(k, v) in NUM_MAP {
+    if f(s, k) {
+      return Some(v);
+    }
+  }
+  None
+}
 
 #[cfg(test)]
 mod tests {

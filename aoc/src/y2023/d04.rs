@@ -30,7 +30,7 @@ pub fn part1(data: &[usize]) -> usize {
       if n == 0 {
         0
       } else {
-        2usize.pow((n - 1) as u32)
+        1 << (n - 1)
       }
     })
     .sum()
