@@ -9,51 +9,25 @@ use nom::{
 };
 use std::collections::HashSet;
 
-#[derive(Debug, Default, Clone)]
-pub struct Card {
-  winning: HashSet<i64>,
-  numbers: Vec<i64>,
-}
-
-fn card(i: &str) -> IResult<&str, Card> {
+fn card(i: &str) -> IResult<&str, usize> {
   let (i, _) = pair(take_until(": "), tag(": "))(i)?;
-  let (i, winning) = terminated(ws(separated_list1(space1, integer)), ws(tag("|")))(i)?;
-  let winning = HashSet::from_iter(winning);
+  let (i, winning) = terminated(ws(separated_list1(space1, integer::<i64>)), ws(tag("|")))(i)?;
+  let winning: HashSet<i64> = HashSet::from_iter(winning);
   let (i, numbers) = ws(separated_list1(space1, integer))(i)?;
-  Ok((i, Card { winning, numbers }))
+  Ok((i, numbers.iter().map(|n| winning.contains(n) as usize).sum()))
 }
 
-pub fn parse(data: &str) -> Result<Vec<Card>> {
+pub fn parse(data: &str) -> Result<Vec<usize>> {
   finish(separated_list1(newline, card)(data))
 }
 
-pub fn part1(data: &[Card]) -> i64 {
-  data
-    .iter()
-    .map(|card| {
-      card.numbers.iter().fold(0, |s, n| {
-        if card.winning.contains(n) {
-          std::cmp::max(1, 2 * s)
-        } else {
-          s
-        }
-      })
-    })
-    .sum()
+pub fn part1(data: &[usize]) -> usize {
+  data.iter().map(|&n| if n == 0 { 0 } else { 2usize.pow((n - 1) as u32) }).sum()
 }
 
-pub fn part2(data: &[Card]) -> usize {
-  let matches: Vec<usize> = data
-    .iter()
-    .map(|c| {
-      c.numbers
-        .iter()
-        .map(|n| c.winning.contains(n) as usize)
-        .sum()
-    })
-    .collect();
-  let mut copies = vec![1usize; matches.len()];
-  for (n, &m) in matches.iter().enumerate() {
+pub fn part2(data: &[usize]) -> usize {
+  let mut copies = vec![1usize; data.len()];
+  for (n, &m) in data.iter().enumerate() {
     let factor = copies[n];
     for i in 1..=m {
       copies[n + i] += factor;
