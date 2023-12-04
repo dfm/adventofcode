@@ -5,7 +5,7 @@ use nom::{
   combinator::{opt, recognize},
   error::ParseError,
   multi::separated_list1,
-  sequence::{pair, delimited},
+  sequence::{delimited, pair},
   IResult, ParseTo, Parser,
 };
 
@@ -59,7 +59,6 @@ fn sign(i: &str) -> Result<bool> {
 fn recognize_integer(s: &str) -> Result {
   recognize(pair(sign, digit1))(s)
 }
-
 
 pub fn ws<'a, T, F, E: ParseError<&'a str>>(f: F) -> impl FnMut(&'a str) -> IResult<&'a str, T, E>
 where
