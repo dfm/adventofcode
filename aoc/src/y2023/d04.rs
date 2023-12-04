@@ -1,28 +1,39 @@
-use crate::parsers::{finish, integer, ws};
 use anyhow::Result;
-use nom::{
-  bytes::complete::{tag, take_until},
-  character::complete::{newline, space1},
-  multi::separated_list1,
-  sequence::{pair, terminated},
-  IResult,
-};
 use std::collections::HashSet;
 
-fn card(i: &str) -> IResult<&str, usize> {
-  let (i, _) = pair(take_until(": "), tag(": "))(i)?;
-  let (i, winning) = terminated(ws(separated_list1(space1, integer::<i64>)), ws(tag("|")))(i)?;
-  let winning: HashSet<i64> = HashSet::from_iter(winning);
-  let (i, numbers) = ws(separated_list1(space1, integer))(i)?;
-  Ok((i, numbers.iter().map(|n| winning.contains(n) as usize).sum()))
+fn numbers(s: &str) -> HashSet<usize> {
+  s.split_whitespace()
+    .filter(|s| !s.is_empty())
+    .map(|s| s.parse::<usize>().unwrap())
+    .collect()
 }
 
 pub fn parse(data: &str) -> Result<Vec<usize>> {
-  finish(separated_list1(newline, card)(data))
+  Ok(
+    data
+      .lines()
+      .map(|line| {
+        let (_, line) = line.split_once(':').unwrap();
+        let (a, b) = line.split_once('|').unwrap();
+        let a = numbers(a);
+        let b = numbers(b);
+        a.intersection(&b).count()
+      })
+      .collect(),
+  )
 }
 
 pub fn part1(data: &[usize]) -> usize {
-  data.iter().map(|&n| if n == 0 { 0 } else { 2usize.pow((n - 1) as u32) }).sum()
+  data
+    .iter()
+    .map(|&n| {
+      if n == 0 {
+        0
+      } else {
+        2usize.pow((n - 1) as u32)
+      }
+    })
+    .sum()
 }
 
 pub fn part2(data: &[usize]) -> usize {
