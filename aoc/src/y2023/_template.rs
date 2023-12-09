@@ -1,16 +1,14 @@
-use crate::parsers::{finish, integer};
 use anyhow::Result;
-use nom::{character::complete::newline, multi::separated_list1};
 
-pub fn parse(data: &str) -> Result<Vec<i64>> {
-  finish(separated_list1(newline, integer)(data))
+pub fn parse(data: &str) -> Result<String> {
+  Ok(data.to_string())
 }
 
-pub fn part1(_data: &[i64]) -> i64 {
+pub fn part1(data: &str) -> i64 {
   0
 }
 
-pub fn part2(_data: &[i64]) -> i64 {
+pub fn part2(data: &str) -> i64 {
   0
 }
 
@@ -21,8 +19,14 @@ mod tests {
   const TEST_DATA: &str = r"0";
 
   #[test]
-  fn test_parse() {
-    let result = parse(TEST_DATA).unwrap();
-    assert_eq!(result, vec![0]);
+  fn test_part1() {
+    let data = parse(TEST_DATA).unwrap();
+    assert_eq!(part1(&data), 0);
+  }
+
+  #[test]
+  fn test_part2() {
+    let data = parse(TEST_DATA).unwrap();
+    assert_eq!(part2(&data), 0);
   }
 }
