@@ -48,7 +48,6 @@ pub fn part2(data: &str) -> i64 {
   });
   let t = lines.next().unwrap();
   let d = lines.next().unwrap();
-  println!("{} {}", t, d);
   win(t, d)
 }
 
