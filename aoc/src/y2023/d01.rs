@@ -1,7 +1,5 @@
-use anyhow::Result;
-
-pub fn parse(data: &str) -> Result<String> {
-  Ok(data.to_string())
+pub fn parse(data: &str) -> String {
+  data.to_string()
 }
 
 pub fn part1(data: &str) -> i64 {
@@ -85,7 +83,7 @@ treb7uchet
 
   #[test]
   fn test_part1() {
-    let data = parse(TEST_DATA1).unwrap();
+    let data = parse(TEST_DATA1);
     assert_eq!(part1(&data), 142);
   }
 
@@ -100,7 +98,7 @@ zoneight234
 
   #[test]
   fn test_part2() {
-    let data = parse(TEST_DATA2).unwrap();
+    let data = parse(TEST_DATA2);
     assert_eq!(part2(&data), 281);
   }
 }

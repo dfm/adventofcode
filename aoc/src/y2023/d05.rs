@@ -1,4 +1,3 @@
-use anyhow::Result;
 use std::collections::HashSet;
 
 type Map = (usize, usize, usize);
@@ -10,7 +9,7 @@ pub struct Almanac {
   maps: Vec<Vec<Map>>,
 }
 
-pub fn parse(data: &str) -> Result<Almanac> {
+pub fn parse(data: &str) -> Almanac {
   let mut parts = data.split("\n\n");
 
   let (_, seeds) = parts.next().unwrap().split_once(':').unwrap();
@@ -26,7 +25,7 @@ pub fn parse(data: &str) -> Result<Almanac> {
     maps.push(lines.map(parse_map).collect());
   }
 
-  Ok(Almanac { seeds, maps })
+  Almanac { seeds, maps }
 }
 
 pub fn part1(data: &Almanac) -> usize {
@@ -131,13 +130,13 @@ humidity-to-location map:
 
   #[test]
   fn test_part1() {
-    let data = parse(TEST_DATA).unwrap();
+    let data = parse(TEST_DATA);
     assert_eq!(part1(&data), 35);
   }
 
   #[test]
   fn test_part2() {
-    let data = parse(TEST_DATA).unwrap();
+    let data = parse(TEST_DATA);
     assert_eq!(part2(&data), 46);
   }
 }

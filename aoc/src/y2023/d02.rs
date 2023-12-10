@@ -1,5 +1,4 @@
 use crate::parsers::{finish, integer};
-use anyhow::Result;
 use nom::{
   branch::alt, bytes::complete::tag, character::complete::newline, combinator::value,
   multi::separated_list1, sequence::pair, IResult,
@@ -53,8 +52,8 @@ fn game(i: &str) -> IResult<&str, Game> {
   Ok((i, Game { number, draws }))
 }
 
-pub fn parse(data: &str) -> Result<Vec<Game>> {
-  finish(separated_list1(newline, game)(data))
+pub fn parse(data: &str) -> Vec<Game> {
+  finish(separated_list1(newline, game)(data)).unwrap()
 }
 
 pub fn part1(data: &[Game]) -> i64 {
@@ -99,13 +98,13 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
 
   #[test]
   fn test_part1() {
-    let data = parse(TEST_DATA).unwrap();
+    let data = parse(TEST_DATA);
     assert_eq!(part1(&data), 8);
   }
 
   #[test]
   fn test_part2() {
-    let data = parse(TEST_DATA).unwrap();
+    let data = parse(TEST_DATA);
     assert_eq!(part2(&data), 2286);
   }
 }

@@ -1,4 +1,3 @@
-use anyhow::Result;
 use std::collections::HashSet;
 
 fn numbers(s: &str) -> HashSet<usize> {
@@ -8,8 +7,7 @@ fn numbers(s: &str) -> HashSet<usize> {
     .collect()
 }
 
-pub fn parse(data: &str) -> Result<Vec<usize>> {
-  Ok(
+pub fn parse(data: &str) -> Vec<usize> {
     data
       .lines()
       .map(|line| {
@@ -19,8 +17,7 @@ pub fn parse(data: &str) -> Result<Vec<usize>> {
         let b = numbers(b);
         a.intersection(&b).count()
       })
-      .collect(),
-  )
+      .collect()
 }
 
 pub fn part1(data: &[usize]) -> usize {
@@ -61,13 +58,13 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11
 
   #[test]
   fn test_part1() {
-    let data = parse(TEST_DATA).unwrap();
+    let data = parse(TEST_DATA);
     assert_eq!(part1(&data), 13);
   }
 
   #[test]
   fn test_part2() {
-    let data = parse(TEST_DATA).unwrap();
+    let data = parse(TEST_DATA);
     assert_eq!(part2(&data), 30);
   }
 }

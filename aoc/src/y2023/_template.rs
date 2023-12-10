@@ -1,7 +1,5 @@
-use anyhow::Result;
-
-pub fn parse(data: &str) -> Result<String> {
-  Ok(data.to_string())
+pub fn parse(data: &str) -> String {
+  data.to_string()
 }
 
 pub fn part1(data: &str) -> i64 {

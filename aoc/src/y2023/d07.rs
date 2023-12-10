@@ -1,5 +1,3 @@
-use anyhow::Result;
-
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
 pub struct Card([usize; 5], usize);
 
@@ -69,35 +67,33 @@ fn compute_score(card: &[usize; 5]) -> usize {
   }
 }
 
-pub fn parse(data: &str) -> Result<Vec<(Card, usize)>> {
-  Ok(
-    data
-      .lines()
-      .map(|line| {
-        let (card, bid) = line.split_once(' ').unwrap();
-        let card = Card::new(
-          card
-            .chars()
-            .map(|c| {
-              if c.is_ascii_digit() {
-                c as usize - '0' as usize
-              } else {
-                match c {
-                  'T' => 10,
-                  'J' => 11,
-                  'Q' => 12,
-                  'K' => 13,
-                  'A' => 14,
-                  _ => panic!("Invalid card {}", c),
-                }
+pub fn parse(data: &str) -> Vec<(Card, usize)> {
+  data
+    .lines()
+    .map(|line| {
+      let (card, bid) = line.split_once(' ').unwrap();
+      let card = Card::new(
+        card
+          .chars()
+          .map(|c| {
+            if c.is_ascii_digit() {
+              c as usize - '0' as usize
+            } else {
+              match c {
+                'T' => 10,
+                'J' => 11,
+                'Q' => 12,
+                'K' => 13,
+                'A' => 14,
+                _ => panic!("Invalid card {}", c),
               }
-            })
-            .collect::<Vec<_>>(),
-        );
-        (card, bid.parse().unwrap())
-      })
-      .collect(),
-  )
+            }
+          })
+          .collect::<Vec<_>>(),
+      );
+      (card, bid.parse().unwrap())
+    })
+    .collect()
 }
 
 fn score(mut stack: Vec<(Card, usize)>) -> usize {
@@ -133,13 +129,13 @@ QQQJA 483
 
   #[test]
   fn test_part1() {
-    let data = parse(TEST_DATA).unwrap();
+    let data = parse(TEST_DATA);
     assert_eq!(part1(&data), 6440);
   }
 
   #[test]
   fn test_part2() {
-    let data = parse(TEST_DATA).unwrap();
+    let data = parse(TEST_DATA);
     assert_eq!(part2(&data), 5905);
   }
 }

@@ -52,7 +52,7 @@ fn main() -> Result<()> {
         }
         println!("\nDay {}:", day);
         let input = aoc::api::get_input(day)?;
-        let ((p1, p2), (d0, d1, d2)) = aoc::y2023::solve(day, &input)?;
+        let ((p1, p2), (d0, d1, d2)) = aoc::y2023::solve(day, &input);
         println!("Parsing took {:.2} us", format_duration(&d0));
         println!("=> Part 1: {} ({:.2} us)", p1, format_duration(&d1));
         println!("=> Part 2: {} ({:.2} us)", p2, format_duration(&d2));

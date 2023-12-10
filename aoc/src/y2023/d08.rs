@@ -1,4 +1,3 @@
-use anyhow::Result;
 use std::collections::{HashMap, HashSet};
 
 pub struct Data {
@@ -20,7 +19,7 @@ impl Data {
   }
 }
 
-pub fn parse(data: &str) -> Result<Data> {
+pub fn parse(data: &str) -> Data {
   let instr = data.lines().next().unwrap().to_string();
 
   let idx: HashMap<&str, usize> = data
@@ -50,14 +49,14 @@ pub fn parse(data: &str) -> Result<Data> {
     .filter_map(|(&s, &n)| if s.ends_with('Z') { Some(n) } else { None })
     .collect();
 
-  Ok(Data {
+  Data {
     start: idx.get("AAA").copied(),
     end: idx.get("ZZZ").copied(),
     starts,
     ends,
     instr,
     steps,
-  })
+  }
 }
 
 pub fn part1(data: &Data) -> usize {
@@ -122,7 +121,7 @@ ZZZ = (ZZZ, ZZZ)
 
   #[test]
   fn test_part1() {
-    let data = parse(TEST_DATA1).unwrap();
+    let data = parse(TEST_DATA1);
     assert_eq!(part1(&data), 2);
   }
 
@@ -140,7 +139,7 @@ XXX = (XXX, XXX)
 
   #[test]
   fn test_part2() {
-    let data = parse(TEST_DATA2).unwrap();
+    let data = parse(TEST_DATA2);
     assert_eq!(part2(&data), 6);
   }
 }

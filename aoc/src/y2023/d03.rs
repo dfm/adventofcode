@@ -1,4 +1,3 @@
-use anyhow::Result;
 use itertools::Itertools;
 use std::collections::{HashMap, HashSet};
 
@@ -75,13 +74,13 @@ impl Grid {
   }
 }
 
-pub fn parse(data: &str) -> Result<Grid> {
+pub fn parse(data: &str) -> Grid {
   let mut grid: Grid = Default::default();
   for line in data.lines() {
     grid.width = line.chars().map(|c| grid.data.push(c)).count();
     grid.height += 1;
   }
-  Ok(grid)
+  grid
 }
 
 pub fn part1(grid: &Grid) -> i64 {
@@ -128,7 +127,7 @@ mod tests {
 
   #[test]
   fn test_parse() {
-    let data = parse(TEST_DATA).unwrap();
+    let data = parse(TEST_DATA);
     assert_eq!(data.width, 10);
     assert_eq!(data.height, 10);
     assert_eq!(data.to_index((3, 1)), 13);
@@ -137,13 +136,13 @@ mod tests {
 
   #[test]
   fn test_part1() {
-    let data = parse(TEST_DATA).unwrap();
+    let data = parse(TEST_DATA);
     assert_eq!(part1(&data), 4361);
   }
 
   #[test]
   fn test_part2() {
-    let data = parse(TEST_DATA).unwrap();
+    let data = parse(TEST_DATA);
     assert_eq!(part2(&data), 467835);
   }
 }

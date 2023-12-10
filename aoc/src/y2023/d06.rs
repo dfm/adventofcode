@@ -1,7 +1,5 @@
-use anyhow::Result;
-
-pub fn parse(data: &str) -> Result<String> {
-  Ok(data.to_string())
+pub fn parse(data: &str) -> String {
+  data.to_string()
 }
 
 fn win(t: i64, d: i64) -> i64 {
@@ -61,14 +59,14 @@ Distance:  9  40  200
 
   #[test]
   fn test_part1() {
-    let data = parse(TEST_DATA).unwrap();
+    let data = parse(TEST_DATA);
     assert_eq!(part1(&data), 288);
     // assert_eq!(result, vec![0]);
   }
 
   #[test]
   fn test_part2() {
-    let data = parse(TEST_DATA).unwrap();
+    let data = parse(TEST_DATA);
     assert_eq!(part2(&data), 71503);
   }
 }
