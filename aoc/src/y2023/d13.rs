@@ -1,79 +1,18 @@
-#[derive(Default, Debug, Clone)]
-pub struct Grid {
-  width: usize,
-  height: usize,
-  data: Vec<u8>,
+use crate::helpers::CharGrid;
+
+pub fn parse(data: &str) -> Vec<CharGrid> {
+  data.split("\n\n").map(CharGrid::new).collect()
 }
 
-impl Grid {
-  fn new(data: &str) -> Self {
-    let mut grid: Grid = Default::default();
-    for line in data.lines() {
-      grid.width = line.as_bytes().iter().map(|&c| grid.data.push(c)).count();
-      grid.height += 1;
-    }
-    grid
-  }
-
-  fn to_index(&self, (x, y): (usize, usize)) -> usize {
-    y * self.width + x
-  }
-
-  fn get(&self, x: usize, y: usize) -> u8 {
-    self.data[self.to_index((x, y))]
-  }
-
-  fn check_mirror(&self, x: usize, y: usize, sx: usize, sy: usize) -> bool {
-    let mut dx = sx;
-    let mut dy = sy;
-    while x + dx < self.width && dx <= x + sx && y + dy < self.height && dy <= y + sy {
-      if self.get(x + dx, y + dy) != self.get(x + sx - dx, y + sy - dy) {
-        return false;
-      }
-      dx += sx;
-      dy += sy;
-    }
-    true
-  }
-
-  fn find_mirror(&self, skip: Option<usize>) -> Option<usize> {
-    for x in 0..self.width - 1 {
-      if let Some(s) = skip {
-        if s == x + 1 {
-          continue;
-        }
-      }
-      if (0..self.height).all(|y| self.check_mirror(x, y, 1, 0)) {
-        return Some(x + 1);
-      }
-    }
-    for y in 0..self.height - 1 {
-      if let Some(s) = skip {
-        if s == 100 * (y + 1) {
-          continue;
-        }
-      }
-      if (0..self.width).all(|x| self.check_mirror(x, y, 0, 1)) {
-        return Some(100 * (y + 1));
-      }
-    }
-    None
-  }
+pub fn part1(data: &[CharGrid]) -> usize {
+  data.iter().map(|d| find_mirror(d, None).unwrap()).sum()
 }
 
-pub fn parse(data: &str) -> Vec<Grid> {
-  data.split("\n\n").map(Grid::new).collect()
-}
-
-pub fn part1(data: &[Grid]) -> usize {
-  data.iter().map(|d| d.find_mirror(None).unwrap()).sum()
-}
-
-pub fn part2(data: &[Grid]) -> usize {
+pub fn part2(data: &[CharGrid]) -> usize {
   data
     .iter()
     .map(|d| {
-      let orig = d.find_mirror(None).unwrap();
+      let orig = find_mirror(d, None).unwrap();
       let mut grid = d.clone();
       for n in 0..grid.data.len() {
         let tmp = grid.data[n];
@@ -82,7 +21,7 @@ pub fn part2(data: &[Grid]) -> usize {
         } else {
           grid.data[n] = b'.';
         }
-        if let Some(r) = grid.find_mirror(Some(orig)) {
+        if let Some(r) = find_mirror(&grid, Some(orig)) {
           return r;
         }
         grid.data[n] = tmp;
@@ -90,6 +29,43 @@ pub fn part2(data: &[Grid]) -> usize {
       panic!("failed");
     })
     .sum()
+}
+
+fn check_mirror(grid: &CharGrid, x: usize, y: usize, sx: usize, sy: usize) -> bool {
+  let mut dx = sx;
+  let mut dy = sy;
+  while x + dx < grid.width && dx <= x + sx && y + dy < grid.height && dy <= y + sy {
+    if grid.get(x + dx, y + dy) != grid.get(x + sx - dx, y + sy - dy) {
+      return false;
+    }
+    dx += sx;
+    dy += sy;
+  }
+  true
+}
+
+fn find_mirror(grid: &CharGrid, skip: Option<usize>) -> Option<usize> {
+  for x in 0..grid.width - 1 {
+    if let Some(s) = skip {
+      if s == x + 1 {
+        continue;
+      }
+    }
+    if (0..grid.height).all(|y| check_mirror(grid, x, y, 1, 0)) {
+      return Some(x + 1);
+    }
+  }
+  for y in 0..grid.height - 1 {
+    if let Some(s) = skip {
+      if s == 100 * (y + 1) {
+        continue;
+      }
+    }
+    if (0..grid.width).all(|x| check_mirror(grid, x, y, 0, 1)) {
+      return Some(100 * (y + 1));
+    }
+  }
+  None
 }
 
 #[cfg(test)]
