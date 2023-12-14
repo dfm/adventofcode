@@ -17,7 +17,7 @@ pub fn part2(data: &CharGrid) -> usize {
   let mut acc = Vec::new();
   let mut current;
 
-  for n in 0..10_000 {
+  for n in 0.. {
     (spheres, current) = cycle(data, &spheres);
     acc.push(current);
 
@@ -29,7 +29,7 @@ pub fn part2(data: &CharGrid) -> usize {
       }
     }
   }
-  panic!("Failure");
+  unreachable!("No solution");
 }
 
 fn find_spheres(grid: &CharGrid) -> HashSet<(usize, usize)> {
@@ -65,27 +65,25 @@ fn tilt(
   spheres
     .iter()
     .map(|&(x, y)| {
-      let mut x = x as i64;
-      let mut y = y as i64;
+      let mut x = x as i64 + dirx;
+      let mut y = y as i64 + diry;
       let mut acc = 0;
-      loop {
-        let xp = x + dirx;
-        let yp = y + diry;
-        if xp < 0
-          || xp >= grid.width as i64
-          || yp < 0
-          || yp >= grid.height as i64
-          || grid.get(xp as usize, yp as usize) == b'#'
-        {
-          break;
-        }
-        if spheres.contains(&(xp as usize, yp as usize)) {
+      while x >= 0
+        && x < grid.width as i64
+        && y >= 0
+        && y < grid.height as i64
+        && grid.get(x as usize, y as usize) != b'#'
+      {
+        if spheres.contains(&(x as usize, y as usize)) {
           acc += 1;
         }
-        x = xp;
-        y = yp;
+        x += dirx;
+        y += diry;
       }
-      ((x - acc * dirx) as usize, (y - acc * diry) as usize)
+      (
+        (x - (acc + 1) * dirx) as usize,
+        (y - (acc + 1) * diry) as usize,
+      )
     })
     .collect()
 }
