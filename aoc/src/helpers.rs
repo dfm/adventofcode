@@ -27,7 +27,7 @@ impl CharGrid {
   pub fn get(&self, x: usize, y: usize) -> u8 {
     self.data[self.to_index(x, y)]
   }
-  
+
   pub fn get_mut(&mut self, x: usize, y: usize) -> &mut u8 {
     let idx = self.to_index(x, y);
     &mut self.data[idx]
