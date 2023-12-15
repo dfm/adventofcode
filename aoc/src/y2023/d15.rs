@@ -13,17 +13,15 @@ pub fn part2(data: &str) -> usize {
     let id = comp_hash(label);
 
     if step.ends_with('-') {
-      if let Some(v) = boxes.get_mut(id) {
-        v.retain(|(k, _)| k != label);
-      }
+      let v = boxes.get_mut(id).unwrap();
+      v.retain(|(k, _)| k != label);
     } else {
       let foc = foc.parse().unwrap();
-      if let Some(v) = boxes.get_mut(id) {
-        if let Some(r) = v.iter_mut().find(|(k, _)| k == label) {
-          r.1 = foc;
-        } else {
-          v.push((label.to_string(), foc))
-        }
+      let v = boxes.get_mut(id).unwrap();
+      if let Some(r) = v.iter_mut().find(|(k, _)| k == label) {
+        r.1 = foc;
+      } else {
+        v.push((label.to_string(), foc));
       }
     }
   }
