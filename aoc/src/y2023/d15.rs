@@ -11,17 +11,15 @@ pub fn part2(data: &str) -> usize {
   for step in data.split(',') {
     let (label, foc) = step.split_once(|c| matches!(c, '=' | '-')).unwrap();
     let id = comp_hash(label);
-
-    if step.ends_with('-') {
-      let v = boxes.get_mut(id).unwrap();
-      v.retain(|(k, _)| k != label);
+    let b = boxes.get_mut(id).unwrap();
+    if foc.is_empty() {
+      b.retain(|(k, _)| k != label);
     } else {
       let foc = foc.parse().unwrap();
-      let v = boxes.get_mut(id).unwrap();
-      if let Some(r) = v.iter_mut().find(|(k, _)| k == label) {
+      if let Some(r) = b.iter_mut().find(|(k, _)| k == label) {
         r.1 = foc;
       } else {
-        v.push((label.to_string(), foc));
+        b.push((label.to_string(), foc));
       }
     }
   }
