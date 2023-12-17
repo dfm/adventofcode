@@ -1,3 +1,7 @@
+use std::cmp::Ordering;
+use std::collections::{BinaryHeap, HashMap};
+
+// An indexed grid of coordinates
 #[derive(Default, Clone)]
 pub struct CharGrid<T = u8> {
   pub(crate) width: usize,
@@ -5,14 +9,24 @@ pub struct CharGrid<T = u8> {
   pub(crate) data: Vec<T>,
 }
 
-impl CharGrid<u8> {
-  pub fn new(data: &str) -> Self {
+impl<T: std::default::Default> CharGrid<T> {
+  pub fn new_with<F: Fn(u8) -> T>(f: F, data: &str) -> Self {
     let mut grid: Self = Default::default();
     for line in data.lines() {
-      grid.width = line.as_bytes().iter().map(|&c| grid.data.push(c)).count();
+      grid.width = line
+        .as_bytes()
+        .iter()
+        .map(|&c| grid.data.push(f(c)))
+        .count();
       grid.height += 1;
     }
     grid
+  }
+}
+
+impl CharGrid<u8> {
+  pub fn new(data: &str) -> Self {
+    Self::new_with(|c| c, data)
   }
 }
 
@@ -83,4 +97,72 @@ impl std::fmt::Debug for CharGrid<bool> {
     }
     Ok(())
   }
+}
+
+// Shortest path
+pub trait ShortestPath {
+  type Coord;
+  fn is_target(&self, current: &Self::Coord) -> bool;
+  fn neighbors(&self, current: &Self::Coord) -> Vec<(Self::Coord, usize)>;
+}
+
+#[derive(Copy, Clone, Eq, PartialEq)]
+pub struct ShortestPathState<Coord> {
+  cost: usize,
+  coord: Coord,
+}
+
+impl<Coord: std::cmp::Ord> Ord for ShortestPathState<Coord> {
+  fn cmp(&self, other: &Self) -> Ordering {
+    other
+      .cost
+      .cmp(&self.cost)
+      .then_with(|| self.coord.cmp(&other.coord))
+  }
+}
+
+impl<Coord: std::cmp::Ord> PartialOrd for ShortestPathState<Coord> {
+  fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+    Some(self.cmp(other))
+  }
+}
+
+pub fn shortest_distance<G, C>(graph: G, starts: &[C]) -> Option<usize>
+where
+  G: ShortestPath<Coord = C>,
+  C: Copy + std::cmp::Ord + std::hash::Hash,
+{
+  let mut distances = HashMap::new();
+  let mut heap = BinaryHeap::new();
+
+  for &start in starts {
+    distances.insert(start, 0);
+    heap.push(ShortestPathState {
+      cost: 0,
+      coord: start,
+    });
+  }
+
+  while let Some(ShortestPathState { cost, coord }) = heap.pop() {
+    if graph.is_target(&coord) {
+      return Some(cost);
+    }
+
+    if cost > *distances.get(&coord).unwrap_or(&usize::MAX) {
+      continue;
+    }
+
+    for (neighbor, delta) in graph.neighbors(&coord) {
+      let next = ShortestPathState {
+        cost: cost + delta,
+        coord: neighbor,
+      };
+      if next.cost < *distances.get(&next.coord).unwrap_or(&usize::MAX) {
+        heap.push(next);
+        distances.insert(next.coord, next.cost);
+      }
+    }
+  }
+
+  None
 }
