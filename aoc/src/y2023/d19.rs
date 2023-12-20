@@ -1,49 +1,28 @@
 use std::collections::HashMap;
 
-pub type Rule = (Option<(usize, bool, usize)>, String);
-pub type Part = [usize; 4];
-pub type Data = (HashMap<String, Vec<Rule>>, Vec<Part>);
-
-fn to_idx(s: &str) -> usize {
-  match s {
-    "x" => 0,
-    "m" => 1,
-    "a" => 2,
-    "s" => 3,
-    _ => unreachable!(),
-  }
+#[derive(Debug, Clone)]
+pub enum Cond {
+  Lt(usize, usize, String),
+  Gt(usize, usize, String),
+  No(String),
 }
 
+pub type Data = (HashMap<String, Vec<Cond>>, Vec<[usize; 4]>);
+
 pub fn parse(data: &str) -> Data {
-  let mut rules = HashMap::new();
+  let mut workflows = HashMap::new();
   let mut lines = data.lines();
   loop {
     let line = lines.next().unwrap();
     if line.is_empty() {
       break;
     }
-
     let (name, rest) = line.split_once('{').unwrap();
-    rules.insert(
+    workflows.insert(
       name.to_string(),
-      rest[..rest.len() - 1]
-        .split(',')
-        .map(|p| {
-          if let Some((from, to)) = p.split_once(':') {
-            if let Some((a, b)) = from.split_once('<') {
-              (Some((to_idx(a), true, b.parse().unwrap())), to.to_string())
-            } else {
-              let (a, b) = from.split_once('>').unwrap();
-              (Some((to_idx(a), false, b.parse().unwrap())), to.to_string())
-            }
-          } else {
-            (None, p.to_string())
-          }
-        })
-        .collect(),
+      rest[..rest.len() - 1].split(',').map(Cond::from).collect(),
     );
   }
-
   let parts = lines
     .map(|line| {
       line[1..line.len() - 1]
@@ -54,31 +33,19 @@ pub fn parse(data: &str) -> Data {
         .unwrap()
     })
     .collect();
-  (rules, parts)
-}
-
-fn apply_rule<'a>(rule: &'a Rule, part: &mut Part) -> Option<&'a str> {
-  if let Some((idx, flag, val)) = rule.0 {
-    if (flag && part[idx] < val) || (!flag && part[idx] > val) {
-      Some(&rule.1)
-    } else {
-      None
-    }
-  } else {
-    Some(&rule.1)
-  }
+  (workflows, parts)
 }
 
 pub fn part1(data: &Data) -> usize {
-  data
-    .1
+  let (workflows, parts) = data;
+  parts
     .iter()
     .filter_map(|part| {
       let mut part = *part;
       let mut workflow = "in".to_string();
-      while let Some(rules) = data.0.get(&workflow) {
-        for rule in rules {
-          if let Some(next) = apply_rule(rule, &mut part) {
+      while let Some(conds) = workflows.get(&workflow) {
+        for cond in conds {
+          if let Some(next) = cond.apply(&mut part) {
             match next {
               "R" => return None,
               "A" => return Some(part.iter().sum::<usize>()),
@@ -96,11 +63,12 @@ pub fn part1(data: &Data) -> usize {
 }
 
 pub fn part2(data: &Data) -> usize {
-  let mut invert: HashMap<String, Vec<(&str, usize)>> = HashMap::new();
-  for (name, workflow) in data.0.iter() {
-    for (n, rule) in workflow.iter().enumerate() {
+  let workflows = &data.0;
+  let mut invert: HashMap<&str, Vec<(&str, usize)>> = HashMap::new();
+  for (name, workflow) in workflows.iter() {
+    for (n, cond) in workflow.iter().enumerate() {
       invert
-        .entry(rule.1.to_string())
+        .entry(cond.name())
         .and_modify(|v| v.push((name, n)))
         .or_insert(vec![(name, n)]);
     }
@@ -114,22 +82,10 @@ pub fn part2(data: &Data) -> usize {
     .map(|&v| (v, [(0, 4001); 4]))
     .collect();
   while let Some(((name, idx), mut ranges)) = queue.pop() {
-    let rules = data.0.get(name).unwrap();
-    if let Some((n, flag, v)) = rules[idx].0 {
-      if flag {
-        ranges[n].1 = ranges[n].1.min(v);
-      } else {
-        ranges[n].0 = ranges[n].0.max(v);
-      }
-    }
-
-    for (r, _) in rules.iter().take(idx) {
-      let (n, flag, v) = r.unwrap();
-      if flag {
-        ranges[n].0 = ranges[n].0.max(v - 1);
-      } else {
-        ranges[n].1 = ranges[n].1.min(v + 1);
-      }
+    let conds = workflows.get(name).unwrap();
+    conds[idx].apply_ranges(&mut ranges);
+    for cond in conds.iter().take(idx){
+      cond.invert().apply_ranges(&mut ranges);
     }
     if name == "in" {
       results.push(ranges);
@@ -137,8 +93,70 @@ pub fn part2(data: &Data) -> usize {
       queue.extend(invert.get(name).unwrap().iter().map(|&v| (v, ranges)));
     }
   }
-  results.iter().map(|r| r.iter().map(|(a, b)| b - a - 1).product::<usize>()).sum()
+  results
+    .iter()
+    .map(|r| r.iter().map(|(a, b)| b - a - 1).product::<usize>())
+    .sum()
 }
+
+impl Cond {
+  fn name(&self) -> &str {
+    match self {
+      Cond::Lt(_, _, name) | Cond::Gt(_, _, name) | Cond::No(name) => name
+    }
+  }
+
+  fn invert(&self) -> Self {
+    match self.clone() {
+      Cond::Lt(idx, val, name) => Cond::Gt(idx, val - 1, name),
+      Cond::Gt(idx, val, name) => Cond::Lt(idx, val + 1, name),
+      Cond::No(name) => Cond::No(name),
+    }
+  }
+
+  fn apply<'a>(&'a self, part: &mut [usize; 4]) -> Option<&'a str> {
+    match self {
+      Cond::Lt(idx, val, name) if part[*idx] < *val => Some(name),
+      Cond::Gt(idx, val, name) if part[*idx] > *val => Some(name),
+      Cond::No(name) => Some(name),
+      _ => None,
+    }
+  }
+
+  fn apply_ranges(&self, ranges: &mut [(usize, usize); 4]) {
+    match self {
+      Cond::Lt(idx, val, _) => ranges[*idx].1 = ranges[*idx].1.min(*val),
+      Cond::Gt(idx, val, _) => ranges[*idx].0 = ranges[*idx].0.max(*val),
+      _ => {}
+    }
+  }
+}
+
+impl From<&str> for Cond {
+  fn from(value: &str) -> Self {
+    if let Some((from, to)) = value.split_once(':') {
+      if let Some((a, b)) = from.split_once('<') {
+        Cond::Lt(to_idx(a), b.parse().unwrap(), to.to_string())
+      } else {
+        let (a, b) = from.split_once('>').unwrap();
+        Cond::Gt(to_idx(a), b.parse().unwrap(), to.to_string())
+      }
+    } else {
+      Cond::No(value.to_string())
+    }
+  }
+}
+
+fn to_idx(s: &str) -> usize {
+  match s {
+    "x" => 0,
+    "m" => 1,
+    "a" => 2,
+    "s" => 3,
+    _ => unreachable!(),
+  }
+}
+
 
 #[cfg(test)]
 mod tests {
