@@ -1,6 +1,21 @@
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashMap};
 
+pub fn gcd(a: usize, b: usize) -> usize {
+  let mut a = a;
+  let mut b = b;
+  while b > 0 {
+    let t = b;
+    b = a % b;
+    a = t;
+  }
+  a
+}
+
+pub fn lcm(a: usize, b: usize) -> usize {
+  a * b / gcd(a, b)
+}
+
 // An indexed grid of coordinates
 #[derive(Default, Clone)]
 pub struct CharGrid<T = u8> {

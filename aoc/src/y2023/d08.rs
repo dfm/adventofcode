@@ -1,3 +1,4 @@
+use crate::helpers::lcm;
 use std::collections::{HashMap, HashSet};
 
 pub struct Data {
@@ -69,21 +70,6 @@ pub fn part1(data: &Data) -> usize {
     }
   }
   0
-}
-
-fn gcd(a: usize, b: usize) -> usize {
-  let mut a = a;
-  let mut b = b;
-  while b > 0 {
-    let t = b;
-    b = a % b;
-    a = t;
-  }
-  a
-}
-
-fn lcm(a: usize, b: usize) -> usize {
-  a * b / gcd(a, b)
 }
 
 pub fn part2(data: &Data) -> usize {
