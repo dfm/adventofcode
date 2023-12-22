@@ -117,7 +117,9 @@ impl std::fmt::Debug for CharGrid<bool> {
 // Shortest path
 pub trait ShortestPath {
   type Coord;
-  fn is_target(&self, current: &Self::Coord) -> bool;
+  fn is_target(&self, _current: &Self::Coord) -> bool {
+    false
+  }
   fn neighbors(&self, current: &Self::Coord) -> Vec<(Self::Coord, usize)>;
 }
 
@@ -180,4 +182,44 @@ where
   }
 
   None
+}
+
+pub fn shortest_paths<G, C>(graph: G, starts: &[C], max_cost: usize) -> HashMap<C, usize>
+where
+  G: ShortestPath<Coord = C>,
+  C: Copy + std::cmp::Ord + std::hash::Hash,
+{
+  let mut distances = HashMap::new();
+  let mut heap = BinaryHeap::new();
+
+  for &start in starts {
+    distances.insert(start, 0);
+    heap.push(ShortestPathState {
+      cost: 0,
+      coord: start,
+    });
+  }
+
+  while let Some(ShortestPathState { cost, coord }) = heap.pop() {
+    if cost >= max_cost {
+      continue;
+    }
+
+    if cost > *distances.get(&coord).unwrap_or(&usize::MAX) {
+      continue;
+    }
+
+    for (neighbor, delta) in graph.neighbors(&coord) {
+      let next = ShortestPathState {
+        cost: cost + delta,
+        coord: neighbor,
+      };
+      if next.cost < *distances.get(&next.coord).unwrap_or(&usize::MAX) {
+        heap.push(next);
+        distances.insert(next.coord, next.cost);
+      }
+    }
+  }
+
+  distances
 }
