@@ -83,6 +83,7 @@ pub fn part2(data: &CharGrid) -> i64 {
   let a2 = data.solve(size / 2 + size) as i64;
   let a3 = data.solve(size / 2 + 2 * size) as i64;
 
+  // Solved using sympy
   let t = ((26501365 - size / 2) / size) as i64;
   t * t * (a1 - 2 * a2 + a3) / 2 - t * (3 * a1 - 4 * a2 + a3) / 2 + a1
 }
