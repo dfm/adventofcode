@@ -42,7 +42,8 @@ fn longest_distance(
         Some(
           longest_distance(*b, end, edges, &cache)
             .iter()
-            .map( |d| d + dist).collect::<Vec<_>>(),
+            .map(|d| d + dist)
+            .collect::<Vec<_>>(),
         )
       }
     })
