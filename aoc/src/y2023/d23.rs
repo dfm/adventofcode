@@ -1,7 +1,6 @@
 use crate::helpers::CharGrid;
 use std::collections::{HashMap, HashSet, VecDeque};
 
-
 pub fn parse(data: &str) -> CharGrid {
   CharGrid::new(data)
 }
@@ -23,55 +22,53 @@ pub fn part2(data: &CharGrid) -> usize {
   solve(data, |_, c| !matches!(c, None | Some(b'#')))
 }
 
-#[derive(Debug)]
-struct State {
-  current: (i64, i64),
-  distance: usize,
-  past: HashSet<(i64, i64)>,
+fn longest_distance(
+  start: Coord,
+  end: Coord,
+  edges: &HashMap<Edge, usize>,
+  cache: &HashSet<Coord>,
+) -> Vec<usize> {
+  if start == end {
+    return vec![0];
+  }
+  let mut cache = cache.clone();
+  cache.insert(start);
+  edges
+    .iter()
+    .filter_map(|((a, b), dist)| {
+      if *a != start || cache.contains(b) {
+        None
+      } else {
+        Some(
+          longest_distance(*b, end, edges, &cache)
+            .iter()
+            .map( |d| d + dist).collect::<Vec<_>>(),
+        )
+      }
+    })
+    .flatten()
+    .collect()
 }
 
-fn solve<F>(data: &CharGrid, is_allowed: F) -> usize 
-
+fn solve<F>(data: &CharGrid, is_allowed: F) -> usize
 where
   F: Fn(Coord, Option<u8>) -> bool,
 {
   let edges = build_graph(data, is_allowed);
-  let mut queue = VecDeque::new();
-  let mut past = HashSet::new();
-  past.insert((1, 0));
-  queue.push_back(State {
-    current: (1, 0),
-    distance: 0,
-    past,
-  });
-  let mut results = Vec::new();
 
-  while let Some(next) = queue.pop_front() {
-    if next.current == (data.width as i64 - 2, data.height as i64 - 1) {
-      results.push(next.distance);
-      continue;
-    }
-
-    for ((_, _, end), dist) in edges
-      .iter()
-      .filter(|((start, _, end), _)| *start == next.current && !next.past.contains(end))
-    {
-      let mut past = next.past.clone();
-      past.insert(*end);
-      queue.push_back(State {
-        current: *end,
-        distance: next.distance + dist,
-        past,
-      });
-    }
-  }
-
-  results.into_iter().max().unwrap()
+  longest_distance(
+    (1, 0),
+    (data.width as i64 - 2, data.height as i64 - 1),
+    &edges,
+    &HashSet::new(),
+  )
+  .into_iter()
+  .max()
+  .unwrap()
 }
 
-
 type Coord = (i64, i64);
-type Edge = (Coord, Coord, Coord);
+type Edge = (Coord, Coord);
 
 fn build_graph<F>(data: &CharGrid, is_allowed: F) -> HashMap<Edge, usize>
 where
@@ -113,7 +110,11 @@ where
           past.insert((xp, yp));
         }
         _ => {
-          edges.insert(((x0, y0), (dx, dy), (x, y)), dist);
+          edges
+            .entry(((x0, y0), (x, y)))
+            .and_modify(|e| *e = dist.max(*e))
+            .or_insert(dist);
+          // edges.insert(((x0, y0), (dx, dy), (x, y)), dist);
           for (_, d) in options {
             if !visited.contains(&((x, y), d)) {
               visited.insert(((x, y), d));

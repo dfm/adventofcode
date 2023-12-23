@@ -53,9 +53,9 @@ fn main() -> Result<()> {
         println!("\nDay {}:", day);
         let input = aoc::api::get_input(day)?;
         let ((p1, p2), (d0, d1, d2)) = aoc::y2023::solve(day, &input);
-        println!("Parsing took {:.2} us", format_duration(&d0));
-        println!("=> Part 1: {} ({:.2} us)", p1, format_duration(&d1));
-        println!("=> Part 2: {} ({:.2} us)", p2, format_duration(&d2));
+        println!("Parsing took {:.2} ms", format_duration(&d0));
+        println!("=> Part 1: {} ({:.2} ms)", p1, format_duration(&d1));
+        println!("=> Part 2: {} ({:.2} ms)", p2, format_duration(&d2));
       }
     }
   }
@@ -64,6 +64,6 @@ fn main() -> Result<()> {
 }
 
 fn format_duration(d: &std::time::Duration) -> f64 {
-  let t = d.subsec_nanos() as f64;
+  let t = d.subsec_micros() as f64;
   t / 1e3f64
 }

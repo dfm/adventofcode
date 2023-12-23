@@ -92,7 +92,6 @@ mod tests {
   #[test]
   fn test_part1() {
     let data = parse(TEST_DATA);
-    println!("{:?}", data);
     assert_eq!(part1(&data), 405);
   }
 
