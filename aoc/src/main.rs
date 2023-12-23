@@ -1,6 +1,6 @@
 use anyhow::Result;
 use aoc::template::copy_template;
-use chrono::{Datelike, Utc};
+use chrono::{Datelike, Local};
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
@@ -24,7 +24,7 @@ enum Commands {
 
 fn main() -> Result<()> {
   let cli = Cli::parse();
-  let today: u32 = Utc::now().day();
+  let today: u32 = Local::now().day();
 
   match cli.command {
     Some(Commands::Login) => {
