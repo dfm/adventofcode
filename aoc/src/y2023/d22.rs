@@ -82,23 +82,16 @@ pub fn part2(blocks: &[(Coord, Coord)]) -> usize {
       let mut count = 0;
       for n in idx + 1..blocks.len() {
         let mut block = blocks[n];
-        loop {
-          block.0 .2 -= 1;
-          block.1 .2 -= 1;
-          if block.0 .2 <= 0
-            || block.1 .2 <= 0
-            || blocks
-              .iter()
-              .enumerate()
-              .take(n)
-              .any(|(m, &other)| m != idx && intersect(block, other))
-          {
-            break;
-          }
-        }
-        block.0 .2 += 1;
-        block.1 .2 += 1;
-        if blocks[n] != block {
+        block.0 .2 -= 1;
+        block.1 .2 -= 1;
+        if block.0 .2 > 0
+          && block.1 .2 > 0
+          && blocks
+            .iter()
+            .enumerate()
+            .take(n)
+            .all(|(m, &other)| m == idx || !intersect(block, other))
+        {
           count += 1;
           blocks[n] = block;
         }
