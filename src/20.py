@@ -24,7 +24,6 @@ def initial(start):
 fwd = initial(start)
 bwd = initial(end)
 longest = fwd[end]
-# print(longest)
 
 def solve(start, dist, min_cheats=2, max_cheats=2):
   queue = [(dist, *start, 0, start)]
